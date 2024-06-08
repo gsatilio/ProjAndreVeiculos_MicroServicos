@@ -24,7 +24,7 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.Parameters.Add(Address.INSERT);
+                        cmd.CommandText = Address.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@Document", person.Item1.Id));
                         cmd.Parameters.Add(new SqlParameter("@Name", person.Item2));
                         cmd.Parameters.Add(new SqlParameter("@DateOfBirth", person.Item3));

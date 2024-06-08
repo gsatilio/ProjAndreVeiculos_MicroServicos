@@ -24,7 +24,7 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.Parameters.Add(PixType.INSERT);
+                        cmd.CommandText = PixType.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@Name", pixType.Name));
                         result = (int)cmd.ExecuteScalar();
                     }

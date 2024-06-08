@@ -24,7 +24,7 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.Parameters.Add(Role.INSERT);
+                        cmd.CommandText = Role.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@Number", role.Description));
                         result = (int)cmd.ExecuteScalar();
                     }

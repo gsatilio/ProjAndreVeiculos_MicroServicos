@@ -9,7 +9,7 @@ namespace APIAcquisition.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "Car",
                 columns: table => new
                 {
@@ -24,7 +24,7 @@ namespace APIAcquisition.Migrations
                 {
                     table.PrimaryKey("PK_Car", x => x.LicensePlate);
                 });
-
+            */
             migrationBuilder.CreateTable(
                 name: "Acquisition",
                 columns: table => new

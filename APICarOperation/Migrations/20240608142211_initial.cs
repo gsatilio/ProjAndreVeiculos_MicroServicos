@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -8,7 +9,8 @@ namespace APICarOperation.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+                /*
+                migrationBuilder.CreateTable(
                 name: "Car",
                 columns: table => new
                 {
@@ -23,7 +25,7 @@ namespace APICarOperation.Migrations
                 {
                     table.PrimaryKey("PK_Car", x => x.LicensePlate);
                 });
-
+                */
             migrationBuilder.CreateTable(
                 name: "Operation",
                 columns: table => new

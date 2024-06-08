@@ -26,7 +26,7 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.Parameters.Add(Boleto.INSERT);
+                        cmd.CommandText = Boleto.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@Number", boleto.Number));
                         cmd.Parameters.Add(new SqlParameter("@ExpirationDate", boleto.ExpirationDate));
                         result = (int)cmd.ExecuteScalar();

@@ -26,7 +26,7 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.Parameters.Add(Address.INSERT);
+                        cmd.CommandText = Address.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@Street", address.Street));
                         cmd.Parameters.Add(new SqlParameter("@CEP", address.CEP));
                         cmd.Parameters.Add(new SqlParameter("@Neighborhood", address.Neighborhood));

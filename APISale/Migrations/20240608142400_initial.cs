@@ -236,14 +236,14 @@ namespace APISale.Migrations
                         name: "FK_Sale_Customer_CustomerDocument",
                         column: x => x.CustomerDocument,
                         principalTable: "Customer",
-                        principalColumn: "Document",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Document");
+                    //onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Sale_Employee_EmployeeDocument",
                         column: x => x.EmployeeDocument,
                         principalTable: "Employee",
-                        principalColumn: "Document",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Document");
+                    //onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Sale_Payment_PaymentId",
                         column: x => x.PaymentId,

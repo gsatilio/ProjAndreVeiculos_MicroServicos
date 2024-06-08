@@ -24,7 +24,7 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.Parameters.Add(CreditCard.INSERT);
+                        cmd.CommandText = CreditCard.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@CardNumber", creditCard.CardNumber));
                         cmd.Parameters.Add(new SqlParameter("@SecurityCode", creditCard.SecurityCode));
                         cmd.Parameters.Add(new SqlParameter("@ExpirationDate", creditCard.ExpirationDate));

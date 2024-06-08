@@ -38,7 +38,7 @@ namespace Repositories
                         cmd.ExecuteNonQuery();
                         */
                         cmd = new SqlCommand { Connection = db };
-                        cmd.Parameters.Add(Customer.INSERT);
+                        cmd.CommandText = Customer.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@Document", customer.Document));
                         cmd.Parameters.Add(new SqlParameter("@Income", customer.Income));
                         cmd.Parameters.Add(new SqlParameter("@PDFDocument", customer.PDFDocument));
