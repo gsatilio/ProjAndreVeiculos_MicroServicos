@@ -70,5 +70,34 @@ namespace Services
             }
             return csList;
         }
+
+        public async Task<List<CarOperation>> GetAll(int type)
+        {
+            List<CarOperation> list = new List<CarOperation>();
+            try
+            {
+                list = await _repository.GetAll(type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
+        public async Task<CarOperation> Get(int id, int type)
+        {
+            CarOperation list = new CarOperation();
+            try
+            {
+                list = await _repository.Get(id, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
     }
 }

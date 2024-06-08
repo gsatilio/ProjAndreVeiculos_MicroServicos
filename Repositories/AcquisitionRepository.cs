@@ -120,7 +120,7 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.CommandText = Acquisition.GET + " WHERE Id = @Id";
+                        cmd.CommandText = Acquisition.GETALL + " WHERE Id = @Id";
                         cmd.Parameters.Add(new SqlParameter("@Id", id));
                         using (var reader = cmd.ExecuteReader())
                         {
@@ -146,7 +146,7 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        list = db.Query<Acquisition, Car, Acquisition>(Acquisition.GET,
+                        list = db.Query<Acquisition, Car, Acquisition>(Acquisition.GETALL,
                             (acquisition, car) =>
                             {
                                 acquisition.Id = id;

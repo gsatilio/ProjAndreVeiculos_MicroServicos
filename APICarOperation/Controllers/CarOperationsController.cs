@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APICarOperation.Data;
 using Models;
+using Controllers;
 
 namespace APICarOperation.Controllers
 {
@@ -22,32 +23,57 @@ namespace APICarOperation.Controllers
         }
 
         // GET: api/CarOperations
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarOperation>>> GetCarOperation()
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<CarOperation>>> GetCarOperation(int techType)
         {
           if (_context.CarOperation == null)
           {
               return NotFound();
           }
-            return await _context.CarOperation.ToListAsync();
+            List<CarOperation> carOp = new List<CarOperation>();
+            switch (techType)
+            {
+                case 0:
+                    carOp = await _context.CarOperation.Include(c => c.Car).Include(o => o.Operation).ToListAsync();
+                    break;
+                case 1:
+                    carOp = await new CarOperationController().GetAll(0);
+                    break;
+                case 2:
+                    carOp = await new CarOperationController().GetAll(1);
+                    break;
+            }
+            return carOp;
         }
 
         // GET: api/CarOperations/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CarOperation>> GetCarOperation(int id)
+        [HttpGet("{id},{techType}")]
+        public async Task<ActionResult<CarOperation>> GetCarOperation(int id, int techType)
         {
           if (_context.CarOperation == null)
           {
               return NotFound();
           }
-            var carOperation = await _context.CarOperation.FindAsync(id);
+            CarOperation? carOp = new CarOperation();
+            switch (techType)
+            {
+                case 0:
+                    carOp = await _context.CarOperation.Include(c => c.Car).SingleOrDefaultAsync(c => c.Id == id);
+                    break;
+                case 1:
+                    carOp = await new CarOperationController().Get(id, 0);
+                    break;
+                case 2:
+                    carOp = await new CarOperationController().Get(id, 1);
+                    break;
+            }
 
-            if (carOperation == null)
+            if (carOp == null)
             {
                 return NotFound();
             }
 
-            return carOperation;
+            return carOp;
         }
 
         // PUT: api/CarOperations/5

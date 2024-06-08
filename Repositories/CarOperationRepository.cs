@@ -300,5 +300,129 @@ namespace Repositories
             }
             return csList;
         }
+
+
+        public async Task<List<CarOperation>> GetAll(int type)
+        {
+            List<CarOperation>? list = new();
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = CarOperation.GETALL;
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list.Add(new CarOperation
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Status = reader.GetBoolean(1),
+                                    Car = new Car
+                                    {
+                                        LicensePlate = reader.GetString(2),
+                                        Name = reader.GetString(3),
+                                        ModelYear = reader.GetInt32(4),
+                                        FabricationYear = reader.GetInt32(5),
+                                        Color = reader.GetString(6),
+                                        Sold = reader.GetBoolean(7)
+                                    },
+                                    Operation = new Operation
+                                    {
+                                        Id = reader.GetInt32(8),
+                                        Description = reader.GetString(9)
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    else // Dapper
+                    {
+                        list = db.Query<CarOperation, Car, Operation, CarOperation>(CarOperation.GETALL,
+                            (carOp, car, operation) =>
+                            {
+                                carOp.Car = car;
+                                carOp.Operation = operation;
+                                return carOp;
+                            }, splitOn: "Status, Id"
+                    ).ToList();
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return list;
+        }
+
+        public async Task<CarOperation> Get(int id, int type)
+        {
+            CarOperation? list = null;
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = CarOperation.GETALL + " WHERE A.Id = @Id";
+                        cmd.Parameters.Add(new SqlParameter("@Id", id));
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list = new CarOperation
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Status = reader.GetBoolean(1),
+                                    Car = new Car
+                                    {
+                                        LicensePlate = reader.GetString(2),
+                                        Name = reader.GetString(3),
+                                        ModelYear = reader.GetInt32(4),
+                                        FabricationYear = reader.GetInt32(5),
+                                        Color = reader.GetString(6),
+                                        Sold = reader.GetBoolean(7)
+                                    },
+                                    Operation = new Operation
+                                    {
+                                        Id = reader.GetInt32(8),
+                                        Description = reader.GetString(9)
+                                    }
+                                };
+                            }
+                        }
+                    }
+                    else // Dapper
+                    {
+                        list = db.Query<CarOperation, Car, Operation, CarOperation>(Acquisition.GETALL,
+                            (carOp, car, operation) =>
+                            {
+                                carOp.Id = id;
+                                carOp.Car = car;
+                                carOp.Operation = operation;
+                                return carOp;
+                            }, splitOn: "Status, Id"
+                    ).ToList().First();
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return list;
+        }
     }
 }
