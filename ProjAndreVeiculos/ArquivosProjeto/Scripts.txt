@@ -1,0 +1,36 @@
+--select * from CAR
+
+select * from ACQUISITION
+
+select * from ADDRESS
+
+select * from BOLETO
+
+select * from CREDITCARD
+
+select * from CUSTOMER
+
+select * from EMPLOYEE
+
+select * from PAYMENT
+
+select * from PERSON
+
+select * from PIXTYPE
+
+select * from PIX
+
+select * from ROLE
+
+select * from SALE
+
+
+
+---
+
+Reseta as tabelas
+
+EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
+EXEC sp_MSforeachtable 'DELETE FROM ?';
+EXEC sp_MSforeachtable 'DBCC CHECKIDENT (''?'', RESEED, 0)';
+EXEC sp_MSforeachtable 'ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL';
