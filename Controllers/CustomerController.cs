@@ -24,5 +24,33 @@ namespace Controllers
             }
             return result;
         }
+        public async Task<List<Customer>> GetAll(int type)
+        {
+            List<Customer> list = new List<Customer>();
+            try
+            {
+                list = await _service.GetAll(type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
+        public async Task<Customer> Get(string document, int type)
+        {
+            Customer list = new Customer();
+            try
+            {
+                list = await _service.Get(document, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
     }
 }

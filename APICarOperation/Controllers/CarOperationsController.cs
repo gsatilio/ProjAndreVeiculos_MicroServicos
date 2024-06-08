@@ -58,7 +58,7 @@ namespace APICarOperation.Controllers
             switch (techType)
             {
                 case 0:
-                    carOp = await _context.CarOperation.Include(c => c.Car).SingleOrDefaultAsync(c => c.Id == id);
+                    carOp = await _context.CarOperation.Include(c => c.Car).Include(o => o.Operation).SingleOrDefaultAsync(c => c.Id == id);
                     break;
                 case 1:
                     carOp = await new CarOperationController().Get(id, 0);

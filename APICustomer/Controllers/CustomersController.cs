@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APICustomer.Data;
 using Models;
+using Controllers;
 
 namespace APICustomer.Controllers
 {
@@ -22,25 +23,50 @@ namespace APICustomer.Controllers
         }
 
         // GET: api/Customers
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomer()
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomer(int techType)
         {
-          if (_context.Customer == null)
-          {
-              return NotFound();
-          }
-            return await _context.Customer.ToListAsync();
+            if (_context.Customer == null)
+            {
+                return NotFound();
+            }
+            List<Customer> customer = new List<Customer>();
+            switch (techType)
+            {
+                case 0:
+                    customer = await _context.Customer.Include(a => a.Address).ToListAsync();
+                    break;
+                case 1:
+                    customer = await new CustomerController().GetAll(0);
+                    break;
+                case 2:
+                    customer = await new CustomerController().GetAll(1);
+                    break;
+            }
+            return customer;
         }
 
         // GET: api/Customers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomer(string id)
+        [HttpGet("{document},{techType}")]
+        public async Task<ActionResult<Customer>> GetCustomer(string document, int techType)
         {
-          if (_context.Customer == null)
-          {
-              return NotFound();
-          }
-            var customer = await _context.Customer.FindAsync(id);
+            if (_context.Customer == null)
+            {
+                return NotFound();
+            }
+            Customer? customer = new Customer();
+            switch (techType)
+            {
+                case 0:
+                    customer = await _context.Customer.Include(a => a.Address).SingleOrDefaultAsync(c => c.Document == document);
+                    break;
+                case 1:
+                    customer = await new CustomerController().Get(document, 0);
+                    break;
+                case 2:
+                    customer = await new CustomerController().Get(document, 1);
+                    break;
+            }
 
             if (customer == null)
             {

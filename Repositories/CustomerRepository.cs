@@ -27,16 +27,6 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        /*
-                        cmd.Parameters.Add(Customer.INSERTPERSON);
-                        cmd.Parameters.Add(new SqlParameter("@Number", customer.Address.Id));
-                        cmd.Parameters.Add(new SqlParameter("@Document", customer.Document));
-                        cmd.Parameters.Add(new SqlParameter("@Name", customer.Name));
-                        cmd.Parameters.Add(new SqlParameter("@DateOfBirth", customer.DateOfBirth));
-                        cmd.Parameters.Add(new SqlParameter("@Phone", customer.Phone));
-                        cmd.Parameters.Add(new SqlParameter("@Email", customer.Email));
-                        cmd.ExecuteNonQuery();
-                        */
                         cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = Customer.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@Document", customer.Document));
@@ -51,15 +41,6 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        /*db.Execute(Customer.INSERTPERSON, new
-                        {
-                            IdAddress = customer.Address.Id,
-                            customer.Document,
-                            customer.Name,
-                            customer.DateOfBirth,
-                            customer.Phone,
-                            customer.Email
-                        });*/
                         db.Execute(Customer.INSERT, customer);
                         result = db.ExecuteScalar<int>(Customer.INSERT, new
                         {
@@ -82,6 +63,132 @@ namespace Repositories
                 //throw;
             }
             return result;
+        }
+
+        public async Task<List<Customer>> GetAll(int type)
+        {
+            List<Customer>? list = new();
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Customer.GETALL;
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list.Add(new Customer
+                                {
+                                    Address = new Address
+                                    {
+                                        CEP = reader.GetString(7),
+                                        City = reader.GetString(8),
+                                        Complement = reader.GetString(9),
+                                        Id = reader.GetInt32(10),
+                                        Neighborhood = reader.GetString(11),
+                                        Number = reader.GetInt32(12),
+                                        Street = reader.GetString(13),
+                                        StreetType = reader.GetString(14),
+                                        Uf = reader.GetString(15),
+                                    },
+                                    DateOfBirth = reader.GetDateTime(0),
+                                    Document = reader.GetString(1),
+                                    Email = reader.GetString(2),
+                                    Income = reader.GetDecimal(3),
+                                    Name = reader.GetString(4),
+                                    PDFDocument = reader.GetString(5),
+                                    Phone = reader.GetString(6)
+                                });
+                            }
+                        }
+                    }
+                    else // Dapper
+                    {
+                        list = db.Query<Customer, Address, Customer>(Customer.GETALL,
+                            (customer, address) =>
+                            {
+                                customer.Address = address;
+                                return customer;
+                            }, splitOn: "Phone"
+                    ).ToList();
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return list;
+        }
+
+        public async Task<Customer> Get(string document, int type)
+        {
+            Customer? list = null;
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Customer.GETALL + " WHERE A.Document = @document";
+                        cmd.Parameters.Add(new SqlParameter("@document", document));
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list = new Customer
+                                {
+                                    Address = new Address
+                                    {
+                                        CEP = reader.GetString(7),
+                                        City = reader.GetString(8),
+                                        Complement = reader.GetString(9),
+                                        Id = reader.GetInt32(10),
+                                        Neighborhood = reader.GetString(11),
+                                        Number = reader.GetInt32(12),
+                                        Street = reader.GetString(13),
+                                        StreetType = reader.GetString(14),
+                                        Uf = reader.GetString(15),
+                                    },
+                                    DateOfBirth = reader.GetDateTime(0),
+                                    Document = reader.GetString(1),
+                                    Email = reader.GetString(2),
+                                    Income = reader.GetDecimal(3),
+                                    Name = reader.GetString(4),
+                                    PDFDocument = reader.GetString(5),
+                                    Phone = reader.GetString(6)
+                                };
+                            }
+                        }
+                    }
+                    else // Dapper
+                    {
+                        list = db.Query<Customer, Address, Customer>(Customer.GETALL,
+                            (customer, address) =>
+                            {
+                                customer.Address = address;
+                                return customer;
+                            }, splitOn: "Phone"
+                    ).ToList().FirstOrDefault();
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return list;
         }
     }
 }

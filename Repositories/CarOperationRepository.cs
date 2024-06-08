@@ -412,7 +412,7 @@ namespace Repositories
                                 carOp.Operation = operation;
                                 return carOp;
                             }, splitOn: "Status, Id"
-                    ).ToList().First();
+                    ).ToList().FirstOrDefault();
                     }
                     db.Close();
                 }
