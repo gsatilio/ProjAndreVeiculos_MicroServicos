@@ -99,7 +99,7 @@ namespace APIAddress.Controllers
 
         // POST: api/Addresses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("{tipoTec}")]
         public async Task<ActionResult<Address>> PostAddress(int tipoTec, AddressDTO addressDTO)
         {
             if (_context.Address == null)
