@@ -1,5 +1,7 @@
 ﻿using Models;
 using Repositories;
+using System.Collections.Generic;
+using System.Net;
 
 namespace Services
 {
@@ -20,6 +22,34 @@ namespace Services
                 throw;
             }
             return result;
+        }
+        public async Task<List<Address>> GetAll(int type)
+        {
+            List<Address> list = new List<Address>();
+            try
+            {
+                list = await _repository.GetAll(type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
+        public async Task<Address> Get(int id, int type)
+        {
+            Address list = new Address();
+            try
+            {
+                list = await _repository.Get(id, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
         }
     }
 }

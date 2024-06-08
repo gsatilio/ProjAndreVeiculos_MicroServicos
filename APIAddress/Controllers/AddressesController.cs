@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Security.Policy;
 using Humanizer;
 using Controllers;
+using System.Net;
 
 namespace APIAddress.Controllers
 {
@@ -29,25 +30,51 @@ namespace APIAddress.Controllers
         }
 
         // GET: api/Addresses
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Address>>> GetAddress()
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Address>>> GetAddress(int techType)
         {
             if (_context.Address == null)
             {
                 return NotFound();
             }
-            return await _context.Address.ToListAsync();
+            List<Address> addresses = new List<Address>();
+            switch (techType)
+            {
+                case 0:
+                    addresses = await _context.Address.ToListAsync();
+                    break;
+                case 1:
+                    addresses = await new AddressController().GetAll(0);
+                    break;
+                case 2:
+                    addresses = await new AddressController().GetAll(1);
+                    break;
+            }
+            return addresses;
         }
 
         // GET: api/Addresses/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Address>> GetAddress(int id)
+        [HttpGet("{id},{techType}")]
+        public async Task<ActionResult<Address>> GetAddress(int id, int techType)
         {
             if (_context.Address == null)
             {
                 return NotFound();
             }
-            var address = await _context.Address.FindAsync(id);
+
+            Address address = new Address();
+            switch (techType)
+            {
+                case 0:
+                    address = await _context.Address.FindAsync(id);
+                    break;
+                case 1:
+                    address = await new AddressController().Get(id, 0);
+                    break;
+                case 2:
+                    address = await new AddressController().Get(id, 1);
+                    break;
+            }
 
             if (address == null)
             {
@@ -99,8 +126,8 @@ namespace APIAddress.Controllers
 
         // POST: api/Addresses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{tipoTec}")]
-        public async Task<ActionResult<Address>> PostAddress(int tipoTec, AddressDTO addressDTO)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<Address>> PostAddress(int techType, AddressDTO addressDTO)
         {
             if (_context.Address == null)
             {
@@ -110,7 +137,7 @@ namespace APIAddress.Controllers
             AddressesService addressesService = new AddressesService();
             address = await addressesService.RetrieveAdressAPI(addressDTO);
 
-            switch (tipoTec)
+            switch (techType)
             {
                 case 0:
                     _context.Address.Add(address);

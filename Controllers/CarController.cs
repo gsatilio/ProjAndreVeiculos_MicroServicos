@@ -1,6 +1,7 @@
 ﻿using Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Repositories;
 using Services;
 
 namespace Controllers
@@ -32,6 +33,32 @@ namespace Controllers
             try
             {
                 carList = _carService.Retrieve(type);
+            }
+            catch
+            {
+                throw;
+            }
+            return carList;
+        }
+        public async Task<List<Car>> GetAll(int type)
+        {
+            List<Car> carList = new List<Car>();
+            try
+            {
+                carList = await _carService.GetAll(type);
+            }
+            catch
+            {
+                throw;
+            }
+            return carList;
+        }
+        public async Task<Car> Get(string licensePlate, int type)
+        {
+            Car carList = new Car();
+            try
+            {
+                carList = await _carService.Get(licensePlate, type);
             }
             catch
             {

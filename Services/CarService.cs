@@ -28,5 +28,32 @@ namespace Services
             }
             return carList;
         }
+
+        public async Task<List<Car>> GetAll(int type)
+        {
+            List<Car> carList = new List<Car>();
+            try
+            {
+                carList = await _carRepository.GetAll(type);
+            }
+            catch
+            {
+                throw;
+            }
+            return carList;
+        }
+        public async Task<Car> Get(string licensePlate, int type)
+        {
+            Car carList = new Car();
+            try
+            {
+                carList = await _carRepository.Get(licensePlate, type);
+            }
+            catch
+            {
+                throw;
+            }
+            return carList;
+        }
     }
 }

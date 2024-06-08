@@ -7,6 +7,9 @@ namespace Models
     public class Car
     {
         public static readonly string INSERT = "INSERT INTO Car (LicensePlate, Name, ModelYear, FabricationYear, Color, Sold) VALUES (@LicensePlate, @Name, @ModelYear, @FabricationYear, @Color, @Sold)";
+
+        public static readonly string GET = " SELECT LicensePlate, Name, ModelYear, FabricationYear, Color, Sold From Car WHERE LicensePlate = '@LicensePlate' ";
+        public static readonly string GETALL = " SELECT LicensePlate, Name, ModelYear, FabricationYear, Color, Sold FROM Car ";
         [JsonProperty("licensePlate")]
         [Key]
         public string LicensePlate { get; set; }

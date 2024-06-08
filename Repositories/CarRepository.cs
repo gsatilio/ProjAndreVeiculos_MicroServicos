@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using Models;
 using System.Configuration;
+using System.Drawing;
 
 namespace Repositories
 {
@@ -138,6 +139,115 @@ namespace Repositories
                 //throw;
             }
             return carList;
+        }
+        public async Task<List<Car>> GetAll(int type)
+        {
+            List<Car> list = new List<Car>();
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Car.GETALL;
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list.Add(new Car
+                                {
+                                    LicensePlate = reader.GetString(0),
+                                    Name = reader.GetString(1),
+                                    ModelYear = reader.GetInt32(2),
+                                    FabricationYear = reader.GetInt32(3),
+                                    Color = reader.GetString(4),
+                                    Sold = reader.GetBoolean(5)
+                                });
+                            }
+                        }
+                    }
+                    else // Dapper
+                    {
+                        var query = db.Query(Car.GETALL);
+                        foreach (var item in query)
+                        {
+                            list.Add(new Car
+                            {
+                                LicensePlate = item.LicensePlate,
+                                Name = item.Name,
+                                ModelYear = item.ModelYear,
+                                FabricationYear = item.FabricationYear,
+                                Color = item.Color,
+                                Sold = item.Sold
+                            });
+                        }
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return list;
+        }
+        public async Task<Car> Get(string licensePlate, int type)
+        {
+            Car list = new Car();
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Car.GET;
+                        cmd.Parameters.Add(new SqlParameter("@LicensePlate", licensePlate));
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list = (new Car
+                                {
+                                    LicensePlate = reader.GetString(0),
+                                    Name = reader.GetString(1),
+                                    ModelYear = reader.GetInt32(2),
+                                    FabricationYear = reader.GetInt32(3),
+                                    Color = reader.GetString(4),
+                                    Sold = reader.GetBoolean(5)
+                                });
+                            }
+                        }
+                    }
+                    else // Dapper
+                    {
+                        var query = db.Query(Car.GETALL);
+                        foreach (var item in query)
+                        {
+                            list = (new Car
+                            {
+                                LicensePlate = item.LicensePlate,
+                                Name = item.Name,
+                                ModelYear = item.ModelYear,
+                                FabricationYear = item.FabricationYear,
+                                Color = item.Color,
+                                Sold = item.Sold
+                            });
+                        }
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return list;
         }
     }
 }

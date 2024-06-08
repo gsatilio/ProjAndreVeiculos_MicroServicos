@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APICar.Data;
 using Models;
+using Controllers;
 
 namespace APICar.Controllers
 {
@@ -22,25 +23,51 @@ namespace APICar.Controllers
         }
 
         // GET: api/Cars
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Car>>> GetCar()
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Car>>> GetCar(int techType)
         {
-          if (_context.Car == null)
-          {
-              return NotFound();
-          }
-            return await _context.Car.ToListAsync();
+            if (_context.Car == null)
+            {
+                return NotFound();
+            }
+
+            List<Car> cars = new List<Car>();
+            switch (techType)
+            {
+                case 0:
+                    cars = await _context.Car.ToListAsync();
+                    break;
+                case 1:
+                    cars = await new CarController().GetAll(0);
+                    break;
+                case 2:
+                    cars = await new CarController().GetAll(1);
+                    break;
+            }
+            return cars;
         }
 
         // GET: api/Cars/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Car>> GetCar(string id)
+        [HttpGet("{licensePlate},{techType}")]
+        public async Task<ActionResult<Car>> GetCar(string licensePlate, int techType)
         {
-          if (_context.Car == null)
-          {
-              return NotFound();
-          }
-            var car = await _context.Car.FindAsync(id);
+            if (_context.Car == null)
+            {
+                return NotFound();
+            }
+            Car? car = new Car();
+            switch (techType)
+            {
+                case 0:
+                    car = await _context.Car.FindAsync(licensePlate);
+                    break;
+                case 1:
+                    car = await new CarController().Get(licensePlate, 0);
+                    break;
+                case 2:
+                    car = await new CarController().Get(licensePlate, 1);
+                    break;
+            }
 
             if (car == null)
             {
@@ -86,10 +113,10 @@ namespace APICar.Controllers
         [HttpPost]
         public async Task<ActionResult<Car>> PostCar(Car car)
         {
-          if (_context.Car == null)
-          {
-              return Problem("Entity set 'APICarContext.Car'  is null.");
-          }
+            if (_context.Car == null)
+            {
+                return Problem("Entity set 'APICarContext.Car'  is null.");
+            }
             _context.Car.Add(car);
             try
             {
