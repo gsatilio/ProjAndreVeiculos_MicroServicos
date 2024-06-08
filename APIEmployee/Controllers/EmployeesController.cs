@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIEmployee.Data;
 using Models;
+using Controllers;
 
 namespace APIEmployee.Controllers
 {
@@ -22,32 +23,57 @@ namespace APIEmployee.Controllers
         }
 
         // GET: api/Employees
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployee()
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployee(int techType)
         {
-          if (_context.Employee == null)
-          {
-              return NotFound();
-          }
-            return await _context.Employee.ToListAsync();
+            if (_context.Employee == null)
+            {
+                return NotFound();
+            }
+            List<Employee> customer = new List<Employee>();
+            switch (techType)
+            {
+                case 0:
+                    customer = await _context.Employee.Include(a => a.Address).Include(b => b.Role).ToListAsync();
+                    break;
+                case 1:
+                    customer = await new EmployeeController().GetAll(0);
+                    break;
+                case 2:
+                    customer = await new EmployeeController().GetAll(1);
+                    break;
+            }
+            return customer;
         }
 
         // GET: api/Employees/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(string id)
+        [HttpGet("{document},{techType}")]
+        public async Task<ActionResult<Employee>> GetEmployee(string document, int techType)
         {
-          if (_context.Employee == null)
-          {
-              return NotFound();
-          }
-            var employee = await _context.Employee.FindAsync(id);
+            if (_context.Employee == null)
+            {
+                return NotFound();
+            }
+            Employee? customer = new Employee();
+            switch (techType)
+            {
+                case 0:
+                    customer = await _context.Employee.Include(a => a.Address).Include(b => b.Role).SingleOrDefaultAsync(c => c.Document == document);
+                    break;
+                case 1:
+                    customer = await new EmployeeController().Get(document, 0);
+                    break;
+                case 2:
+                    customer = await new EmployeeController().Get(document, 1);
+                    break;
+            }
 
-            if (employee == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return employee;
+            return customer;
         }
 
         // PUT: api/Employees/5
