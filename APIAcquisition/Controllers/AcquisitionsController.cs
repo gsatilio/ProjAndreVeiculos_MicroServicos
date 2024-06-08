@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIAcquisition.Data;
 using Models;
+using Controllers;
 
 namespace APIAcquisition.Controllers
 {
@@ -22,25 +23,50 @@ namespace APIAcquisition.Controllers
         }
 
         // GET: api/Acquisitions
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Acquisition>>> GetAcquisition()
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Acquisition>>> GetAcquisition(int techType)
         {
           if (_context.Acquisition == null)
           {
               return NotFound();
           }
-            return await _context.Acquisition.ToListAsync();
+            List<Acquisition> acquisition = new List<Acquisition>();
+            switch (techType)
+            {
+                case 0:
+                    acquisition = await _context.Acquisition.Include(c => c.Car).ToListAsync();
+                    break;
+                case 1:
+                    acquisition = await new AcquisitionController().GetAll(0);
+                    break;
+                case 2:
+                    acquisition = await new AcquisitionController().GetAll(1);
+                    break;
+            }
+            return acquisition;
         }
 
         // GET: api/Acquisitions/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Acquisition>> GetAcquisition(int id)
+        [HttpGet("{id},{techType}")]
+        public async Task<ActionResult<Acquisition>> GetAcquisition(int id, int techType)
         {
           if (_context.Acquisition == null)
           {
               return NotFound();
           }
-            var acquisition = await _context.Acquisition.FindAsync(id);
+            Acquisition? acquisition = new Acquisition();
+            switch (techType)
+            {
+                case 0:
+                    acquisition = await _context.Acquisition.Include(c => c.Car).SingleOrDefaultAsync(c => c.Id == id);
+                    break;
+                case 1:
+                    acquisition = await new AcquisitionController().Get(id, 0);
+                    break;
+                case 2:
+                    acquisition = await new AcquisitionController().Get(id, 1);
+                    break;
+            }
 
             if (acquisition == null)
             {

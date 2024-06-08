@@ -142,7 +142,7 @@ namespace Repositories
         }
         public async Task<List<Car>> GetAll(int type)
         {
-            List<Car> list = new List<Car>();
+            List<Car>? list = new();
             try
             {
                 using (var db = new SqlConnection(Conn))
@@ -196,7 +196,7 @@ namespace Repositories
         }
         public async Task<Car> Get(string licensePlate, int type)
         {
-            Car list = new Car();
+            Car? list = null;
             try
             {
                 using (var db = new SqlConnection(Conn))

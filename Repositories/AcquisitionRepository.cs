@@ -2,7 +2,9 @@
 using Microsoft.Data.SqlClient;
 using Models;
 using System.Configuration;
+using System.Data;
 using System.Diagnostics;
+using System.Reflection.PortableExecutable;
 
 namespace Repositories
 {
@@ -35,7 +37,7 @@ namespace Repositories
                     {
                         result = db.ExecuteScalar<int>(Acquisition.INSERT, new
                         {
-                            LicensePlate = acquisition.Car.LicensePlate,
+                            acquisition.Car.LicensePlate,
                             acquisition.Price,
                             acquisition.AcquisitionDate
                         });
@@ -50,5 +52,119 @@ namespace Repositories
             }
             return result;
         }
+
+        public async Task<List<Acquisition>> GetAll(int type)
+        {
+            List<Acquisition>? list = new();
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Acquisition.GETALL;
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list.Add(new Acquisition
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Car = new Car
+                                    {
+                                        LicensePlate = reader.GetString(3),
+                                        Name = reader.GetString(4),
+                                        ModelYear = reader.GetInt32(5),
+                                        FabricationYear = reader.GetInt32(6),
+                                        Color = reader.GetString(7),
+                                        Sold = reader.GetBoolean(8)
+                                    },
+                                    Price = reader.GetDecimal(1),
+                                    AcquisitionDate = reader.GetDateTime(2),
+                                });
+                            }
+                        }
+                    }
+                    else // Dapper
+                    {
+                        list = db.Query<Acquisition, Car, Acquisition>(Acquisition.GETALL,
+                            (acquisition, car) =>
+                            {
+                                acquisition.Car = car;
+                                return acquisition;
+                            }, splitOn: "LicensePlate"
+                    ).ToList();
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return list;
+        }
+
+        public async Task<Acquisition> Get(int id, int type)
+        {
+            Acquisition? list = null;
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Acquisition.GET + " WHERE Id = @Id";
+                        cmd.Parameters.Add(new SqlParameter("@Id", id));
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list = new Acquisition
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Car = new Car
+                                    {
+                                        LicensePlate = reader.GetString(3),
+                                        Name = reader.GetString(4),
+                                        ModelYear = reader.GetInt32(5),
+                                        FabricationYear = reader.GetInt32(6),
+                                        Color = reader.GetString(7),
+                                        Sold = reader.GetBoolean(8)
+                                    },
+                                    Price = reader.GetDecimal(1),
+                                    AcquisitionDate = reader.GetDateTime(2),
+                                };
+                            }
+                        }
+                    }
+                    else // Dapper
+                    {
+                        list = db.Query<Acquisition, Car, Acquisition>(Acquisition.GET,
+                            (acquisition, car) =>
+                            {
+                                acquisition.Id = id;
+                                acquisition.Car = car;
+                                return acquisition;
+                            }, splitOn: "LicensePlate"
+                    ).ToList().First();
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return list;
+        }
+
     }
 }

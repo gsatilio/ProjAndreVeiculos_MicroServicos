@@ -62,7 +62,7 @@ namespace APIAddress.Controllers
                 return NotFound();
             }
 
-            Address address = new Address();
+            Address? address = new Address();
             switch (techType)
             {
                 case 0:

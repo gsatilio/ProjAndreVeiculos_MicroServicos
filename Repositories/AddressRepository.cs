@@ -55,7 +55,7 @@ namespace Repositories
         }
         public async Task<List<Address>> GetAll(int type)
         {
-            List<Address> list = new List<Address>();
+            List<Address>? list = new();
             try
             {
                 using (var db = new SqlConnection(Conn))
@@ -113,7 +113,7 @@ namespace Repositories
         }
         public async Task<Address> Get(int id, int type)
         {
-            Address list = new Address();
+            Address? list = null;
             try
             {
                 using (var db = new SqlConnection(Conn))
