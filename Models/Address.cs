@@ -13,8 +13,8 @@ namespace Models
     {
         public readonly static string INSERT = " INSERT INTO Address (Street, CEP, Neighborhood, StreetType, Complement, Number, Uf, City) " +
             "VALUES (@Street, @CEP, @Neighborhood, @StreetType, @Complement, @Number, @Uf, @City); SELECT cast(scope_identity() as int) ";
-        public readonly static string GETALL = " SELECT Street, CEP, Neighborhood, StreetType, Complement, Number, Uf, City, Id FROM Address";
-        public readonly static string GET = " SELECT Street, CEP, Neighborhood, StreetType, Complement, Number, Uf, City, Id FROM Address WHERE Id = @Id";
+        public readonly static string GETALL = " SELECT Street, CEP, Neighborhood, ISNULL(StreetType,'') StreetType, ISNULL(Complement,'') Complement, Number, Uf, City, Id FROM Address";
+        public readonly static string GET = " SELECT Street, CEP, Neighborhood, ISNULL(StreetType,'') StreetType, ISNULL(Complement,'') Complement, Number, Uf, City, Id FROM Address WHERE Id = @Id";
         public int Id { get; set; }
         [JsonProperty("logradouro")]
         public string Street { get; set; }

@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using APICustomer.Data;
 using Models;
 using Controllers;
+using Models.DTO;
+using APIAddress.Services;
 
 namespace APICustomer.Controllers
 {
@@ -110,12 +112,29 @@ namespace APICustomer.Controllers
         // POST: api/Customers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
+        public async Task<ActionResult<Customer>> PostCustomer(CustomerDTO customerDTO)
         {
-          if (_context.Customer == null)
-          {
-              return Problem("Entity set 'APICustomerContext.Customer'  is null.");
-          }
+            if (_context.Customer == null)
+            {
+                return Problem("Entity set 'APICustomerContext.Customer'  is null.");
+            }
+
+            Customer customer = new();
+            Address address = new();
+            AddressesService addressesService = new AddressesService();
+            address.CEP = customerDTO.Address.CEP;
+            address = await addressesService.RetrieveAdressAPI(address);
+            address.Complement = customerDTO.Address.Complement;
+            address.Number = customerDTO.Address.Number;
+            address.StreetType = customerDTO.Address.StreetType;
+            customer.Name = customerDTO.Name;
+            customer.Document = customerDTO.Document;
+            customer.DateOfBirth = customerDTO.DateOfBirth;
+            customer.Income = customerDTO.Income;
+            customer.PDFDocument = customerDTO.PDFDocument;
+            customer.Address = address;
+            customer.Phone = customerDTO.Phone;
+            customer.Email = customerDTO.Email;
             _context.Customer.Add(customer);
             try
             {
@@ -132,8 +151,8 @@ namespace APICustomer.Controllers
                     throw;
                 }
             }
-
-            return CreatedAtAction("GetCustomer", new { id = customer.Document }, customer);
+            // alterado parametros para retorno
+            return CreatedAtAction("GetCustomer", new { document = customer.Document, techType = 0 }, customer);
         }
 
         // DELETE: api/Customers/5

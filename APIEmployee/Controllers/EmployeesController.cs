@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using APIEmployee.Data;
 using Models;
 using Controllers;
+using Models.DTO;
+using APIAddress.Services;
 
 namespace APIEmployee.Controllers
 {
@@ -110,12 +112,31 @@ namespace APIEmployee.Controllers
         // POST: api/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        public async Task<ActionResult<Employee>> PostEmployee(EmployeeDTO employeeDTO)
         {
-          if (_context.Employee == null)
-          {
-              return Problem("Entity set 'APIEmployeeContext.Employee'  is null.");
-          }
+            if (_context.Employee == null)
+            {
+                return Problem("Entity set 'APIEmployeeContext.Employee'  is null.");
+            }
+            Employee employee = new();
+            Address address = new();
+            AddressesService addressesService = new AddressesService();
+            address.CEP = employeeDTO.Address.CEP;
+            address = await addressesService.RetrieveAdressAPI(address);
+            address.Complement = employeeDTO.Address.Complement;
+            address.Number = employeeDTO.Address.Number;
+            address.StreetType = employeeDTO.Address.StreetType;
+            employee.Address = address;
+            employee.ComissionValue = employeeDTO.ComissionValue;
+            employee.Comission = employeeDTO.Comission;
+            employee.Name = employeeDTO.Name;
+            employee.Document = employeeDTO.Document;
+            employee.Role = employeeDTO.Role;
+            employee.Document = employeeDTO.Document;
+            employee.DateOfBirth = employeeDTO.DateOfBirth;
+            employee.Phone = employeeDTO.Phone;
+            employee.Email = employeeDTO.Email;
+
             _context.Employee.Add(employee);
             try
             {
@@ -133,7 +154,7 @@ namespace APIEmployee.Controllers
                 }
             }
 
-            return CreatedAtAction("GetEmployee", new { id = employee.Document }, employee);
+            return CreatedAtAction("GetEmployee", new { document = employee.Document, techType = 0 }, employee);
         }
 
         // DELETE: api/Employees/5

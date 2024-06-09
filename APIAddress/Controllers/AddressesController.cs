@@ -96,8 +96,14 @@ namespace APIAddress.Controllers
 
             _context.Entry(address).State = EntityState.Modified;
             */
+            Address address = new();
+            address.CEP = addressDTO.CEP;
+            address.Complement = addressDTO.Complement;
+            address.Number = addressDTO.Number;
+            address.StreetType = addressDTO.StreetType;
+
             AddressesService addressesService = new AddressesService();
-            var address = await addressesService.RetrieveAdressAPI(addressDTO);
+            address = await addressesService.RetrieveAdressAPI(address);
             address.Id = id;
             if (id != address.Id)
             {
@@ -135,7 +141,11 @@ namespace APIAddress.Controllers
             }
             Address address = new();
             AddressesService addressesService = new AddressesService();
-            address = await addressesService.RetrieveAdressAPI(addressDTO);
+            address.CEP = addressDTO.CEP;
+            address = await addressesService.RetrieveAdressAPI(address);
+            address.Complement = addressDTO.Complement;
+            address.Number = addressDTO.Number;
+            address.StreetType = addressDTO.StreetType;
 
             switch (techType)
             {
