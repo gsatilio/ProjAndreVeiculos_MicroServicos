@@ -21,5 +21,34 @@ namespace Services
             }
             return result;
         }
+
+        public async Task<List<Role>> GetAll(int type)
+        {
+            List<Role> list = new List<Role>();
+            try
+            {
+                list = await _repository.GetAll(type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
+        public async Task<Role> Get(int id, int type)
+        {
+            Role list = new Role();
+            try
+            {
+                list = await _repository.Get(id, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
     }
 }
