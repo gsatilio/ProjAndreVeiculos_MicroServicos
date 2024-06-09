@@ -10,6 +10,8 @@ namespace Models
     public class CreditCard
     {
         public readonly static string INSERT = " INSERT INTO CreditCard (CardNumber, SecurityCode, ExpirationDate, CardName) VALUES (@CardNumber, @SecurityCode, @ExpirationDate, @CardName); SELECT cast(scope_identity() as int) ";
+        public readonly static string GETALL = " SELECT Id, CardNumber, SecurityCode, ExpirationDate, CardName FROM CreditCard ";
+        public readonly static string GET = " SELECT Id, CardNumber, SecurityCode, ExpirationDate, CardName FROM CreditCard WHERE Id = @IdCreditCard ";
         public int Id { get; set; }
         public string CardNumber { get; set; }
         public string SecurityCode { get; set; }

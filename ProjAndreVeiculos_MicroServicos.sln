@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIPixType", "APIPixType\AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIPix", "APIPix\APIPix.csproj", "{BD467B89-5C86-4F2A-B795-4C54175D5E26}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICreditCard", "APICreditCard\APICreditCard.csproj", "{F737DA4F-981D-44ED-A3AB-67864C938A93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{BD467B89-5C86-4F2A-B795-4C54175D5E26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD467B89-5C86-4F2A-B795-4C54175D5E26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD467B89-5C86-4F2A-B795-4C54175D5E26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F737DA4F-981D-44ED-A3AB-67864C938A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F737DA4F-981D-44ED-A3AB-67864C938A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F737DA4F-981D-44ED-A3AB-67864C938A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F737DA4F-981D-44ED-A3AB-67864C938A93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

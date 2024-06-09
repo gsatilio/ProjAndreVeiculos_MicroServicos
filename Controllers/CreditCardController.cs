@@ -24,5 +24,33 @@ namespace Controllers
             }
             return result;
         }
+        public async Task<List<CreditCard>> GetAll(int type)
+        {
+            List<CreditCard> list = new List<CreditCard>();
+            try
+            {
+                list = await _service.GetAll(type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
+        public async Task<CreditCard> Get(int id, int type)
+        {
+            CreditCard list = new CreditCard();
+            try
+            {
+                list = await _service.Get(id, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
     }
 }
