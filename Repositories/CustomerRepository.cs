@@ -139,8 +139,8 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.CommandText = Customer.GETALL + " WHERE A.Document = @document";
-                        cmd.Parameters.Add(new SqlParameter("@document", document));
+                        cmd.CommandText = Customer.GET;
+                        cmd.Parameters.Add(new SqlParameter("@Document", document));
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -172,12 +172,12 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        list = db.Query<Customer, Address, Customer>(Customer.GETALL,
+                        list = db.Query<Customer, Address, Customer>(Customer.GET,
                             (customer, address) =>
                             {
                                 customer.Address = address;
                                 return customer;
-                            }, splitOn: "Phone"
+                            }, new {Document = document}, splitOn: "Phone"
                     ).ToList().FirstOrDefault();
                     }
                     db.Close();

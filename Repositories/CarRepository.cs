@@ -98,7 +98,7 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.CommandText = ($" SELECT LicensePlate, Name, ModelYear, FabricationYear, Color FROM Car ");
+                        cmd.CommandText = (Car.GETALL);
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -117,7 +117,7 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        var tc = db.Query(" SELECT LicensePlate, Name, ModelYear, FabricationYear, Color FROM Car ");
+                        var tc = db.Query(Car.GETALL);
                         foreach (var item in tc)
                         {
                             carList.Car.Add(new Car
@@ -170,19 +170,7 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        var query = db.Query(Car.GETALL);
-                        foreach (var item in query)
-                        {
-                            list.Add(new Car
-                            {
-                                LicensePlate = item.LicensePlate,
-                                Name = item.Name,
-                                ModelYear = item.ModelYear,
-                                FabricationYear = item.FabricationYear,
-                                Color = item.Color,
-                                Sold = item.Sold
-                            });
-                        }
+                        list = db.Query<Car>(Car.GETALL).ToList();
                     }
                     db.Close();
                 }
@@ -225,19 +213,7 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        var query = db.Query(Car.GETALL);
-                        foreach (var item in query)
-                        {
-                            list = (new Car
-                            {
-                                LicensePlate = item.LicensePlate,
-                                Name = item.Name,
-                                ModelYear = item.ModelYear,
-                                FabricationYear = item.FabricationYear,
-                                Color = item.Color,
-                                Sold = item.Sold
-                            });
-                        }
+                        list = db.Query<Car>(Car.GET, new { LicensePlate = licensePlate }).ToList().FirstOrDefault();
                     }
                     db.Close();
                 }

@@ -35,5 +35,34 @@ namespace Services
             }
             return opList;
         }
+
+        public async Task<List<Operation>> GetAll(int type)
+        {
+            List<Operation> list = new List<Operation>();
+            try
+            {
+                list = await _repository.GetAll(type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
+        public async Task<Operation> Get(int id, int type)
+        {
+            Operation list = new Operation();
+            try
+            {
+                list = await _repository.Get(id, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
     }
 }

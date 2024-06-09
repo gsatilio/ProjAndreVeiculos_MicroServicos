@@ -71,5 +71,83 @@ namespace Repositories
             }
             return opList;
         }
+
+        public async Task<List<Operation>> GetAll(int type)
+        {
+            List<Operation>? list = new();
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Operation.GETALL;
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list.Add(new Operation
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Description = reader.GetString(1)
+                                });
+                            }
+                        }
+                    }
+                    else // Dapper
+                    {
+                        list = db.Query<Operation>(Operation.GETALL).ToList();
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return list;
+        }
+        public async Task<Operation> Get(int id, int type)
+        {
+            Operation? list = null;
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Operation.GET;
+                        cmd.Parameters.Add(new SqlParameter("@Id", id));
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list = new Operation
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Description = reader.GetString(1)
+                                };
+                            }
+                        }
+                    }
+                    else // Dapper
+                    {
+                        list = db.Query<Operation>(Operation.GET, new { Id = id }).ToList().FirstOrDefault();
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return list;
+        }
     }
 }

@@ -78,28 +78,15 @@ namespace Repositories
                                     Complement = reader.GetString(4),
                                     Number = reader.GetInt32(5),
                                     Uf = reader.GetString(6),
-                                    City = reader.GetString(7)
+                                    City = reader.GetString(7),
+                                    Id = reader.GetInt32(8)
                                 });
                             }
                         }
                     }
                     else // Dapper
                     {
-                        var query = db.Query(Address.GETALL);
-                        foreach (var item in query)
-                        {
-                            list.Add(new Address
-                            {
-                                Street = item.Street,
-                                CEP = item.CEP,
-                                Neighborhood = item.Neighborhood,
-                                StreetType = item.StreetType,
-                                Complement = item.Complement,
-                                Number = item.Number,
-                                Uf = item.Uf,
-                                City = item.City
-                            });
-                        }
+                        list = db.Query<Address>(Address.GETALL).ToList();
                     }
                     db.Close();
                 }
@@ -137,28 +124,15 @@ namespace Repositories
                                     Complement = reader.GetString(4),
                                     Number = reader.GetInt32(5),
                                     Uf = reader.GetString(6),
-                                    City = reader.GetString(7)
+                                    City = reader.GetString(7),
+                                    Id = reader.GetInt32(8)
                                 };
                             }
                         }
                     }
                     else // Dapper
                     {
-                        var query = db.Query(Address.GETALL);
-                        foreach (var item in query)
-                        {
-                            list = new Address
-                            {
-                                Street = item.Street,
-                                CEP = item.CEP,
-                                Neighborhood = item.Neighborhood,
-                                StreetType = item.StreetType,
-                                Complement = item.Complement,
-                                Number = item.Number,
-                                Uf = item.Uf,
-                                City = item.City
-                            };
-                        }
+                        list = db.Query<Address>(Address.GET, new { Id = id }).ToList().FirstOrDefault();
                     }
                     db.Close();
                 }

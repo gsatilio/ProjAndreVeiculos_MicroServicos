@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIOperation.Data;
 using Models;
+using Controllers;
 
 namespace APIOperation.Controllers
 {
@@ -21,33 +22,59 @@ namespace APIOperation.Controllers
             _context = context;
         }
 
-        // GET: api/Operations
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Operation>>> GetOperation()
+        // GET: api/Operation
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Operation>>> GetOperation(int techType)
         {
-          if (_context.Operation == null)
-          {
-              return NotFound();
-          }
-            return await _context.Operation.ToListAsync();
+            if (_context.Operation == null)
+            {
+                return NotFound();
+            }
+            List<Operation> addresses = new List<Operation>();
+            switch (techType)
+            {
+                case 0:
+                    addresses = await _context.Operation.ToListAsync();
+                    break;
+                case 1:
+                    addresses = await new OperationController().GetAll(0);
+                    break;
+                case 2:
+                    addresses = await new OperationController().GetAll(1);
+                    break;
+            }
+            return addresses;
         }
 
-        // GET: api/Operations/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Operation>> GetOperation(int id)
+        // GET: api/Operation/5
+        [HttpGet("{id},{techType}")]
+        public async Task<ActionResult<Operation>> GetOperation(int id, int techType)
         {
-          if (_context.Operation == null)
-          {
-              return NotFound();
-          }
-            var operation = await _context.Operation.FindAsync(id);
-
-            if (operation == null)
+            if (_context.Operation == null)
             {
                 return NotFound();
             }
 
-            return operation;
+            Operation? address = new Operation();
+            switch (techType)
+            {
+                case 0:
+                    address = await _context.Operation.FindAsync(id);
+                    break;
+                case 1:
+                    address = await new OperationController().Get(id, 0);
+                    break;
+                case 2:
+                    address = await new OperationController().Get(id, 1);
+                    break;
+            }
+
+            if (address == null)
+            {
+                return NotFound();
+            }
+
+            return address;
         }
 
         // PUT: api/Operations/5

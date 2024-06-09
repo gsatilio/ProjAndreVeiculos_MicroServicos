@@ -374,7 +374,7 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.CommandText = CarOperation.GETALL + " WHERE A.Id = @Id";
+                        cmd.CommandText = CarOperation.GET;
                         cmd.Parameters.Add(new SqlParameter("@Id", id));
                         using (var reader = cmd.ExecuteReader())
                         {
@@ -404,14 +404,13 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        list = db.Query<CarOperation, Car, Operation, CarOperation>(Acquisition.GETALL,
+                        list = db.Query<CarOperation, Car, Operation, CarOperation>(CarOperation.GET,
                             (carOp, car, operation) =>
                             {
-                                carOp.Id = id;
                                 carOp.Car = car;
                                 carOp.Operation = operation;
                                 return carOp;
-                            }, splitOn: "Status, Id"
+                            }, new { Id = id }, splitOn: "Status, Id"
                     ).ToList().FirstOrDefault();
                     }
                     db.Close();

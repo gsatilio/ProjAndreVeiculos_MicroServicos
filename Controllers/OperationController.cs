@@ -37,5 +37,34 @@ namespace Controllers
             }
             return opList;
         }
+
+        public async Task<List<Operation>> GetAll(int type)
+        {
+            List<Operation> list = new List<Operation>();
+            try
+            {
+                list = await _service.GetAll(type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
+        public async Task<Operation> Get(int id, int type)
+        {
+            Operation list = new Operation();
+            try
+            {
+                list = await _service.Get(id, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
     }
 }
