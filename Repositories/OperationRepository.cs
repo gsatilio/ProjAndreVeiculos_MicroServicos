@@ -122,7 +122,7 @@ namespace Repositories
                     {
                         var cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = Operation.GET;
-                        cmd.Parameters.Add(new SqlParameter("@Id", id));
+                        cmd.Parameters.Add(new SqlParameter("@IdOperation", id));
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -137,7 +137,7 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        list = db.Query<Operation>(Operation.GET, new { Id = id }).ToList().FirstOrDefault();
+                        list = db.Query<Operation>(Operation.GET, new { IdOperation = id }).ToList().FirstOrDefault();
                     }
                     db.Close();
                 }

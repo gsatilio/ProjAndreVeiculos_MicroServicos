@@ -121,7 +121,7 @@ namespace Repositories
                     {
                         var cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = Acquisition.GET;
-                        cmd.Parameters.Add(new SqlParameter("@Id", id));
+                        cmd.Parameters.Add(new SqlParameter("@IdAcquisition", id));
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -152,7 +152,7 @@ namespace Repositories
                                 acquisition.Id = id;
                                 acquisition.Car = car;
                                 return acquisition;
-                            }, new { Id = id }, splitOn: "LicensePlate"
+                            }, new { IdAcquisition = id }, splitOn: "LicensePlate"
                     ).ToList().First();
                     }
                     db.Close();

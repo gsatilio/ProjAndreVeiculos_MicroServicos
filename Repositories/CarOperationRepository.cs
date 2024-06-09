@@ -375,7 +375,7 @@ namespace Repositories
                     {
                         var cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = CarOperation.GET;
-                        cmd.Parameters.Add(new SqlParameter("@Id", id));
+                        cmd.Parameters.Add(new SqlParameter("@IdCarOperation", id));
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -410,7 +410,7 @@ namespace Repositories
                                 carOp.Car = car;
                                 carOp.Operation = operation;
                                 return carOp;
-                            }, new { Id = id }, splitOn: "Status, Id"
+                            }, new { IdCarOperation = id }, splitOn: "Status, Id"
                     ).ToList().FirstOrDefault();
                     }
                     db.Close();
