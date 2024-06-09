@@ -21,5 +21,34 @@ namespace Services
             }
             return result;
         }
+
+        public async Task<List<PixType>> GetAll(int type)
+        {
+            List<PixType> list = new List<PixType>();
+            try
+            {
+                list = await _repository.GetAll(type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
+        public async Task<PixType> Get(int id, int type)
+        {
+            PixType list = new PixType();
+            try
+            {
+                list = await _repository.Get(id, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
     }
 }

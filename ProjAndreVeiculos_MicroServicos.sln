@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIRole", "APIRole\APIRole.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIBoleto", "APIBoleto\APIBoleto.csproj", "{3997C430-9238-44DD-AAF2-B391D241F081}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIPixType", "APIPixType\APIPixType.csproj", "{19B685A8-D0DA-4E46-A67B-68DFE07A8011}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{3997C430-9238-44DD-AAF2-B391D241F081}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3997C430-9238-44DD-AAF2-B391D241F081}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3997C430-9238-44DD-AAF2-B391D241F081}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19B685A8-D0DA-4E46-A67B-68DFE07A8011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19B685A8-D0DA-4E46-A67B-68DFE07A8011}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19B685A8-D0DA-4E46-A67B-68DFE07A8011}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19B685A8-D0DA-4E46-A67B-68DFE07A8011}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
