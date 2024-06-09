@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APISale.Data;
 using Models;
+using Controllers;
 
 namespace APISale.Controllers
 {
@@ -21,33 +22,59 @@ namespace APISale.Controllers
             _context = context;
         }
 
-        // GET: api/Sales
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Sale>>> GetSale()
+        // GET: api/Sale
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Sale>>> GetSale(int techType)
         {
-          if (_context.Sale == null)
-          {
-              return NotFound();
-          }
-            return await _context.Sale.ToListAsync();
+            if (_context.Sale == null)
+            {
+                return NotFound();
+            }
+            List<Sale> addresses = new List<Sale>();
+            switch (techType)
+            {
+                case 0:
+                    addresses = await _context.Sale.Include(p => p.Car).Include(p => p.Customer).Include(p => p.Customer.Address).Include(p => p.Employee).Include(p => p.Employee.Address).Include(p => p.Payment.CreditCard).Include(p => p.Payment.Boleto).Include(p => p.Payment.Pix).Include(p => p.Payment.Pix.PixType).ToListAsync();
+                    break;
+                case 1:
+                    addresses = await new SaleController().GetAll(0);
+                    break;
+                case 2:
+                    addresses = await new SaleController().GetAll(1);
+                    break;
+            }
+            return addresses;
         }
 
-        // GET: api/Sales/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Sale>> GetSale(int id)
+        // GET: api/Sale/5
+        [HttpGet("{id},{techType}")]
+        public async Task<ActionResult<Sale>> GetSale(int id, int techType)
         {
-          if (_context.Sale == null)
-          {
-              return NotFound();
-          }
-            var sale = await _context.Sale.FindAsync(id);
-
-            if (sale == null)
+            if (_context.Sale == null)
             {
                 return NotFound();
             }
 
-            return sale;
+            Sale? address = new Sale();
+            switch (techType)
+            {
+                case 0:
+                    address = await _context.Sale.Include(p => p.Car).Include(p => p.Customer).Include(p => p.Customer.Address).Include(p => p.Employee).Include(p => p.Employee.Address).Include(p => p.Payment.CreditCard).Include(p => p.Payment.Boleto).Include(p => p.Payment.Pix).Include(p => p.Payment.Pix.PixType).SingleOrDefaultAsync(p => p.Id == id);
+                    break;
+                case 1:
+                    address = await new SaleController().Get(id, 0);
+                    break;
+                case 2:
+                    address = await new SaleController().Get(id, 1);
+                    break;
+            }
+
+            if (address == null)
+            {
+                return NotFound();
+            }
+
+            return address;
         }
 
         // PUT: api/Sales/5

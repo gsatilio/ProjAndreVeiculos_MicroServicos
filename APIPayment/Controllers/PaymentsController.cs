@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIPayment.Data;
 using Models;
+using Controllers;
 
 namespace APIPayment.Controllers
 {
@@ -21,33 +22,59 @@ namespace APIPayment.Controllers
             _context = context;
         }
 
-        // GET: api/Payments
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Payment>>> GetPayment()
+        // GET: api/Payment
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Payment>>> GetPayment(int techType)
         {
-          if (_context.Payment == null)
-          {
-              return NotFound();
-          }
-            return await _context.Payment.ToListAsync();
+            if (_context.Payment == null)
+            {
+                return NotFound();
+            }
+            List<Payment> addresses = new List<Payment>();
+            switch (techType)
+            {
+                case 0:
+                    addresses = await _context.Payment.Include(p => p.CreditCard).Include(p => p.Boleto).Include(p => p.Pix.PixType).ToListAsync();
+                    break;
+                case 1:
+                    addresses = await new PaymentController().GetAll(0);
+                    break;
+                case 2:
+                    addresses = await new PaymentController().GetAll(1);
+                    break;
+            }
+            return addresses;
         }
 
-        // GET: api/Payments/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Payment>> GetPayment(int id)
+        // GET: api/Payment/5
+        [HttpGet("{id},{techType}")]
+        public async Task<ActionResult<Payment>> GetPayment(int id, int techType)
         {
-          if (_context.Payment == null)
-          {
-              return NotFound();
-          }
-            var payment = await _context.Payment.FindAsync(id);
-
-            if (payment == null)
+            if (_context.Payment == null)
             {
                 return NotFound();
             }
 
-            return payment;
+            Payment? address = new Payment();
+            switch (techType)
+            {
+                case 0:
+                    address = await _context.Payment.Include(p => p.CreditCard).Include(p => p.Boleto).Include(p => p.Pix.PixType).SingleOrDefaultAsync(p => p.Id == id);
+                    break;
+                case 1:
+                    address = await new PaymentController().Get(id, 0);
+                    break;
+                case 2:
+                    address = await new PaymentController().Get(id, 1);
+                    break;
+            }
+
+            if (address == null)
+            {
+                return NotFound();
+            }
+
+            return address;
         }
 
         // PUT: api/Payments/5
