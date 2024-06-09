@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIAddress", "APIAddress\AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIRole", "APIRole\APIRole.csproj", "{1E704B12-A919-4A6D-BF79-067C5D6589AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIBoleto", "APIBoleto\APIBoleto.csproj", "{3997C430-9238-44DD-AAF2-B391D241F081}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{1E704B12-A919-4A6D-BF79-067C5D6589AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E704B12-A919-4A6D-BF79-067C5D6589AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E704B12-A919-4A6D-BF79-067C5D6589AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3997C430-9238-44DD-AAF2-B391D241F081}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3997C430-9238-44DD-AAF2-B391D241F081}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3997C430-9238-44DD-AAF2-B391D241F081}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3997C430-9238-44DD-AAF2-B391D241F081}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
