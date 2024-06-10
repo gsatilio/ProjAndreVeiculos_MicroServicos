@@ -23,10 +23,11 @@ namespace APIAddress.Controllers
     public class AddressesController : ControllerBase
     {
         private readonly APIAddressContext _context;
-
-        public AddressesController(APIAddressContext context)
+        private readonly AddressesService _addressesService;
+        public AddressesController(APIAddressContext context, AddressesService addressesService)
         {
             _context = context;
+            _addressesService = addressesService;
         }
 
         // GET: api/Addresses
@@ -102,8 +103,7 @@ namespace APIAddress.Controllers
             address.Number = addressDTO.Number;
             address.StreetType = addressDTO.StreetType;
 
-            AddressesService addressesService = new AddressesService();
-            address = await addressesService.RetrieveAdressAPI(address);
+            address = await _addressesService.RetrieveAdressAPI(addressDTO);
             address.Id = id;
             if (id != address.Id)
             {
@@ -139,29 +139,37 @@ namespace APIAddress.Controllers
             {
                 return Problem("Entity set 'APIAddressContext.Address'  is null.");
             }
-            Address address = new();
-            AddressesService addressesService = new AddressesService();
-            address.CEP = addressDTO.CEP;
-            address = await addressesService.RetrieveAdressAPI(address);
-            address.Complement = addressDTO.Complement;
-            address.Number = addressDTO.Number;
-            address.StreetType = addressDTO.StreetType;
+            var address = await _addressesService.RetrieveAdressAPI(addressDTO);
 
-            switch (techType)
+            try
             {
-                case 0:
-                    _context.Address.Add(address);
-                    await _context.SaveChangesAsync();
-                    break;
-                case 1:
-                    new AddressController().Insert(address, 0);
-                    break;
-                case 2:
-                    new AddressController().Insert(address, 1);
-                    break;
+                switch (techType)
+                {
+                    case 0:
+                        _context.Address.Add(address);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        address.Id = new AddressController().Insert(address, 0);
+                        break;
+                    case 2:
+                        address.Id = new AddressController().Insert(address, 1);
+                        break;
+                }
+                _addressesService.InsertMongo(address);
             }
-
-            return CreatedAtAction("GetAddress", new { id = address.Id }, address);
+            catch (DbUpdateException)
+            {
+                if (AddressExists(address.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return CreatedAtAction("GetAddress", new { id = address.Id, techtype = techType }, address);
         }
 
         // DELETE: api/Addresses/5

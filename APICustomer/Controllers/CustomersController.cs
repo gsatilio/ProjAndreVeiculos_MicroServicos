@@ -18,10 +18,12 @@ namespace APICustomer.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly APICustomerContext _context;
+        private readonly AddressesService _addressesService;
 
-        public CustomersController(APICustomerContext context)
+        public CustomersController(APICustomerContext context, AddressesService addressesService)
         {
             _context = context;
+            _addressesService = addressesService;
         }
 
         // GET: api/Customers
@@ -111,34 +113,36 @@ namespace APICustomer.Controllers
 
         // POST: api/Customers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Customer>> PostCustomer(CustomerDTO customerDTO)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<Customer>> PostCustomer(int techType, CustomerDTO customerDTO)
         {
             if (_context.Customer == null)
             {
                 return Problem("Entity set 'APICustomerContext.Customer'  is null.");
             }
 
-            Customer customer = new();
-            Address address = new();
-            AddressesService addressesService = new AddressesService();
-            address.CEP = customerDTO.Address.CEP;
-            address = await addressesService.RetrieveAdressAPI(address);
-            address.Complement = customerDTO.Address.Complement;
-            address.Number = customerDTO.Address.Number;
-            address.StreetType = customerDTO.Address.StreetType;
-            customer.Name = customerDTO.Name;
-            customer.Document = customerDTO.Document;
-            customer.DateOfBirth = customerDTO.DateOfBirth;
-            customer.Income = customerDTO.Income;
-            customer.PDFDocument = customerDTO.PDFDocument;
+            var customer = new Customer(customerDTO);
+            var address = await _addressesService.RetrieveAdressAPI(customerDTO.Address);
             customer.Address = address;
-            customer.Phone = customerDTO.Phone;
-            customer.Email = customerDTO.Email;
-            _context.Customer.Add(customer);
+
             try
             {
-                await _context.SaveChangesAsync();
+                switch (techType)
+                {
+                    case 0:
+                        _context.Customer.Add(customer);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        customer.Address.Id = new AddressController().Insert(address, 0);
+                        new CustomerController().Insert(customer, 0);
+                        break;
+                    case 2:
+                        customer.Address.Id = new AddressController().Insert(address, 1);
+                        new CustomerController().Insert(customer, 1);
+                        break;
+                }
+                _addressesService.InsertMongo(address);
             }
             catch (DbUpdateException)
             {
@@ -151,7 +155,6 @@ namespace APICustomer.Controllers
                     throw;
                 }
             }
-            // alterado parametros para retorno
             return CreatedAtAction("GetCustomer", new { document = customer.Document, techType = 0 }, customer);
         }
 

@@ -18,10 +18,12 @@ namespace APIEmployee.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly APIEmployeeContext _context;
+        private readonly AddressesService _addressesService;
 
-        public EmployeesController(APIEmployeeContext context)
+        public EmployeesController(APIEmployeeContext context, AddressesService addressesService)
         {
             _context = context;
+            _addressesService = addressesService;
         }
 
         // GET: api/Employees
@@ -111,36 +113,36 @@ namespace APIEmployee.Controllers
 
         // POST: api/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(EmployeeDTO employeeDTO)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<Employee>> PostEmployee(int techType, EmployeeDTO employeeDTO)
         {
             if (_context.Employee == null)
             {
                 return Problem("Entity set 'APIEmployeeContext.Employee'  is null.");
             }
-            Employee employee = new();
-            Address address = new();
-            AddressesService addressesService = new AddressesService();
-            address.CEP = employeeDTO.Address.CEP;
-            address = await addressesService.RetrieveAdressAPI(address);
-            address.Complement = employeeDTO.Address.Complement;
-            address.Number = employeeDTO.Address.Number;
-            address.StreetType = employeeDTO.Address.StreetType;
+            var employee = new Employee(employeeDTO);
+            var address = await _addressesService.RetrieveAdressAPI(employeeDTO.Address);
             employee.Address = address;
-            employee.ComissionValue = employeeDTO.ComissionValue;
-            employee.Comission = employeeDTO.Comission;
-            employee.Name = employeeDTO.Name;
-            employee.Document = employeeDTO.Document;
-            employee.Role = employeeDTO.Role;
-            employee.Document = employeeDTO.Document;
-            employee.DateOfBirth = employeeDTO.DateOfBirth;
-            employee.Phone = employeeDTO.Phone;
-            employee.Email = employeeDTO.Email;
+            
 
-            _context.Employee.Add(employee);
             try
             {
-                await _context.SaveChangesAsync();
+                switch (techType)
+                {
+                    case 0:
+                        _context.Employee.Add(employee);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        employee.Address.Id = new AddressController().Insert(address, 0);
+                        new EmployeeController().Insert(employee, 0);
+                        break;
+                    case 2:
+                        employee.Address.Id = new AddressController().Insert(address, 1);
+                        new EmployeeController().Insert(employee, 1);
+                        break;
+                }
+                _addressesService.InsertMongo(address);
             }
             catch (DbUpdateException)
             {

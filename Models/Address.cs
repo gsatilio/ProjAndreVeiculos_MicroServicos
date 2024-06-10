@@ -1,8 +1,11 @@
 ﻿using Models.DTO;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,13 +18,17 @@ namespace Models
             "VALUES (@Street, @CEP, @Neighborhood, @StreetType, @Complement, @Number, @Uf, @City); SELECT cast(scope_identity() as int) ";
         public readonly static string GETALL = " SELECT Street, CEP, Neighborhood, ISNULL(StreetType,'') StreetType, ISNULL(Complement,'') Complement, Number, Uf, City, Id FROM Address";
         public readonly static string GET = " SELECT Street, CEP, Neighborhood, ISNULL(StreetType,'') StreetType, ISNULL(Complement,'') Complement, Number, Uf, City, Id FROM Address WHERE Id = @Id";
+        [BsonId]
+        //[BsonRepresentation(BsonType.ObjectId)]
         public int Id { get; set; }
         [JsonProperty("logradouro")]
         public string Street { get; set; }
+        [JsonProperty("cep")]
         public string CEP { get; set; }
         [JsonProperty("bairro")]
         public string Neighborhood { get; set; }
         public string? StreetType { get; set; }
+        [JsonProperty("complemento")]
         public string? Complement { get; set; }
         public int Number { get; set; }
         [JsonProperty("uf")]

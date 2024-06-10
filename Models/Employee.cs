@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Models.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,5 +16,22 @@ namespace Models
         public Role Role { get; set; }
         public Decimal ComissionValue { get; set; }
         public Decimal Comission { get; set; }
+
+        public Employee()
+        {
+            
+        }
+        public Employee(EmployeeDTO dto)
+        {
+            this.ComissionValue = dto.ComissionValue;
+            this.Comission = dto.Comission;
+            this.Name = dto.Name;
+            this.Document = dto.Document;
+            this.Role = dto.Role;
+            this.Document = dto.Document;
+            this.DateOfBirth = dto.DateOfBirth;
+            this.Phone = dto.Phone;
+            this.Email = dto.Email;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -15,5 +16,20 @@ namespace Models
         public readonly static string GET = " SELECT A.DateOfBirth, A.Document, A.Email, A.Income, A.Name, A.PDFDocument, A.Phone, B.CEP, B.City, B.Complement, B.Id, B.Neighborhood, B.Number, B.Street, B.StreetType, B.Uf FROM Customer A INNER JOIN Address B ON A.AddressId = B.Id WHERE A.Document = @Document ";
         public Decimal Income { get; set; }
         public string PDFDocument { get; set; }
+
+        public Customer()
+        {
+            
+        }
+        public Customer(CustomerDTO dto)
+        {
+            this.Name = dto.Name;
+            this.Document = dto.Document;
+            this.DateOfBirth = dto.DateOfBirth;
+            this.Income = dto.Income;
+            this.PDFDocument = dto.PDFDocument;
+            this.Phone = dto.Phone;
+            this.Email = dto.Email;
+        }
     }
 }
