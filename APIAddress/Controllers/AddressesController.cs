@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using APIAddress.Data;
 using Models;
 using Models.DTO;
-using Services;
 using Controllers;
+using APIAddress.Services;
 
 namespace APIAddress.Controllers
 {
@@ -13,11 +13,11 @@ namespace APIAddress.Controllers
     public class AddressesController : ControllerBase
     {
         private readonly APIAddressContext _context;
-        private readonly AddressService _addressService;
-        public AddressesController(APIAddressContext context, AddressService addressService)
+        private readonly AddressesService _addressesService;
+        public AddressesController(APIAddressContext context, AddressesService addressesService)
         {
             _context = context;
-            _addressService = addressService;
+            _addressesService = addressesService;
         }
 
         // GET: api/Addresses
@@ -93,7 +93,7 @@ namespace APIAddress.Controllers
             address.Number = addressDTO.Number;
             address.StreetType = addressDTO.StreetType;
 
-            address = await _addressService.RetrieveAdressAPI(addressDTO);
+            address = await _addressesService.RetrieveAdressAPI(addressDTO);
             address.Id = id;
             if (id != address.Id)
             {
@@ -129,7 +129,7 @@ namespace APIAddress.Controllers
             {
                 return Problem("Entity set 'APIAddressContext.Address'  is null.");
             }
-            var address = await _addressService.RetrieveAdressAPI(addressDTO);
+            var address = await _addressesService.RetrieveAdressAPI(addressDTO);
 
             try
             {
@@ -146,7 +146,7 @@ namespace APIAddress.Controllers
                         address.Id = new AddressController().Insert(address, 1);
                         break;
                 }
-                _addressService.InsertMongo(address);
+                _addressesService.InsertMongo(address);
             }
             catch (DbUpdateException)
             {

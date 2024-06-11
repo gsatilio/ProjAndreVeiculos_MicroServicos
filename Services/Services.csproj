@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj" />
-    <ProjectReference Include="..\MongoDatabase\MongoDatabase.csproj" />
+    <ProjectReference Include="..\MongoDB\MongoDB.csproj" />
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
   </ItemGroup>
 
