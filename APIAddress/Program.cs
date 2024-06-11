@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using APIAddress.Data;
-using APIAddress.Utils;
 using Microsoft.Extensions.Options;
 using Services;
-using APIAddress.Services;
+using MongoDatabase;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<APIAddressContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APIAddressContext") ?? throw new InvalidOperationException("Connection string 'APIAddressContext' not found.")));
@@ -17,14 +16,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region Arquivo de config
-builder.Services.Configure<MongoDBAPIDataBaseSettings>(
+builder.Services.Configure<IMongoDBAPIDataBaseSettings>(
                builder.Configuration.GetSection(nameof(MongoDBAPIDataBaseSettings)));
 
 
 builder.Services.AddSingleton<IMongoDBAPIDataBaseSettings>(sp =>
     sp.GetRequiredService<IOptions<MongoDBAPIDataBaseSettings>>().Value);
 
-builder.Services.AddSingleton<AddressesService>();
+builder.Services.AddSingleton<AddressService>();
 #endregion
 
 var app = builder.Build();

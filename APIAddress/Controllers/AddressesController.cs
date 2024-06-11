@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIAddress.Data;
 using Models;
 using Models.DTO;
-using APIAddress.Services;
 using Services;
-using Newtonsoft.Json;
-using System.Security.Policy;
-using Humanizer;
 using Controllers;
-using System.Net;
 
 namespace APIAddress.Controllers
 {
@@ -23,11 +13,11 @@ namespace APIAddress.Controllers
     public class AddressesController : ControllerBase
     {
         private readonly APIAddressContext _context;
-        private readonly AddressesService _addressesService;
-        public AddressesController(APIAddressContext context, AddressesService addressesService)
+        private readonly AddressService _addressService;
+        public AddressesController(APIAddressContext context, AddressService addressService)
         {
             _context = context;
-            _addressesService = addressesService;
+            _addressService = addressService;
         }
 
         // GET: api/Addresses
@@ -103,7 +93,7 @@ namespace APIAddress.Controllers
             address.Number = addressDTO.Number;
             address.StreetType = addressDTO.StreetType;
 
-            address = await _addressesService.RetrieveAdressAPI(addressDTO);
+            address = await _addressService.RetrieveAdressAPI(addressDTO);
             address.Id = id;
             if (id != address.Id)
             {
@@ -139,7 +129,7 @@ namespace APIAddress.Controllers
             {
                 return Problem("Entity set 'APIAddressContext.Address'  is null.");
             }
-            var address = await _addressesService.RetrieveAdressAPI(addressDTO);
+            var address = await _addressService.RetrieveAdressAPI(addressDTO);
 
             try
             {
@@ -156,7 +146,7 @@ namespace APIAddress.Controllers
                         address.Id = new AddressController().Insert(address, 1);
                         break;
                 }
-                _addressesService.InsertMongo(address);
+                _addressService.InsertMongo(address);
             }
             catch (DbUpdateException)
             {
