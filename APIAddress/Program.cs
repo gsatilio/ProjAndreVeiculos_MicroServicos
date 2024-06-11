@@ -16,8 +16,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region Arquivo de config
-builder.Services.Configure<IMongoDBAPIDataBaseSettings>(
-               builder.Configuration.GetSection(nameof(MongoDBAPIDataBaseSettings)));
+var config = builder.Configuration.GetSection(nameof(MongoDBAPIDataBaseSettings));
+builder.Services.Configure<IMongoDBAPIDataBaseSettings>(config);
 
 
 builder.Services.AddSingleton<IMongoDBAPIDataBaseSettings>(sp =>
