@@ -14,6 +14,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<PaymentsService>();
+builder.Services.AddSingleton<PixesService>();
+builder.Services.AddSingleton<PixTypesService>();
+builder.Services.AddSingleton<BoletosService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

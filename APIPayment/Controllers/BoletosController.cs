@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using APIPayment.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
@@ -15,30 +14,30 @@ namespace APIPayment.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentsController : ControllerBase
+    public class BoletosController : ControllerBase
     {
         private readonly DataAPIContext _context;
-        private readonly PaymentsService _service = new();
+        private readonly BoletosService _service = new();
 
-        public PaymentsController(DataAPIContext context, PaymentsService service)
+        public BoletosController(DataAPIContext context, BoletosService boletosService)
         {
             _context = context;
-            _service = service;
+            _service = boletosService;
         }
 
-        // GET: api/Payment
+        // GET: api/Boleto
         [HttpGet("{techType}")]
-        public async Task<ActionResult<IEnumerable<Payment>>> GetPayment(int techType)
+        public async Task<ActionResult<IEnumerable<Boleto>>> GetBoleto(int techType)
         {
-            if (_context.Payment == null)
+            if (_context.Boleto == null)
             {
                 return NotFound();
             }
-            List<Payment> addresses = new List<Payment>();
+            List<Boleto> addresses = new List<Boleto>();
             switch (techType)
             {
                 case 0:
-                    addresses = await _context.Payment.Include(p => p.CreditCard).Include(p => p.Boleto).Include(p => p.Pix.PixType).ToListAsync();
+                    addresses = await _context.Boleto.ToListAsync();
                     break;
                 case 1:
                     addresses = await _service.GetAll(0);
@@ -52,20 +51,20 @@ namespace APIPayment.Controllers
             return addresses;
         }
 
-        // GET: api/Payment/5
+        // GET: api/Boleto/5
         [HttpGet("{id},{techType}")]
-        public async Task<ActionResult<Payment>> GetPayment(int id, int techType)
+        public async Task<ActionResult<Boleto>> GetBoleto(int id, int techType)
         {
-            if (_context.Payment == null)
+            if (_context.Boleto == null)
             {
                 return NotFound();
             }
 
-            Payment? address = new Payment();
+            Boleto? address = new Boleto();
             switch (techType)
             {
                 case 0:
-                    address = await _context.Payment.Include(p => p.CreditCard).Include(p => p.Boleto).Include(p => p.Pix.PixType).SingleOrDefaultAsync(p => p.Id == id);
+                    address = await _context.Boleto.FindAsync(id);
                     break;
                 case 1:
                     address = await _service.Get(id, 0);
@@ -85,17 +84,17 @@ namespace APIPayment.Controllers
             return address;
         }
 
-        // PUT: api/Payments/5
+        // PUT: api/Boletoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPayment(int id, Payment payment)
+        public async Task<IActionResult> PutBoleto(int id, Boleto boleto)
         {
-            if (id != payment.Id)
+            if (id != boleto.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(payment).State = EntityState.Modified;
+            _context.Entry(boleto).State = EntityState.Modified;
 
             try
             {
@@ -103,7 +102,7 @@ namespace APIPayment.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PaymentExists(id))
+                if (!BoletoExists(id))
                 {
                     return NotFound();
                 }
@@ -116,44 +115,44 @@ namespace APIPayment.Controllers
             return NoContent();
         }
 
-        // POST: api/Payments
+        // POST: api/Boletoes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Payment>> PostPayment(Payment payment)
+        public async Task<ActionResult<Boleto>> PostBoleto(Boleto boleto)
         {
-          if (_context.Payment == null)
-          {
-              return Problem("Entity set 'APIPaymentContext.Payment'  is null.");
-          }
-            _context.Payment.Add(payment);
+            if (_context.Boleto == null)
+            {
+                return Problem("Entity set 'APIBoletoContext.Boleto'  is null.");
+            }
+            _context.Boleto.Add(boleto);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPayment", new { id = payment.Id }, payment);
+            return CreatedAtAction("GetBoleto", new { id = boleto.Id }, boleto);
         }
 
-        // DELETE: api/Payments/5
+        // DELETE: api/Boletoes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePayment(int id)
+        public async Task<IActionResult> DeleteBoleto(int id)
         {
-            if (_context.Payment == null)
+            if (_context.Boleto == null)
             {
                 return NotFound();
             }
-            var payment = await _context.Payment.FindAsync(id);
-            if (payment == null)
+            var boleto = await _context.Boleto.FindAsync(id);
+            if (boleto == null)
             {
                 return NotFound();
             }
 
-            _context.Payment.Remove(payment);
+            _context.Boleto.Remove(boleto);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool PaymentExists(int id)
+        private bool BoletoExists(int id)
         {
-            return (_context.Payment?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Boleto?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

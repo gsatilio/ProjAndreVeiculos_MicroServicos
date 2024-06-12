@@ -10,6 +10,7 @@ using Models;
 using Controllers;
 using DataAPI.Data;
 using APICar.Services;
+using Models.DTO;
 
 namespace APICar.Controllers
 {
@@ -118,17 +119,31 @@ namespace APICar.Controllers
 
         // POST: api/Cars
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Car>> PostCar(Car car)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<Car>> PostCar(int techType, Car car)
         {
             if (_context.Car == null)
             {
                 return Problem("Entity set 'APICarContext.Car'  is null.");
             }
-            _context.Car.Add(car);
+
             try
             {
-                await _context.SaveChangesAsync();
+                switch (techType)
+                {
+                    case 0:
+                        _context.Car.Add(car);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        car.LicensePlate = await _service.Insert(car, 0);
+                        break;
+                    case 2:
+                        car.LicensePlate = await _service.Insert(car, 1);
+                        break;
+                    default:
+                        return NotFound();
+                }
             }
             catch (DbUpdateException)
             {
@@ -142,7 +157,7 @@ namespace APICar.Controllers
                 }
             }
 
-            return CreatedAtAction("GetCar", new { id = car.LicensePlate }, car);
+            return CreatedAtAction("GetCar", new { id = car.LicensePlate, techType }, car);
         }
 
         // DELETE: api/Cars/5

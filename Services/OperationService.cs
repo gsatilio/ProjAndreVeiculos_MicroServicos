@@ -7,12 +7,12 @@ namespace Services
     {
         private OperationRepository _repository = new();
 
-        public int Insert(Operation operation, int type)
+        public async Task<int> Insert(Operation operation, int type)
         {
             int idService = 0;
             try
             {
-                idService =  _repository.Insert(operation, type);
+                idService = await _repository.Insert(operation, type);
             }
             catch (Exception ex)
             {

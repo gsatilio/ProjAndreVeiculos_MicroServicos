@@ -10,6 +10,8 @@ using Models;
 using Controllers;
 using DataAPI.Data;
 using APICarOperation.Services;
+using System.Runtime.ConstrainedExecution;
+using Models.DTO;
 
 namespace APICarOperation.Controllers
 {
@@ -30,10 +32,10 @@ namespace APICarOperation.Controllers
         [HttpGet("{techType}")]
         public async Task<ActionResult<IEnumerable<CarOperation>>> GetCarOperation(int techType)
         {
-          if (_context.CarOperation == null)
-          {
-              return NotFound();
-          }
+            if (_context.CarOperation == null)
+            {
+                return NotFound();
+            }
             List<CarOperation> carOp = new List<CarOperation>();
             switch (techType)
             {
@@ -56,10 +58,10 @@ namespace APICarOperation.Controllers
         [HttpGet("{id},{techType}")]
         public async Task<ActionResult<CarOperation>> GetCarOperation(int id, int techType)
         {
-          if (_context.CarOperation == null)
-          {
-              return NotFound();
-          }
+            if (_context.CarOperation == null)
+            {
+                return NotFound();
+            }
             CarOperation? carOp = new CarOperation();
             switch (techType)
             {
@@ -117,17 +119,55 @@ namespace APICarOperation.Controllers
 
         // POST: api/CarOperations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<CarOperation>> PostCarOperation(CarOperation carOperation)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<CarOperation>> PostCarOperation(int techType, CarOperationDTO carOperationDTO)
         {
-          if (_context.CarOperation == null)
-          {
-              return Problem("Entity set 'APICarOperationContext.CarOperation'  is null.");
-          }
-            _context.CarOperation.Add(carOperation);
-            await _context.SaveChangesAsync();
+            if (_context.CarOperation == null)
+            {
+                return Problem("Entity set 'APICarOperationContext.CarOperation'  is null.");
+            }
 
-            return CreatedAtAction("GetCarOperation", new { id = carOperation.Id }, carOperation);
+            var car = _context.Car.Where(x => x.LicensePlate == carOperationDTO.LicensePlate).FirstOrDefault();
+            if (car == null)
+                return BadRequest("Carro inexistente");
+            var operation = _context.Operation.Where(x => x.Id == carOperationDTO.IdOperation).FirstOrDefault();
+            if (operation == null)
+                return BadRequest("Serviço inexistente");
+
+            CarOperation carOperation = new(carOperationDTO);
+            carOperation.Car = car;
+            carOperation.Operation = operation;
+            try
+            {
+                switch (techType)
+                {
+                    case 0:
+                        _context.CarOperation.Add(carOperation);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        carOperation.Id = await _service.Insert(carOperation, 0);
+                        break;
+                    case 2:
+                        carOperation.Id = await _service.Insert(carOperation, 1);
+                        break;
+                    default:
+                        return NotFound();
+                }
+            }
+            catch (DbUpdateException)
+            {
+                if (CarOperationExists(carOperation.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return CreatedAtAction("GetCarOperation", new { id = carOperation.Id, techType }, carOperation);
         }
 
         // DELETE: api/CarOperations/5

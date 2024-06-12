@@ -13,12 +13,12 @@ namespace Services
     public class CarOperationService
     {
         CarOperationRepository _repository = new();
-        public int Insert(CarOperation carOp, int type)
+        public async Task<int> Insert(CarOperation carOp, int type)
         {
             int idService = 0;
             try
             {
-                idService = _repository.Insert(carOp, type);
+                idService = await _repository.Insert(carOp, type);
             }
             catch (Exception ex)
             {

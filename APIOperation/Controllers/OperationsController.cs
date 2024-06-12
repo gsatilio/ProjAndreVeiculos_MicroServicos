@@ -10,6 +10,7 @@ using Models;
 using Controllers;
 using DataAPI.Data;
 using APIOperation.Services;
+using System.Runtime.ConstrainedExecution;
 
 namespace APIOperation.Controllers
 {
@@ -118,17 +119,44 @@ namespace APIOperation.Controllers
 
         // POST: api/Operations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Operation>> PostOperation(Operation operation)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<Operation>> PostOperation(int techType, Operation operation)
         {
-          if (_context.Operation == null)
-          {
-              return Problem("Entity set 'APIOperationContext.Operation'  is null.");
-          }
-            _context.Operation.Add(operation);
-            await _context.SaveChangesAsync();
+            if (_context.Operation == null)
+            {
+                return Problem("Entity set 'APIOperationContext.Operation'  is null.");
+            }
+            try
+            {
+                switch (techType)
+                {
+                    case 0:
+                        _context.Operation.Add(operation);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        operation.Id = await _service.Insert(operation, 0);
+                        break;
+                    case 2:
+                        operation.Id = await _service.Insert(operation, 1);
+                        break;
+                    default:
+                        return NotFound();
+                }
+            }
+            catch (DbUpdateException)
+            {
+                if (OperationExists(operation.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-            return CreatedAtAction("GetOperation", new { id = operation.Id }, operation);
+            return CreatedAtAction("GetOperation", new { id = operation.Id, techType }, operation);
         }
 
         // DELETE: api/Operations/5

@@ -1,26 +1,27 @@
 ﻿using Models;
 using Newtonsoft.Json;
+using NuGet.Protocol.Core.Types;
 using Repositories;
 
 namespace APICar.Services
 {
     public class CarsService
     {
-        private CarRepository _carRepository = new();
+        private CarRepository _repository = new();
 
         public void InsertFileOnSQL(string jsonString, int type)
         {
             var json = JsonConvert.DeserializeObject<CarList>(jsonString);
-            _carRepository.Delete(type);
+            _repository.Delete(type);
 
-            _carRepository.InsertBatch(json, type);
+            _repository.InsertBatch(json, type);
         }
         public CarList Retrieve(int type)
         {
             CarList carList = new CarList();
             try
             {
-                carList = _carRepository.Retrieve(type);
+                carList = _repository.Retrieve(type);
             }
             catch
             {
@@ -29,12 +30,27 @@ namespace APICar.Services
             return carList;
         }
 
+        public async Task<string> Insert(Car car, int type)
+        {
+            string result = null;
+            try
+            {
+                result = await _repository.Insert(car, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return result;
+        }
+
         public async Task<List<Car>> GetAll(int type)
         {
             List<Car> carList = new List<Car>();
             try
             {
-                carList = await _carRepository.GetAll(type);
+                carList = await _repository.GetAll(type);
             }
             catch
             {
@@ -47,7 +63,7 @@ namespace APICar.Services
             Car carList = new Car();
             try
             {
-                carList = await _carRepository.Get(licensePlate, type);
+                carList = await _repository.Get(licensePlate, type);
             }
             catch
             {

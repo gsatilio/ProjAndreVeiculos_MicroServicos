@@ -56,6 +56,43 @@ namespace Repositories
             return result;
         }
 
+        public async Task<string> Insert(Car car, int type)
+        {
+            string result = null;
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Car.INSERT;
+                        cmd.Parameters.Add(new SqlParameter("@LicensePlate", car.LicensePlate));
+                        cmd.Parameters.Add(new SqlParameter("@Name", car.Name));
+                        cmd.Parameters.Add(new SqlParameter("@ModelYear", car.ModelYear));
+                        cmd.Parameters.Add(new SqlParameter("@FabricationYear", car.FabricationYear));
+                        cmd.Parameters.Add(new SqlParameter("@Color", car.Color));
+                        cmd.Parameters.Add(new SqlParameter("@Sold", car.Sold));
+                        cmd.ExecuteNonQuery();
+                        result = car.LicensePlate;
+                    }
+                    else // Dapper
+                    {
+                        db.Execute(Car.INSERT, car);
+                        result = car.LicensePlate;
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return result;
+        }
+
         public bool Delete(int type)
         {
             var result = false;

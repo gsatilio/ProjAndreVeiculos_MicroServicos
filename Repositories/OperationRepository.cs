@@ -13,7 +13,7 @@ namespace Repositories
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;
         }
 
-        public int Insert(Operation operation, int type)
+        public async Task<int> Insert(Operation operation, int type)
         {
             int result = 0;
             try

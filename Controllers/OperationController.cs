@@ -11,12 +11,12 @@ namespace Controllers
         {
 
         }
-        public int Insert(Operation operation, int type)
+        public async Task<int> Insert(Operation operation, int type)
         {
             int idService = 0;
             try
             {
-                idService = _service.Insert(operation, type);
+                idService = await _service.Insert(operation, type);
             }
             catch
             {

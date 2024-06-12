@@ -15,12 +15,12 @@ namespace Controllers
         {
             
         }
-        public int Insert(CarOperation carOp, int type)
+        public async Task<int> Insert(CarOperation carOp, int type)
         {
             int idService = 0;
             try
             {
-                idService = _service.Insert(carOp, type);
+                idService = await _service.Insert(carOp, type);
             }
             catch
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,5 +18,15 @@ namespace Models
         public Car Car { get; set; }
         public Operation Operation { get; set; }
         public bool Status { get; set; }
+
+        public CarOperation()
+        {
+            
+        }
+        public CarOperation(CarOperationDTO carOperationDTO)
+        {
+            this.Status = carOperationDTO.Status;
+            this.Car = new Car { LicensePlate = carOperationDTO .LicensePlate };
+        }
     }
 }

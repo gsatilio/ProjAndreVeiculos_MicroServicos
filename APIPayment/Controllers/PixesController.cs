@@ -5,97 +5,95 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using APIPayment.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
 using APIPayment.Services;
 
-namespace APIPayment.Controllers
+namespace APIPix.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentsController : ControllerBase
+    public class PixesController : ControllerBase
     {
         private readonly DataAPIContext _context;
-        private readonly PaymentsService _service = new();
+        private readonly PixesService _service = new();
 
-        public PaymentsController(DataAPIContext context, PaymentsService service)
+        public PixesController(DataAPIContext context, PixesService service)
         {
             _context = context;
             _service = service;
         }
 
-        // GET: api/Payment
+        // GET: api/Pix
         [HttpGet("{techType}")]
-        public async Task<ActionResult<IEnumerable<Payment>>> GetPayment(int techType)
+        public async Task<ActionResult<IEnumerable<Pix>>> GetPix(int techType)
         {
-            if (_context.Payment == null)
+            if (_context.Pix == null)
             {
                 return NotFound();
             }
-            List<Payment> addresses = new List<Payment>();
+            List<Pix> customer = new List<Pix>();
             switch (techType)
             {
                 case 0:
-                    addresses = await _context.Payment.Include(p => p.CreditCard).Include(p => p.Boleto).Include(p => p.Pix.PixType).ToListAsync();
+                    customer = await _context.Pix.Include(a => a.PixType).ToListAsync();
                     break;
                 case 1:
-                    addresses = await _service.GetAll(0);
+                    customer = await _service.GetAll(0);
                     break;
                 case 2:
-                    addresses = await _service.GetAll(1);
+                    customer = await _service.GetAll(1);
                     break;
                 default:
                     return NotFound();
             }
-            return addresses;
+            return customer;
         }
 
-        // GET: api/Payment/5
+        // GET: api/Pixs/5
         [HttpGet("{id},{techType}")]
-        public async Task<ActionResult<Payment>> GetPayment(int id, int techType)
+        public async Task<ActionResult<Pix>> GetPix(int id, int techType)
         {
-            if (_context.Payment == null)
+            if (_context.Pix == null)
             {
                 return NotFound();
             }
-
-            Payment? address = new Payment();
+            Pix? customer = new Pix();
             switch (techType)
             {
                 case 0:
-                    address = await _context.Payment.Include(p => p.CreditCard).Include(p => p.Boleto).Include(p => p.Pix.PixType).SingleOrDefaultAsync(p => p.Id == id);
+                    customer = await _context.Pix.Include(a => a.PixType).SingleOrDefaultAsync(c => c.Id == id);
                     break;
                 case 1:
-                    address = await _service.Get(id, 0);
+                    customer = await _service.Get(id, 0);
                     break;
                 case 2:
-                    address = await _service.Get(id, 1);
+                    customer = await _service.Get(id, 1);
                     break;
                 default:
                     return NotFound();
             }
 
-            if (address == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return address;
+            return customer;
         }
 
-        // PUT: api/Payments/5
+        // PUT: api/Pixes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPayment(int id, Payment payment)
+        public async Task<IActionResult> PutPix(int id, Pix pix)
         {
-            if (id != payment.Id)
+            if (id != pix.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(payment).State = EntityState.Modified;
+            _context.Entry(pix).State = EntityState.Modified;
 
             try
             {
@@ -103,7 +101,7 @@ namespace APIPayment.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PaymentExists(id))
+                if (!PixExists(id))
                 {
                     return NotFound();
                 }
@@ -116,44 +114,44 @@ namespace APIPayment.Controllers
             return NoContent();
         }
 
-        // POST: api/Payments
+        // POST: api/Pixes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Payment>> PostPayment(Payment payment)
+        public async Task<ActionResult<Pix>> PostPix(Pix pix)
         {
-          if (_context.Payment == null)
-          {
-              return Problem("Entity set 'APIPaymentContext.Payment'  is null.");
-          }
-            _context.Payment.Add(payment);
+            if (_context.Pix == null)
+            {
+                return Problem("Entity set 'APIPixContext.Pix'  is null.");
+            }
+            _context.Pix.Add(pix);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPayment", new { id = payment.Id }, payment);
+            return CreatedAtAction("GetPix", new { id = pix.Id }, pix);
         }
 
-        // DELETE: api/Payments/5
+        // DELETE: api/Pixes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePayment(int id)
+        public async Task<IActionResult> DeletePix(int id)
         {
-            if (_context.Payment == null)
+            if (_context.Pix == null)
             {
                 return NotFound();
             }
-            var payment = await _context.Payment.FindAsync(id);
-            if (payment == null)
+            var pix = await _context.Pix.FindAsync(id);
+            if (pix == null)
             {
                 return NotFound();
             }
 
-            _context.Payment.Remove(payment);
+            _context.Pix.Remove(pix);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool PaymentExists(int id)
+        private bool PixExists(int id)
         {
-            return (_context.Payment?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Pix?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
