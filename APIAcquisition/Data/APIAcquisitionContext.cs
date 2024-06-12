@@ -15,5 +15,6 @@ namespace APIAcquisition.Data
         }
 
         public DbSet<Models.Acquisition> Acquisition { get; set; } = default!;
+        public DbSet<Models.Car> Car { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Models.DTO;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using MongoDB;
+using NuGet.Protocol.Core.Types;
 
 namespace APIAddress.Services
 {
@@ -54,6 +55,49 @@ namespace APIAddress.Services
             {
                 throw;
             }
+        }
+
+        public int Insert(Address address, int type)
+        {
+            int result = 0;
+            try
+            {
+                result = _repository.Insert(address, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return result;
+        }
+        public async Task<List<Address>> GetAll(int type)
+        {
+            List<Address> list = new List<Address>();
+            try
+            {
+                list = await _repository.GetAll(type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
+        }
+        public async Task<Address> Get(int id, int type)
+        {
+            Address list = new Address();
+            try
+            {
+                list = await _repository.Get(id, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return list;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Repositories
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;
         }
 
-        public int Insert(Acquisition acquisition, int type)
+        public async Task<int> Insert(Acquisition acquisition, int type)
         {
             int result = 0;
             try
@@ -28,7 +28,7 @@ namespace Repositories
                     {
                         var cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = Acquisition.INSERT;
-                        cmd.Parameters.Add(new SqlParameter("@LicensePlate", acquisition.Car.LicensePlate));
+                        cmd.Parameters.Add(new SqlParameter("@CarLicensePlate", acquisition.Car.LicensePlate));
                         cmd.Parameters.Add(new SqlParameter("@Price", acquisition.Price));
                         cmd.Parameters.Add(new SqlParameter("@AcquisitionDate", acquisition.AcquisitionDate));
                         result = (int)cmd.ExecuteScalar();
@@ -37,7 +37,7 @@ namespace Repositories
                     {
                         result = db.ExecuteScalar<int>(Acquisition.INSERT, new
                         {
-                            acquisition.Car.LicensePlate,
+                            CarLicensePlate = acquisition.Car.LicensePlate,
                             acquisition.Price,
                             acquisition.AcquisitionDate
                         });
