@@ -15,6 +15,50 @@ namespace Repositories
         {
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;
         }
+        public int Insert(Conductor conductor, int type)
+        {
+            int result = 0;
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Conductor.INSERT;
+                        cmd.Parameters.Add(new SqlParameter("@Document", conductor.Document));
+                        cmd.Parameters.Add(new SqlParameter("@CNHDriverLicense", conductor.CNH.DriverLicense));
+                        cmd.Parameters.Add(new SqlParameter("@Name", conductor.Name));
+                        cmd.Parameters.Add(new SqlParameter("@DateOfBirth", conductor.DateOfBirth));
+                        cmd.Parameters.Add(new SqlParameter("@AddressId", conductor.Address.Id));
+                        cmd.Parameters.Add(new SqlParameter("@Phone", conductor.Phone));
+                        cmd.Parameters.Add(new SqlParameter("@Email", conductor.Email));
+                        result = (int)cmd.ExecuteScalar();
+                    }
+                    else // Dapper
+                    {
+                        result = db.ExecuteScalar<int>(Conductor.INSERT, new
+                        {
+                            conductor.Document,
+                            conductor.CNH.DriverLicense,
+                            conductor.Name,
+                            conductor.DateOfBirth,
+                            conductor.Address.Id,
+                            conductor.Phone,
+                            conductor.Email
+                        });
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return result;
+        }
 
         public async Task<List<Conductor>> GetAll(int type)
         {

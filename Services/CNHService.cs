@@ -6,7 +6,20 @@ namespace Services
     public class CNHService
     {
         private CNHRepository _repository = new();
-
+        public int Insert(CNH cnh, int type)
+        {
+            int result = 0;
+            try
+            {
+                result = _repository.Insert(cnh, type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return result;
+        }
         public async Task<List<CNH>> GetAll(int type)
         {
             List<CNH> list = new List<CNH>();

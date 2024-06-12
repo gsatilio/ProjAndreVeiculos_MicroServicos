@@ -15,7 +15,50 @@ namespace Repositories
         {
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;
         }
-
+        public int Insert(CNH cnh, int type)
+        {
+            int result = 0;
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = CNH.INSERT;
+                        cmd.Parameters.Add(new SqlParameter("@DriverLicense", cnh.DriverLicense));
+                        cmd.Parameters.Add(new SqlParameter("@DueDate", cnh.DueDate));
+                        cmd.Parameters.Add(new SqlParameter("@RG", cnh.RG));
+                        cmd.Parameters.Add(new SqlParameter("@CPF", cnh.CPF));
+                        cmd.Parameters.Add(new SqlParameter("@MotherName", cnh.MotherName));
+                        cmd.Parameters.Add(new SqlParameter("@FatherName", cnh.FatherName));
+                        cmd.Parameters.Add(new SqlParameter("@CategoryId", cnh.Category.Id));
+                        result = (int)cmd.ExecuteScalar();
+                    }
+                    else // Dapper
+                    {
+                        result = db.ExecuteScalar<int>(CNH.INSERT, new
+                        {
+                            cnh.DriverLicense,
+                            cnh.DueDate,
+                            cnh.RG,
+                            cnh.CPF,
+                            cnh.MotherName,
+                            cnh.FatherName,
+                            cnh.Category.Id
+                        });
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return result;
+        }
         public async Task<List<CNH>> GetAll(int type)
         {
             List<CNH>? list = new();

@@ -16,6 +16,35 @@ namespace Repositories
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;
         }
 
+        public int Insert(Category category, int type)
+        {
+            int result = 0;
+            try
+            {
+                using (var db = new SqlConnection(Conn))
+                {
+                    db.Open();
+                    if (type == 0) // ADO.NET
+                    {
+                        var cmd = new SqlCommand { Connection = db };
+                        cmd.CommandText = Address.INSERT;
+                        cmd.Parameters.Add(new SqlParameter("@Description", category.Description));
+                        result = (int)cmd.ExecuteScalar();
+                    }
+                    else // Dapper
+                    {
+                        result = db.ExecuteScalar<int>(Category.INSERT, category);
+                    }
+                    db.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //throw;
+            }
+            return result;
+        }
         public async Task<List<Category>> GetAll(int type)
         {
             List<Category>? list = new();

@@ -11,6 +11,19 @@ namespace Controllers
         {
 
         }
+        public int Insert(Conductor conductor, int type)
+        {
+            int result = 0;
+            try
+            {
+                result = _service.Insert(conductor, type);
+            }
+            catch
+            {
+                throw;
+            }
+            return result;
+        }
         public async Task<List<Conductor>> GetAll(int type)
         {
             List<Conductor> list = new List<Conductor>();

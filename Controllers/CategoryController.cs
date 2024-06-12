@@ -11,6 +11,19 @@ namespace Controllers
         {
 
         }
+        public int Insert(Category category, int type)
+        {
+            int result = 0;
+            try
+            {
+                result = _service.Insert(category, type);
+            }
+            catch
+            {
+                throw;
+            }
+            return result;
+        }
         public async Task<List<Category>> GetAll(int type)
         {
             List<Category> list = new List<Category>();

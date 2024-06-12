@@ -11,7 +11,19 @@ namespace Controllers
         {
 
         }
-
+        public int Insert(CNH cnh, int type)
+        {
+            int result = 0;
+            try
+            {
+                result = _service.Insert(cnh, type);
+            }
+            catch
+            {
+                throw;
+            }
+            return result;
+        }
         public async Task<List<CNH>> GetAll(int type)
         {
             List<CNH> list = new List<CNH>();
