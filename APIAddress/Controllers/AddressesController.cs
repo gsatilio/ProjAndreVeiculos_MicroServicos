@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using APIAddress.Data;
 using Models;
 using Models.DTO;
-using Controllers;
 using APIAddress.Services;
 
 namespace APIAddress.Controllers
@@ -13,11 +12,11 @@ namespace APIAddress.Controllers
     public class AddressesController : ControllerBase
     {
         private readonly APIAddressContext _context;
-        private readonly AddressesService _addressesService;
+        private readonly AddressesService _service;
         public AddressesController(APIAddressContext context, AddressesService addressesService)
         {
             _context = context;
-            _addressesService = addressesService;
+            _service = addressesService;
         }
 
         // GET: api/Addresses
@@ -35,11 +34,13 @@ namespace APIAddress.Controllers
                     addresses = await _context.Address.ToListAsync();
                     break;
                 case 1:
-                    addresses = await new AddressController().GetAll(0);
+                    addresses = await _service.GetAll(0);
                     break;
                 case 2:
-                    addresses = await new AddressController().GetAll(1);
+                    addresses = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return addresses;
         }
@@ -60,11 +61,13 @@ namespace APIAddress.Controllers
                     address = await _context.Address.FindAsync(id);
                     break;
                 case 1:
-                    address = await new AddressController().Get(id, 0);
+                    address = await _service.Get(id, 0);
                     break;
                 case 2:
-                    address = await new AddressController().Get(id, 1);
+                    address = await _service.Get(id, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (address == null)
@@ -93,7 +96,7 @@ namespace APIAddress.Controllers
             address.Number = addressDTO.Number;
             address.StreetType = addressDTO.StreetType;
 
-            address = await _addressesService.RetrieveAdressAPI(addressDTO);
+            address = await _service.RetrieveAdressAPI(addressDTO);
             address.Id = id;
             if (id != address.Id)
             {
@@ -129,7 +132,7 @@ namespace APIAddress.Controllers
             {
                 return Problem("Entity set 'APIAddressContext.Address'  is null.");
             }
-            var address = await _addressesService.RetrieveAdressAPI(addressDTO);
+            var address = await _service.RetrieveAdressAPI(addressDTO);
 
             try
             {
@@ -140,13 +143,15 @@ namespace APIAddress.Controllers
                         await _context.SaveChangesAsync();
                         break;
                     case 1:
-                        address.Id = new AddressController().Insert(address, 0);
+                        address.Id = _service.Insert(address, 0);
                         break;
                     case 2:
-                        address.Id = new AddressController().Insert(address, 1);
+                        address.Id = _service.Insert(address, 1);
                         break;
+                    default:
+                        return NotFound();
                 }
-                _addressesService.InsertMongo(address);
+                _service.InsertMongo(address);
             }
             catch (DbUpdateException)
             {

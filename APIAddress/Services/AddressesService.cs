@@ -4,19 +4,22 @@ using MongoDB.Driver;
 using Newtonsoft.Json;
 using MongoDB;
 using NuGet.Protocol.Core.Types;
+using Repositories;
 
 namespace APIAddress.Services
 {
     public class AddressesService
     {
         private readonly IMongoCollection<Address> _address;
+        private AddressRepository _repository;
         private readonly string _url = "https://viacep.com.br/ws";
 
-        public AddressesService(IMongoDBAPIDataBaseSettings settings)
+        public AddressesService(IMongoDBAPIDataBaseSettings settings, AddressRepository addressRepository)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _address = database.GetCollection<Address>(settings.AddressCollectionName);
+            _repository = addressRepository;
         }
         public void InsertMongo(Address address)
         {
