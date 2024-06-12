@@ -23,9 +23,10 @@ namespace Models
         public string FatherName { get; set; }
         public Category Category { get; set; }
 
+
         public DriverLicense()
         {
-            
+
         }
 
         public DriverLicense(DriverLicenseDTO cnhDTO)
@@ -36,8 +37,7 @@ namespace Models
             this.CPF = cnhDTO.CPF;
             this.MotherName = cnhDTO.MotherName;
             this.FatherName = cnhDTO.FatherName;
-            var category = new Category();
-            this.Category = category;
+            this.Category = new Category { Id = cnhDTO.Category.Id };
         }
     }
 }

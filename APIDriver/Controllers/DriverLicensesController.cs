@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIDriver.Data;
 using Models;
+using Models.DTO;
 
 namespace APIDriver.Controllers
 {
@@ -15,6 +16,9 @@ namespace APIDriver.Controllers
     public class DriverLicensesController : ControllerBase
     {
         private readonly APIDriverContext _context;
+
+        private readonly CategoriesController _categoriesController;
+        private readonly ConductorsController _conductorsController;
 
         public DriverLicensesController(APIDriverContext context)
         {
@@ -25,10 +29,10 @@ namespace APIDriver.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DriverLicense>>> GetDriverLicense()
         {
-          if (_context.DriverLicense == null)
-          {
-              return NotFound();
-          }
+            if (_context.DriverLicense == null)
+            {
+                return NotFound();
+            }
             return await _context.DriverLicense.ToListAsync();
         }
 
@@ -36,10 +40,10 @@ namespace APIDriver.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DriverLicense>> GetDriverLicense(long id)
         {
-          if (_context.DriverLicense == null)
-          {
-              return NotFound();
-          }
+            if (_context.DriverLicense == null)
+            {
+                return NotFound();
+            }
             var driverLicense = await _context.DriverLicense.FindAsync(id);
 
             if (driverLicense == null)
@@ -84,14 +88,24 @@ namespace APIDriver.Controllers
         // POST: api/DriverLicenses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DriverLicense>> PostDriverLicense(DriverLicense driverLicense)
+        public async Task<ActionResult<DriverLicense>> PostDriverLicense(DriverLicenseDTO driverLicenseDTO)
         {
-          if (_context.DriverLicense == null)
-          {
-              return Problem("Entity set 'APIDriverContext.DriverLicense'  is null.");
-          }
-            _context.DriverLicense.Add(driverLicense);
-            await _context.SaveChangesAsync();
+            if (_context.DriverLicense == null)
+            {
+                return Problem("Entity set 'APIDriverContext.DriverLicense'  is null.");
+            }
+            DriverLicense driverLicense = new(driverLicenseDTO);
+            var category = _context.Category.Find(driverLicenseDTO.Category.Id);
+            if (category != null)
+            {
+                driverLicense.Category = category;
+                _context.DriverLicense.Add(driverLicense);
+                await _context.SaveChangesAsync();
+            } else
+            {
+                return BadRequest("Categoria inexistente");
+            }
+
 
             return CreatedAtAction("GetDriverLicense", new { id = driverLicense.DriverId }, driverLicense);
         }
