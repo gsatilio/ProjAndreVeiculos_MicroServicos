@@ -1,0 +1,18 @@
+select * from Category
+select * from DriverLicense
+
+select * from Conductor -- EF
+
+select * from Dependent -- ADO.NET
+
+select * from Insurance -- Dapper
+
+select * from FinancialPending -- EF
+
+select * from Bank -- mongo
+
+select * from Financing -- Dapper
+
+select * from TermsOfUse -- mongo
+
+select * from TermsOfUseAgreement -- mongo
