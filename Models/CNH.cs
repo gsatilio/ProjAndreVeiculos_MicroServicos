@@ -9,6 +9,8 @@ namespace Models
 {
     public class CNH
     {
+        public readonly static string GETALL = " SELECT A.DriverLicense, A.DueDate, A.RG, A.CPF, A.MotherName, A.FatherName, B.Id, B.Description FROM CNH A INNER JOIN Category B ON A.CategoryId = B.Id ";
+        public readonly static string GET = " SELECT A.DriverLicense, A.DueDate, A.RG, A.CPF, A.MotherName, A.FatherName, B.Id, B.Description FROM CNH A INNER JOIN Category B ON A.CategoryId = B.Id WHERE A.DriverLicense = @DriverLicense ";
         [Key]
         public long DriverLicense { get; set; }
         public DateTime DueDate { get; set; }

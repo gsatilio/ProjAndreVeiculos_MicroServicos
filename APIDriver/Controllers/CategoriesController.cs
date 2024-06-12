@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIConductor.Data;
 using Models;
+using Controllers;
 
 namespace APIConductor.Controllers
 {
@@ -21,33 +22,59 @@ namespace APIConductor.Controllers
             _context = context;
         }
 
-        // GET: api/Categories
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
+        // GET: api/Categorys
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategory(int techType)
         {
-          if (_context.Category == null)
-          {
-              return NotFound();
-          }
-            return await _context.Category.ToListAsync();
+            if (_context.Category == null)
+            {
+                return NotFound();
+            }
+            List<Category> addresses = new List<Category>();
+            switch (techType)
+            {
+                case 0:
+                    addresses = await _context.Category.ToListAsync();
+                    break;
+                case 1:
+                    addresses = await new CategoryController().GetAll(0);
+                    break;
+                case 2:
+                    addresses = await new CategoryController().GetAll(1);
+                    break;
+            }
+            return addresses;
         }
 
-        // GET: api/Categories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
+        // GET: api/Categorys/5
+        [HttpGet("{id},{techType}")]
+        public async Task<ActionResult<Category>> GetCategory(int id, int techType)
         {
-          if (_context.Category == null)
-          {
-              return NotFound();
-          }
-            var category = await _context.Category.FindAsync(id);
-
-            if (category == null)
+            if (_context.Category == null)
             {
                 return NotFound();
             }
 
-            return category;
+            Category? address = new Category();
+            switch (techType)
+            {
+                case 0:
+                    address = await _context.Category.FindAsync(id);
+                    break;
+                case 1:
+                    address = await new CategoryController().Get(id, 0);
+                    break;
+                case 2:
+                    address = await new CategoryController().Get(id, 1);
+                    break;
+            }
+
+            if (address == null)
+            {
+                return NotFound();
+            }
+
+            return address;
         }
 
         // PUT: api/Categories/5
@@ -93,7 +120,7 @@ namespace APIConductor.Controllers
             _context.Category.Add(category);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
+            return CreatedAtAction("GetCategory", new { id = category.Id, techType = 0 }, category);
         }
 
         // DELETE: api/Categories/5

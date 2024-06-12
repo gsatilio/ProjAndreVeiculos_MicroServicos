@@ -4,7 +4,6 @@ using APIConductor.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,10 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIConductor.Migrations
 {
     [DbContext(typeof(APIConductorContext))]
-    [Migration("20240611215347_Initial")]
-    partial class Initial
+    partial class APIConductorContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,11 +126,11 @@ namespace APIConductor.Migrations
                     b.Property<int>("AddressId")
                         .HasColumnType("int");
 
+                    b.Property<long>("CNHDriverLicense")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
-
-                    b.Property<long>("DriverLicense1")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -150,7 +148,7 @@ namespace APIConductor.Migrations
 
                     b.HasIndex("AddressId");
 
-                    b.HasIndex("DriverLicense1");
+                    b.HasIndex("CNHDriverLicense");
 
                     b.ToTable("Conductor");
                 });
@@ -174,15 +172,15 @@ namespace APIConductor.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.CNH", "DriverLicense")
+                    b.HasOne("Models.CNH", "CNH")
                         .WithMany()
-                        .HasForeignKey("DriverLicense1")
+                        .HasForeignKey("CNHDriverLicense")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Address");
 
-                    b.Navigation("DriverLicense");
+                    b.Navigation("CNH");
                 });
 #pragma warning restore 612, 618
         }

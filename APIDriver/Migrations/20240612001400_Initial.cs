@@ -9,8 +9,7 @@ namespace APIConductor.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            /*
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "Address",
                 columns: table => new
                 {
@@ -72,7 +71,7 @@ namespace APIConductor.Migrations
                 columns: table => new
                 {
                     Document = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DriverLicense = table.Column<long>(type: "bigint", nullable: false),
+                    CNHDriverLicense = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AddressId = table.Column<int>(type: "int", nullable: false),
@@ -82,15 +81,15 @@ namespace APIConductor.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Conductor", x => x.Document);
-                    /*table.ForeignKey(
+                    table.ForeignKey(
                         name: "FK_Conductor_Address_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Address",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);*/
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Conductor_CNH_DriverLicense1",
-                        column: x => x.DriverLicense,
+                        name: "FK_Conductor_CNH_CNHDriverLicense",
+                        column: x => x.CNHDriverLicense,
                         principalTable: "CNH",
                         principalColumn: "DriverLicense",
                         onDelete: ReferentialAction.Cascade);
@@ -107,9 +106,9 @@ namespace APIConductor.Migrations
                 column: "AddressId");
             */
             migrationBuilder.CreateIndex(
-                name: "IX_Conductor_DriverLicense1",
+                name: "IX_Conductor_CNHDriverLicense",
                 table: "Conductor",
-                column: "DriverLicense");
+                column: "CNHDriverLicense");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
