@@ -108,43 +108,6 @@ namespace APIInsurance.Migrations
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("Models.CNH", b =>
-                {
-                    b.Property<long>("DriverLicense")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("DriverLicense"), 1L, 1);
-
-                    b.Property<string>("CPF")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FatherName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MotherName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RG")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DriverLicense");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("CNH");
-                });
-
             modelBuilder.Entity("Models.Conductor", b =>
                 {
                     b.Property<string>("Document")
@@ -153,11 +116,11 @@ namespace APIInsurance.Migrations
                     b.Property<int>("AddressId")
                         .HasColumnType("int");
 
-                    b.Property<long>("CNHDriverLicense")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
+
+                    b.Property<long>("DriverLicenseDriverId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -175,7 +138,7 @@ namespace APIInsurance.Migrations
 
                     b.HasIndex("AddressId");
 
-                    b.HasIndex("CNHDriverLicense");
+                    b.HasIndex("DriverLicenseDriverId");
 
                     b.ToTable("Conductor");
                 });
@@ -217,6 +180,43 @@ namespace APIInsurance.Migrations
                     b.ToTable("Customer");
                 });
 
+            modelBuilder.Entity("Models.DriverLicense", b =>
+                {
+                    b.Property<long>("DriverId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("DriverId"), 1L, 1);
+
+                    b.Property<string>("CPF")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FatherName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MotherName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RG")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DriverId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("DriverLicense");
+                });
+
             modelBuilder.Entity("Models.Insurance", b =>
                 {
                     b.Property<int>("Id")
@@ -251,17 +251,6 @@ namespace APIInsurance.Migrations
                     b.ToTable("Insurance");
                 });
 
-            modelBuilder.Entity("Models.CNH", b =>
-                {
-                    b.HasOne("Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("Models.Conductor", b =>
                 {
                     b.HasOne("Models.Address", "Address")
@@ -270,15 +259,15 @@ namespace APIInsurance.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.CNH", "CNH")
+                    b.HasOne("Models.DriverLicense", "DriverLicense")
                         .WithMany()
-                        .HasForeignKey("CNHDriverLicense")
+                        .HasForeignKey("DriverLicenseDriverId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Address");
 
-                    b.Navigation("CNH");
+                    b.Navigation("DriverLicense");
                 });
 
             modelBuilder.Entity("Models.Customer", b =>
@@ -290,6 +279,17 @@ namespace APIInsurance.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("Models.DriverLicense", b =>
+                {
+                    b.HasOne("Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Models.Insurance", b =>

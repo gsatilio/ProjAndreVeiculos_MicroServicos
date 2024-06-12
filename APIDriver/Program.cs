@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using APIConductor.Data;
+using APIDriver.Data;
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<APIConductorContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("APIConductorContext") ?? throw new InvalidOperationException("Connection string 'APIConductorContext' not found.")));
+builder.Services.AddDbContext<APIDriverContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("APIDriverContext") ?? throw new InvalidOperationException("Connection string 'APIDriverContext' not found.")));
 
 // Add services to the container.
 

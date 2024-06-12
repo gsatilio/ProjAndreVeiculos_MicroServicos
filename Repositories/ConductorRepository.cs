@@ -28,7 +28,7 @@ namespace Repositories
                         var cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = Conductor.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@Document", conductor.Document));
-                        cmd.Parameters.Add(new SqlParameter("@CNHDriverLicense", conductor.CNH.DriverLicense));
+                        cmd.Parameters.Add(new SqlParameter("@CNHDriverLicense", conductor.DriverLicense.DriverId));
                         cmd.Parameters.Add(new SqlParameter("@Name", conductor.Name));
                         cmd.Parameters.Add(new SqlParameter("@DateOfBirth", conductor.DateOfBirth));
                         cmd.Parameters.Add(new SqlParameter("@AddressId", conductor.Address.Id));
@@ -41,7 +41,7 @@ namespace Repositories
                         result = db.ExecuteScalar<int>(Conductor.INSERT, new
                         {
                             conductor.Document,
-                            conductor.CNH.DriverLicense,
+                            conductor.DriverLicense.DriverId,
                             conductor.Name,
                             conductor.DateOfBirth,
                             conductor.Address.Id,
@@ -83,7 +83,7 @@ namespace Repositories
                                     DateOfBirth = reader.GetDateTime(2),
                                     Phone = reader.GetString(3),
                                     Email = reader.GetString(4),
-                                    CNH = await new CNHRepository().Get(reader.GetInt32(5), type),
+                                    DriverLicense = await new DriverLicenseRepository().Get(reader.GetInt32(5), type),
                                     Address = await new AddressRepository().Get(reader.GetInt32(13), type)
                                 });
                             }
@@ -91,12 +91,12 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        list = db.Query<Conductor, CNH, Category, Address, Conductor>(Conductor.GETALL,
+                        list = db.Query<Conductor, DriverLicense, Category, Address, Conductor>(Conductor.GETALL,
                             (conductor, cnh, category, address) =>
                             {
                                 conductor.Address = address;
-                                conductor.CNH = cnh;
-                                conductor.CNH.Category = category;
+                                conductor.DriverLicense = cnh;
+                                conductor.DriverLicense.Category = category;
                                 return conductor;
                             }, splitOn: "Email, FatherName, Id"
                     ).ToList();
@@ -136,7 +136,7 @@ namespace Repositories
                                     DateOfBirth = reader.GetDateTime(2),
                                     Phone = reader.GetString(3),
                                     Email = reader.GetString(4),
-                                    CNH = await new CNHRepository().Get(reader.GetInt32(5), type),
+                                    DriverLicense = await new DriverLicenseRepository().Get(reader.GetInt32(5), type),
                                     Address = await new AddressRepository().Get(reader.GetInt32(13), type)
                                 };
                             }
@@ -144,12 +144,12 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        list = db.Query<Conductor, CNH, Category, Address, Conductor>(Conductor.GETALL,
+                        list = db.Query<Conductor, DriverLicense, Category, Address, Conductor>(Conductor.GETALL,
                             (conductor, cnh, category, address) =>
                             {
                                 conductor.Address = address;
-                                conductor.CNH = cnh;
-                                conductor.CNH.Category = category;
+                                conductor.DriverLicense = cnh;
+                                conductor.DriverLicense.Category = category;
                                 return conductor;
                             }, splitOn: "Email, FatherName, Id"
                     ).ToList().First();

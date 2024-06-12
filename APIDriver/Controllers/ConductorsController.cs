@@ -5,23 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using APIConductor.Data;
+using APIDriver.Data;
 using Models;
-using Controllers;
-using System.Net;
-using Models.DTO;
-using APIAddress.Services;
 
-namespace APIConductor.Controllers
+namespace APIDriver.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ConductorsController : ControllerBase
     {
-        private readonly APIConductorContext _context;
-        private readonly AddressesService _addressesService;
+        private readonly APIDriverContext _context;
 
-        public ConductorsController(APIConductorContext context)
+        public ConductorsController(APIDriverContext context)
         {
             _context = context;
         }
@@ -88,57 +83,21 @@ namespace APIConductor.Controllers
 
         // POST: api/Conductors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("techType")]
-        public async Task<ActionResult<Conductor>> PostConductor(int techType, ConductorDTO conductorDTO)
+        [HttpPost]
+        public async Task<ActionResult<Conductor>> PostConductor(Conductor conductor)
         {
           if (_context.Conductor == null)
           {
-              return Problem("Entity set 'APIConductorContext.Conductor'  is null.");
+              return Problem("Entity set 'APIDriverContext.Conductor'  is null.");
           }
+            _context.Conductor.Add(conductor);
             try
             {
-                Conductor conductor = new();
-                var address = await _addressesService.RetrieveAdressAPI(conductorDTO.Address);
-                conductor.Document = conductorDTO.Document;
-                conductor.Name = conductorDTO.Name;
-                conductor.DateOfBirth = conductorDTO.DateOfBirth;
-                conductor.Phone = conductorDTO.Phone;
-                conductor.Email = conductorDTO.Email;
-                conductor.Address = address;
-                conductor.Address.CEP = conductorDTO.Address.CEP;
-                conductor.Address.StreetType = conductorDTO.Address.StreetType;
-                conductor.Address.Street = conductorDTO.Address.Complement;
-                conductor.Address.Number = conductorDTO.Address.Number;
-                conductor.CNH.DriverLicense = conductorDTO.CNHDTO.DriverLicense;
-
-                int addressid, cnh, category;
-                switch (techType)
-                {
-                    case 0:
-                        _context.Conductor.Add(conductor);
-                        await _context.SaveChangesAsync();
-                        break;
-                    case 1:
-                        addressid = new AddressController().Insert(conductor.Address, 0);
-                        cnh = new CNHController().Insert(conductor.CNH, 0);
-                        category = new CategoryController().Insert(conductor.CNH.Category, 0);
-                        conductor.Address.Id = addressid;
-                        conductor.CNH.DriverLicense = cnh;
-                        new ConductorController().Insert(conductor, 0);
-                        break;
-                    case 2:
-                        addressid = new AddressController().Insert(conductor.Address, 1);
-                        cnh = new CNHController().Insert(conductor.CNH, 1);
-                        category = new CategoryController().Insert(conductor.CNH.Category, 1);
-                        conductor.Address.Id = addressid;
-                        conductor.CNH.DriverLicense = cnh;
-                        new ConductorController().Insert(conductor, 1);
-                        break;
-                }
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (ConductorExists(conductorDTO.Document))
+                if (ConductorExists(conductor.Document))
                 {
                     return Conflict();
                 }
@@ -148,7 +107,7 @@ namespace APIConductor.Controllers
                 }
             }
 
-            return CreatedAtAction("GetConductor", new { id = conductorDTO.Document }, conductorDTO);
+            return CreatedAtAction("GetConductor", new { id = conductor.Document }, conductor);
         }
 
         // DELETE: api/Conductors/5

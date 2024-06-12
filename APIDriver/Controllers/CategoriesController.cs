@@ -5,76 +5,49 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using APIConductor.Data;
+using APIDriver.Data;
 using Models;
-using Controllers;
 
-namespace APIConductor.Controllers
+namespace APIDriver.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly APIConductorContext _context;
+        private readonly APIDriverContext _context;
 
-        public CategoriesController(APIConductorContext context)
+        public CategoriesController(APIDriverContext context)
         {
             _context = context;
         }
 
-        // GET: api/Categorys
-        [HttpGet("{techType}")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategory(int techType)
+        // GET: api/Categories
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
         {
-            if (_context.Category == null)
-            {
-                return NotFound();
-            }
-            List<Category> addresses = new List<Category>();
-            switch (techType)
-            {
-                case 0:
-                    addresses = await _context.Category.ToListAsync();
-                    break;
-                case 1:
-                    addresses = await new CategoryController().GetAll(0);
-                    break;
-                case 2:
-                    addresses = await new CategoryController().GetAll(1);
-                    break;
-            }
-            return addresses;
+          if (_context.Category == null)
+          {
+              return NotFound();
+          }
+            return await _context.Category.ToListAsync();
         }
 
-        // GET: api/Categorys/5
-        [HttpGet("{id},{techType}")]
-        public async Task<ActionResult<Category>> GetCategory(int id, int techType)
+        // GET: api/Categories/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Category>> GetCategory(int id)
         {
-            if (_context.Category == null)
+          if (_context.Category == null)
+          {
+              return NotFound();
+          }
+            var category = await _context.Category.FindAsync(id);
+
+            if (category == null)
             {
                 return NotFound();
             }
 
-            Category? address = new Category();
-            switch (techType)
-            {
-                case 0:
-                    address = await _context.Category.FindAsync(id);
-                    break;
-                case 1:
-                    address = await new CategoryController().Get(id, 0);
-                    break;
-                case 2:
-                    address = await new CategoryController().Get(id, 1);
-                    break;
-            }
-
-            if (address == null)
-            {
-                return NotFound();
-            }
-
-            return address;
+            return category;
         }
 
         // PUT: api/Categories/5
@@ -115,12 +88,12 @@ namespace APIConductor.Controllers
         {
           if (_context.Category == null)
           {
-              return Problem("Entity set 'APIConductorContext.Category'  is null.");
+              return Problem("Entity set 'APIDriverContext.Category'  is null.");
           }
             _context.Category.Add(category);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCategory", new { id = category.Id, techType = 0 }, category);
+            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
         }
 
         // DELETE: api/Categories/5

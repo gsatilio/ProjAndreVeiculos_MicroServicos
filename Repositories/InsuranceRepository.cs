@@ -9,7 +9,7 @@ using System.Reflection.PortableExecutable;
 namespace Repositories
 {
     public class InsuranceRepository
-    {
+    { /*
         private string Conn { get; set; }
         public InsuranceRepository()
         {
@@ -168,6 +168,6 @@ namespace Repositories
             }
             return list;
         }
-        
+        */
     }
 }
