@@ -9,6 +9,7 @@ using APIPix.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
+using APIPix.Services;
 
 namespace APIPix.Controllers
 {
@@ -17,10 +18,12 @@ namespace APIPix.Controllers
     public class PixesController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly PixesService _service = new();
 
-        public PixesController(DataAPIContext context)
+        public PixesController(DataAPIContext context, PixesService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/Pix
@@ -38,11 +41,13 @@ namespace APIPix.Controllers
                     customer = await _context.Pix.Include(a => a.PixType).ToListAsync();
                     break;
                 case 1:
-                    customer = await new PixController().GetAll(0);
+                    customer = await _service.GetAll(0);
                     break;
                 case 2:
-                    customer = await new PixController().GetAll(1);
+                    customer = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return customer;
         }
@@ -62,11 +67,13 @@ namespace APIPix.Controllers
                     customer = await _context.Pix.Include(a => a.PixType).SingleOrDefaultAsync(c => c.Id == id);
                     break;
                 case 1:
-                    customer = await new PixController().Get(id, 0);
+                    customer = await _service.Get(id, 0);
                     break;
                 case 2:
-                    customer = await new PixController().Get(id, 1);
+                    customer = await _service.Get(id, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (customer == null)

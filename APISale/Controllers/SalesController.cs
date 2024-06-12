@@ -9,6 +9,7 @@ using APISale.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
+using APISale.Services;
 
 namespace APISale.Controllers
 {
@@ -17,10 +18,12 @@ namespace APISale.Controllers
     public class SalesController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly SalesService _service = new();
 
-        public SalesController(DataAPIContext context)
+        public SalesController(DataAPIContext context, SalesService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/Sale
@@ -38,11 +41,13 @@ namespace APISale.Controllers
                     addresses = await _context.Sale.Include(p => p.Car).Include(p => p.Customer).Include(p => p.Customer.Address).Include(p => p.Employee).Include(p => p.Employee.Address).Include(p => p.Payment.CreditCard).Include(p => p.Payment.Boleto).Include(p => p.Payment.Pix).Include(p => p.Payment.Pix.PixType).ToListAsync();
                     break;
                 case 1:
-                    addresses = await new SaleController().GetAll(0);
+                    addresses = await _service.GetAll(0);
                     break;
                 case 2:
-                    addresses = await new SaleController().GetAll(1);
+                    addresses = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return addresses;
         }
@@ -63,11 +68,13 @@ namespace APISale.Controllers
                     address = await _context.Sale.Include(p => p.Car).Include(p => p.Customer).Include(p => p.Customer.Address).Include(p => p.Employee).Include(p => p.Employee.Address).Include(p => p.Payment.CreditCard).Include(p => p.Payment.Boleto).Include(p => p.Payment.Pix).Include(p => p.Payment.Pix.PixType).SingleOrDefaultAsync(p => p.Id == id);
                     break;
                 case 1:
-                    address = await new SaleController().Get(id, 0);
+                    address = await _service.Get(id, 0);
                     break;
                 case 2:
-                    address = await new SaleController().Get(id, 1);
+                    address = await _service.Get(id, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (address == null)

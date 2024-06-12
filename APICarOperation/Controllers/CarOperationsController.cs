@@ -9,6 +9,7 @@ using APICarOperation.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
+using APICarOperation.Services;
 
 namespace APICarOperation.Controllers
 {
@@ -17,10 +18,12 @@ namespace APICarOperation.Controllers
     public class CarOperationsController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly CarOperationsService _service = new();
 
-        public CarOperationsController(DataAPIContext context)
+        public CarOperationsController(DataAPIContext context, CarOperationsService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/CarOperations
@@ -38,11 +41,13 @@ namespace APICarOperation.Controllers
                     carOp = await _context.CarOperation.Include(c => c.Car).Include(o => o.Operation).ToListAsync();
                     break;
                 case 1:
-                    carOp = await new CarOperationController().GetAll(0);
+                    carOp = await _service.GetAll(0);
                     break;
                 case 2:
-                    carOp = await new CarOperationController().GetAll(1);
+                    carOp = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return carOp;
         }
@@ -62,11 +67,13 @@ namespace APICarOperation.Controllers
                     carOp = await _context.CarOperation.Include(c => c.Car).Include(o => o.Operation).SingleOrDefaultAsync(c => c.Id == id);
                     break;
                 case 1:
-                    carOp = await new CarOperationController().Get(id, 0);
+                    carOp = await _service.Get(id, 0);
                     break;
                 case 2:
-                    carOp = await new CarOperationController().Get(id, 1);
+                    carOp = await _service.Get(id, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (carOp == null)

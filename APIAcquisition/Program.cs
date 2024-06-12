@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using APIAcquisition.Data;
 using DataAPI.Data;
+using APIAcquisition.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APIAcquisitionContext") ?? throw new InvalidOperationException("Connection string 'APIAcquisitionContext' not found.")));
@@ -13,6 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton<AcquisitionsService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -9,6 +9,8 @@ using APIPayment.Data;
 using Models;
 using Controllers;
 using APIAcquisition.Data;
+using DataAPI.Data;
+using APIPayment.Services;
 
 namespace APIPayment.Controllers
 {
@@ -17,10 +19,12 @@ namespace APIPayment.Controllers
     public class PaymentsController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly PaymentsService _service = new();
 
-        public PaymentsController(DataAPIContext context)
+        public PaymentsController(DataAPIContext context, PaymentsService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/Payment
@@ -38,11 +42,13 @@ namespace APIPayment.Controllers
                     addresses = await _context.Payment.Include(p => p.CreditCard).Include(p => p.Boleto).Include(p => p.Pix.PixType).ToListAsync();
                     break;
                 case 1:
-                    addresses = await new PaymentController().GetAll(0);
+                    addresses = await _service.GetAll(0);
                     break;
                 case 2:
-                    addresses = await new PaymentController().GetAll(1);
+                    addresses = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return addresses;
         }
@@ -63,11 +69,13 @@ namespace APIPayment.Controllers
                     address = await _context.Payment.Include(p => p.CreditCard).Include(p => p.Boleto).Include(p => p.Pix.PixType).SingleOrDefaultAsync(p => p.Id == id);
                     break;
                 case 1:
-                    address = await new PaymentController().Get(id, 0);
+                    address = await _service.Get(id, 0);
                     break;
                 case 2:
-                    address = await new PaymentController().Get(id, 1);
+                    address = await _service.Get(id, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (address == null)

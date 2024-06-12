@@ -1,18 +1,18 @@
 ﻿using Models;
 using Repositories;
 
-namespace Services
+namespace APICarOperation.Services
 {
-    public class BoletoService
+    public class CreditCardsService
     {
-        private BoletoRepository _repository = new();
+        private CreditCardRepository _repository = new();
 
-        public async Task<int> Insert(Boleto boleto, int type)
+        public int Insert(CreditCard creditCard, int type)
         {
             int result = 0;
             try
             {
-                result = await _repository.Insert(boleto, type);
+                result = _repository.Insert(creditCard, type);
             }
             catch (Exception ex)
             {
@@ -22,9 +22,9 @@ namespace Services
             return result;
         }
 
-        public async Task<List<Boleto>> GetAll(int type)
+        public async Task<List<CreditCard>> GetAll(int type)
         {
-            List<Boleto> list = new List<Boleto>();
+            List<CreditCard> list = new List<CreditCard>();
             try
             {
                 list = await _repository.GetAll(type);
@@ -36,9 +36,9 @@ namespace Services
             }
             return list;
         }
-        public async Task<Boleto> Get(int id, int type)
+        public async Task<CreditCard> Get(int id, int type)
         {
-            Boleto list = new Boleto();
+            CreditCard list = new CreditCard();
             try
             {
                 list = await _repository.Get(id, type);

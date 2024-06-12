@@ -144,10 +144,10 @@ namespace APIAddress.Controllers
                         await _context.SaveChangesAsync();
                         break;
                     case 1:
-                        address.Id = _service.Insert(address, 0);
+                        address.Id = await _service.Insert(address, 0);
                         break;
                     case 2:
-                        address.Id = _service.Insert(address, 1);
+                        address.Id = await _service.Insert(address, 1);
                         break;
                     default:
                         return NotFound();

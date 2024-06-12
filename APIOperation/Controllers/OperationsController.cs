@@ -9,6 +9,7 @@ using APIOperation.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
+using APIOperation.Services;
 
 namespace APIOperation.Controllers
 {
@@ -17,10 +18,12 @@ namespace APIOperation.Controllers
     public class OperationsController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly OperationsService _service = new();
 
-        public OperationsController(DataAPIContext context)
+        public OperationsController(DataAPIContext context, OperationsService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/Operation
@@ -38,11 +41,13 @@ namespace APIOperation.Controllers
                     addresses = await _context.Operation.ToListAsync();
                     break;
                 case 1:
-                    addresses = await new OperationController().GetAll(0);
+                    addresses = await _service.GetAll(0);
                     break;
                 case 2:
-                    addresses = await new OperationController().GetAll(1);
+                    addresses = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return addresses;
         }
@@ -63,11 +68,13 @@ namespace APIOperation.Controllers
                     address = await _context.Operation.FindAsync(id);
                     break;
                 case 1:
-                    address = await new OperationController().Get(id, 0);
+                    address = await _service.Get(id, 0);
                     break;
                 case 2:
-                    address = await new OperationController().Get(id, 1);
+                    address = await _service.Get(id, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (address == null)

@@ -1,18 +1,18 @@
 ﻿using Models;
 using Repositories;
 
-namespace Services
+namespace APIEmployee.Services
 {
-    public class BoletoService
+    public class EmployeesService
     {
-        private BoletoRepository _repository = new();
+        private EmployeeRepository _repository = new();
 
-        public async Task<int> Insert(Boleto boleto, int type)
+        public int Insert(Employee employee, int type)
         {
             int result = 0;
             try
             {
-                result = await _repository.Insert(boleto, type);
+                result = _repository.Insert(employee, type);
             }
             catch (Exception ex)
             {
@@ -21,10 +21,9 @@ namespace Services
             }
             return result;
         }
-
-        public async Task<List<Boleto>> GetAll(int type)
+        public async Task<List<Employee>> GetAll(int type)
         {
-            List<Boleto> list = new List<Boleto>();
+            List<Employee> list = new List<Employee>();
             try
             {
                 list = await _repository.GetAll(type);
@@ -36,12 +35,12 @@ namespace Services
             }
             return list;
         }
-        public async Task<Boleto> Get(int id, int type)
+        public async Task<Employee> Get(string document, int type)
         {
-            Boleto list = new Boleto();
+            Employee list = new Employee();
             try
             {
-                list = await _repository.Get(id, type);
+                list = await _repository.Get(document, type);
             }
             catch (Exception ex)
             {

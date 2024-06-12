@@ -1,36 +1,33 @@
 ﻿using Models;
-using Services;
+using Repositories;
 
-namespace Controllers
+namespace APIRole.Services
 {
-    public class BoletoController
+    public class RolesService
     {
-        private BoletoService _service = new();
+        private RoleRepository _repository = new();
 
-        public BoletoController()
-        {
-
-        }
-        public async Task<int> Insert(Boleto boleto, int type)
+        public int Insert(Role role, int type)
         {
             int result = 0;
             try
             {
-                result = await _service.Insert(boleto, type);
+                result = _repository.Insert(role, type);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             return result;
         }
 
-        public async Task<List<Boleto>> GetAll(int type)
+        public async Task<List<Role>> GetAll(int type)
         {
-            List<Boleto> list = new List<Boleto>();
+            List<Role> list = new List<Role>();
             try
             {
-                list = await _service.GetAll(type);
+                list = await _repository.GetAll(type);
             }
             catch (Exception ex)
             {
@@ -39,12 +36,12 @@ namespace Controllers
             }
             return list;
         }
-        public async Task<Boleto> Get(int id, int type)
+        public async Task<Role> Get(int id, int type)
         {
-            Boleto list = new Boleto();
+            Role list = new Role();
             try
             {
-                list = await _service.Get(id, type);
+                list = await _repository.Get(id, type);
             }
             catch (Exception ex)
             {

@@ -9,6 +9,7 @@ using APIRole.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
+using APIRole.Services;
 
 namespace APIRole.Controllers
 {
@@ -17,10 +18,12 @@ namespace APIRole.Controllers
     public class RolesController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly RolesService _service = new();
 
-        public RolesController(DataAPIContext context)
+        public RolesController(DataAPIContext context, RolesService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/Role
@@ -38,11 +41,13 @@ namespace APIRole.Controllers
                     addresses = await _context.Role.ToListAsync();
                     break;
                 case 1:
-                    addresses = await new RoleController().GetAll(0);
+                    addresses = await _service.GetAll(0);
                     break;
                 case 2:
-                    addresses = await new RoleController().GetAll(1);
+                    addresses = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return addresses;
         }
@@ -63,11 +68,13 @@ namespace APIRole.Controllers
                     address = await _context.Role.FindAsync(id);
                     break;
                 case 1:
-                    address = await new RoleController().Get(id, 0);
+                    address = await _service.Get(id, 0);
                     break;
                 case 2:
-                    address = await new RoleController().Get(id, 1);
+                    address = await _service.Get(id, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (address == null)

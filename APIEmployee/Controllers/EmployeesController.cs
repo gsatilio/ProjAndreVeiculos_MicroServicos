@@ -11,6 +11,7 @@ using Controllers;
 using Models.DTO;
 using APIAddress.Services;
 using DataAPI.Data;
+using APIEmployee.Services;
 
 namespace APIEmployee.Controllers
 {
@@ -20,12 +21,18 @@ namespace APIEmployee.Controllers
     {
         private readonly DataAPIContext _context;
         private readonly AddressesService _addressesService;
+        private readonly EmployeesService _service = new();
 
-        public EmployeesController(DataAPIContext context, AddressesService addressesService)
+        public EmployeesController(DataAPIContext context, EmployeesService service)
+        {
+            _context = context;
+            _service = service;
+        }
+        /*public EmployeesController(DataAPIContext context, AddressesService addressesService)
         {
             _context = context;
             _addressesService = addressesService;
-        }
+        }*/
 
         // GET: api/Employees
         [HttpGet("{techType}")]
@@ -42,11 +49,13 @@ namespace APIEmployee.Controllers
                     customer = await _context.Employee.Include(a => a.Address).Include(b => b.Role).ToListAsync();
                     break;
                 case 1:
-                    customer = await new EmployeeController().GetAll(0);
+                    customer = await _service.GetAll(0);
                     break;
                 case 2:
-                    customer = await new EmployeeController().GetAll(1);
+                    customer = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return customer;
         }
@@ -66,11 +75,13 @@ namespace APIEmployee.Controllers
                     customer = await _context.Employee.Include(a => a.Address).Include(b => b.Role).SingleOrDefaultAsync(c => c.Document == document);
                     break;
                 case 1:
-                    customer = await new EmployeeController().Get(document, 0);
+                    customer = await _service.Get(document, 0);
                     break;
                 case 2:
-                    customer = await new EmployeeController().Get(document, 1);
+                    customer = await _service.Get(document, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (customer == null)

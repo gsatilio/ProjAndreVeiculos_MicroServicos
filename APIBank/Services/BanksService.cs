@@ -1,6 +1,6 @@
 ﻿namespace APIBank.Services
 {
-    public class BankService
+    public class BanksService
     {
     }
 }

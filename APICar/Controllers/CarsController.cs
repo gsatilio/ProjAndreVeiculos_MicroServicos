@@ -9,6 +9,7 @@ using APICar.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
+using APICar.Services;
 
 namespace APICar.Controllers
 {
@@ -17,10 +18,12 @@ namespace APICar.Controllers
     public class CarsController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly CarsService _service = new();
 
-        public CarsController(DataAPIContext context)
+        public CarsController(DataAPIContext context, CarsService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/Cars
@@ -39,11 +42,13 @@ namespace APICar.Controllers
                     cars = await _context.Car.ToListAsync();
                     break;
                 case 1:
-                    cars = await new CarController().GetAll(0);
+                    cars = await _service.GetAll(0);
                     break;
                 case 2:
-                    cars = await new CarController().GetAll(1);
+                    cars = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return cars;
         }
@@ -63,11 +68,13 @@ namespace APICar.Controllers
                     car = await _context.Car.FindAsync(licensePlate);
                     break;
                 case 1:
-                    car = await new CarController().Get(licensePlate, 0);
+                    car = await _service.Get(licensePlate, 0);
                     break;
                 case 2:
-                    car = await new CarController().Get(licensePlate, 1);
+                    car = await _service.Get(licensePlate, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (car == null)

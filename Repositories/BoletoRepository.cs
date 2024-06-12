@@ -15,7 +15,7 @@ namespace Repositories
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;
         }
 
-        public int Insert(Boleto boleto, int type)
+        public async Task<int> Insert(Boleto boleto, int type)
         {
             int result = 0;
             try

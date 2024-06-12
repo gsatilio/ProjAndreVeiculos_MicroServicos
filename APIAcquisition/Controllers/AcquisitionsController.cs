@@ -20,11 +20,13 @@ namespace APIAcquisition.Controllers
     public class AcquisitionsController : ControllerBase
     {
         private readonly DataAPIContext _context;
-        private readonly AcquisitionsService _service = new();
+        private readonly AcquisitionsService _service;
 
-        public AcquisitionsController(DataAPIContext context)
+        public AcquisitionsController(DataAPIContext context, AcquisitionsService acquisitionsService)
         {
             _context = context;
+            _service = acquisitionsService;
+
         }
 
         // GET: api/Acquisitions

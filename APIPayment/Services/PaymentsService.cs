@@ -1,18 +1,18 @@
 ﻿using Models;
 using Repositories;
 
-namespace Services
+namespace APIPayment.Services
 {
-    public class BoletoService
+    public class PaymentsService
     {
-        private BoletoRepository _repository = new();
+        private PaymentRepository _repository = new();
 
-        public async Task<int> Insert(Boleto boleto, int type)
+        public int Insert(Payment payment, int type)
         {
             int result = 0;
             try
             {
-                result = await _repository.Insert(boleto, type);
+                result = _repository.Insert(payment, type);
             }
             catch (Exception ex)
             {
@@ -21,10 +21,9 @@ namespace Services
             }
             return result;
         }
-
-        public async Task<List<Boleto>> GetAll(int type)
+        public async Task<List<Payment>> GetAll(int type)
         {
-            List<Boleto> list = new List<Boleto>();
+            List<Payment> list = new List<Payment>();
             try
             {
                 list = await _repository.GetAll(type);
@@ -36,9 +35,9 @@ namespace Services
             }
             return list;
         }
-        public async Task<Boleto> Get(int id, int type)
+        public async Task<Payment> Get(int id, int type)
         {
-            Boleto list = new Boleto();
+            Payment list = new Payment();
             try
             {
                 list = await _repository.Get(id, type);

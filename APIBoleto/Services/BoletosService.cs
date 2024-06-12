@@ -1,36 +1,32 @@
 ﻿using Models;
-using Services;
+using Repositories;
 
-namespace Controllers
+namespace APIBoleto.Services
 {
-    public class BoletoController
+    public class BoletosService
     {
-        private BoletoService _service = new();
+        private BoletoRepository _repository = new();
 
-        public BoletoController()
-        {
-
-        }
-        public async Task<int> Insert(Boleto boleto, int type)
+        public async Task<int> Insert(Boleto acquisition, int type)
         {
             int result = 0;
             try
             {
-                result = await _service.Insert(boleto, type);
+                result = await _repository.Insert(acquisition, type);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             return result;
         }
-
         public async Task<List<Boleto>> GetAll(int type)
         {
             List<Boleto> list = new List<Boleto>();
             try
             {
-                list = await _service.GetAll(type);
+                list = await _repository.GetAll(type);
             }
             catch (Exception ex)
             {
@@ -44,7 +40,7 @@ namespace Controllers
             Boleto list = new Boleto();
             try
             {
-                list = await _service.Get(id, type);
+                list = await _repository.Get(id, type);
             }
             catch (Exception ex)
             {

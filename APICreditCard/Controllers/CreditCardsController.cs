@@ -9,6 +9,7 @@ using APICreditCard.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
+using APICarOperation.Services;
 
 namespace APICreditCard.Controllers
 {
@@ -17,10 +18,12 @@ namespace APICreditCard.Controllers
     public class CreditCardsController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly CreditCardsService _service = new();
 
-        public CreditCardsController(DataAPIContext context)
+        public CreditCardsController(DataAPIContext context, CreditCardsService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/CreditCard
@@ -38,11 +41,13 @@ namespace APICreditCard.Controllers
                     addresses = await _context.CreditCard.ToListAsync();
                     break;
                 case 1:
-                    addresses = await new CreditCardController().GetAll(0);
+                    addresses = await _service.GetAll(0);
                     break;
                 case 2:
-                    addresses = await new CreditCardController().GetAll(1);
+                    addresses = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return addresses;
         }
@@ -63,11 +68,13 @@ namespace APICreditCard.Controllers
                     address = await _context.CreditCard.FindAsync(id);
                     break;
                 case 1:
-                    address = await new CreditCardController().Get(id, 0);
+                    address = await _service.Get(id, 0);
                     break;
                 case 2:
-                    address = await new CreditCardController().Get(id, 1);
+                    address = await _service.Get(id, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (address == null)

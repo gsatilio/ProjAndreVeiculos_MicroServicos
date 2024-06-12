@@ -11,6 +11,7 @@ using Controllers;
 using Models.DTO;
 using APIAddress.Services;
 using DataAPI.Data;
+using APICustomer.Services;
 
 namespace APICustomer.Controllers
 {
@@ -20,12 +21,19 @@ namespace APICustomer.Controllers
     {
         private readonly DataAPIContext _context;
         private readonly AddressesService _addressesService;
+        private readonly CustomersService _service = new();
 
+        public CustomersController(DataAPIContext context, CustomersService service)
+        {
+            _context = context;
+            _service = service;
+        }
+        /*
         public CustomersController(DataAPIContext context, AddressesService addressesService)
         {
             _context = context;
             _addressesService = addressesService;
-        }
+        }*/
 
         // GET: api/Customers
         [HttpGet("{techType}")]
@@ -42,11 +50,13 @@ namespace APICustomer.Controllers
                     customer = await _context.Customer.Include(a => a.Address).ToListAsync();
                     break;
                 case 1:
-                    customer = await new CustomerController().GetAll(0);
+                    customer = await _service.GetAll(0);
                     break;
                 case 2:
-                    customer = await new CustomerController().GetAll(1);
+                    customer = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return customer;
         }
@@ -66,11 +76,13 @@ namespace APICustomer.Controllers
                     customer = await _context.Customer.Include(a => a.Address).SingleOrDefaultAsync(c => c.Document == document);
                     break;
                 case 1:
-                    customer = await new CustomerController().Get(document, 0);
+                    customer = await _service.Get(document, 0);
                     break;
                 case 2:
-                    customer = await new CustomerController().Get(document, 1);
+                    customer = await _service.Get(document, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (customer == null)

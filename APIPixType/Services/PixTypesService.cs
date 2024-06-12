@@ -1,18 +1,18 @@
 ﻿using Models;
 using Repositories;
 
-namespace Services
+namespace APIPixType.Services
 {
-    public class BoletoService
+    public class PixTypesService
     {
-        private BoletoRepository _repository = new();
+        private PixTypeRepository _repository = new();
 
-        public async Task<int> Insert(Boleto boleto, int type)
+        public int Insert(PixType pixType, int type)
         {
             int result = 0;
             try
             {
-                result = await _repository.Insert(boleto, type);
+                result = _repository.Insert(pixType, type);
             }
             catch (Exception ex)
             {
@@ -22,9 +22,9 @@ namespace Services
             return result;
         }
 
-        public async Task<List<Boleto>> GetAll(int type)
+        public async Task<List<PixType>> GetAll(int type)
         {
-            List<Boleto> list = new List<Boleto>();
+            List<PixType> list = new List<PixType>();
             try
             {
                 list = await _repository.GetAll(type);
@@ -36,9 +36,9 @@ namespace Services
             }
             return list;
         }
-        public async Task<Boleto> Get(int id, int type)
+        public async Task<PixType> Get(int id, int type)
         {
-            Boleto list = new Boleto();
+            PixType list = new PixType();
             try
             {
                 list = await _repository.Get(id, type);

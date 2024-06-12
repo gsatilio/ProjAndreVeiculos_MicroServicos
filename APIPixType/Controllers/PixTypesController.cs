@@ -9,6 +9,7 @@ using APIPixType.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
+using APIPixType.Services;
 
 namespace APIPixType.Controllers
 {
@@ -17,10 +18,12 @@ namespace APIPixType.Controllers
     public class PixTypesController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly PixTypesService _service = new();
 
-        public PixTypesController(DataAPIContext context)
+        public PixTypesController(DataAPIContext context, PixTypesService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/PixType
@@ -38,11 +41,13 @@ namespace APIPixType.Controllers
                     addresses = await _context.PixType.ToListAsync();
                     break;
                 case 1:
-                    addresses = await new PixTypeController().GetAll(0);
+                    addresses = await _service.GetAll(0);
                     break;
                 case 2:
-                    addresses = await new PixTypeController().GetAll(1);
+                    addresses = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return addresses;
         }
@@ -63,11 +68,13 @@ namespace APIPixType.Controllers
                     address = await _context.PixType.FindAsync(id);
                     break;
                 case 1:
-                    address = await new PixTypeController().Get(id, 0);
+                    address = await _service.Get(id, 0);
                     break;
                 case 2:
-                    address = await new PixTypeController().Get(id, 1);
+                    address = await _service.Get(id, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (address == null)

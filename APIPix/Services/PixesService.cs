@@ -1,36 +1,32 @@
 ﻿using Models;
-using Services;
+using Repositories;
 
-namespace Controllers
+namespace APIPix.Services
 {
-    public class BoletoController
+    public class PixesService
     {
-        private BoletoService _service = new();
+        private PixRepository _repository = new();
 
-        public BoletoController()
-        {
-
-        }
-        public async Task<int> Insert(Boleto boleto, int type)
+        public int Insert(Pix pix, int type)
         {
             int result = 0;
             try
             {
-                result = await _service.Insert(boleto, type);
+                result = _repository.Insert(pix, type);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             return result;
         }
-
-        public async Task<List<Boleto>> GetAll(int type)
+        public async Task<List<Pix>> GetAll(int type)
         {
-            List<Boleto> list = new List<Boleto>();
+            List<Pix> list = new List<Pix>();
             try
             {
-                list = await _service.GetAll(type);
+                list = await _repository.GetAll(type);
             }
             catch (Exception ex)
             {
@@ -39,12 +35,12 @@ namespace Controllers
             }
             return list;
         }
-        public async Task<Boleto> Get(int id, int type)
+        public async Task<Pix> Get(int id, int type)
         {
-            Boleto list = new Boleto();
+            Pix list = new Pix();
             try
             {
-                list = await _service.Get(id, type);
+                list = await _repository.Get(id, type);
             }
             catch (Exception ex)
             {

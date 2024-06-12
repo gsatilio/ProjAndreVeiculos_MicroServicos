@@ -25,7 +25,7 @@ builder.Services.AddSingleton<IMongoDBAPIDataBaseSettings>(sp =>
     sp.GetRequiredService<IOptions<MongoDBAPIDataBaseSettings>>().Value);
 
 builder.Services.AddSingleton<AddressesService>();
-builder.Services.AddSingleton<Repositories.AddressRepository>(); // injeta dependencia
+//builder.Services.AddSingleton<Repositories.AddressRepository>(); // injeta dependencia
 
 #endregion
 

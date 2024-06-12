@@ -9,6 +9,7 @@ using APIBoleto.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
+using APIBoleto.Services;
 
 namespace APIBoleto.Controllers
 {
@@ -17,10 +18,12 @@ namespace APIBoleto.Controllers
     public class BoletoesController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly BoletosService _service = new();
 
-        public BoletoesController(DataAPIContext context)
+        public BoletoesController(DataAPIContext context, BoletosService boletosService)
         {
             _context = context;
+            _service = boletosService;
         }
 
         // GET: api/Boleto
@@ -38,11 +41,13 @@ namespace APIBoleto.Controllers
                     addresses = await _context.Boleto.ToListAsync();
                     break;
                 case 1:
-                    addresses = await new BoletoController().GetAll(0);
+                    addresses = await _service.GetAll(0);
                     break;
                 case 2:
-                    addresses = await new BoletoController().GetAll(1);
+                    addresses = await _service.GetAll(1);
                     break;
+                default:
+                    return NotFound();
             }
             return addresses;
         }
@@ -63,11 +68,13 @@ namespace APIBoleto.Controllers
                     address = await _context.Boleto.FindAsync(id);
                     break;
                 case 1:
-                    address = await new BoletoController().Get(id, 0);
+                    address = await _service.Get(id, 0);
                     break;
                 case 2:
-                    address = await new BoletoController().Get(id, 1);
+                    address = await _service.Get(id, 1);
                     break;
+                default:
+                    return NotFound();
             }
 
             if (address == null)
@@ -114,10 +121,10 @@ namespace APIBoleto.Controllers
         [HttpPost]
         public async Task<ActionResult<Boleto>> PostBoleto(Boleto boleto)
         {
-          if (_context.Boleto == null)
-          {
-              return Problem("Entity set 'APIBoletoContext.Boleto'  is null.");
-          }
+            if (_context.Boleto == null)
+            {
+                return Problem("Entity set 'APIBoletoContext.Boleto'  is null.");
+            }
             _context.Boleto.Add(boleto);
             await _context.SaveChangesAsync();
 
