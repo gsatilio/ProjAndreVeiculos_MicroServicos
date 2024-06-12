@@ -10,6 +10,7 @@ using Models;
 using Controllers;
 using Models.DTO;
 using APIAddress.Services;
+using DataAPI.Data;
 
 namespace APIEmployee.Controllers
 {
@@ -17,10 +18,10 @@ namespace APIEmployee.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
-        private readonly APIEmployeeContext _context;
+        private readonly DataAPIContext _context;
         private readonly AddressesService _addressesService;
 
-        public EmployeesController(APIEmployeeContext context, AddressesService addressesService)
+        public EmployeesController(DataAPIContext context, AddressesService addressesService)
         {
             _context = context;
             _addressesService = addressesService;
@@ -124,7 +125,7 @@ namespace APIEmployee.Controllers
             var address = await _addressesService.RetrieveAdressAPI(employeeDTO.Address);
             employee.Address = address;
             
-
+            /*
             try
             {
                 switch (techType)
@@ -155,7 +156,7 @@ namespace APIEmployee.Controllers
                     throw;
                 }
             }
-
+            */
             return CreatedAtAction("GetEmployee", new { document = employee.Document, techType = 0 }, employee);
         }
 

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using APIPayment.Data;
 using Models;
 using Controllers;
+using APIAcquisition.Data;
 
 namespace APIPayment.Controllers
 {
@@ -15,9 +16,9 @@ namespace APIPayment.Controllers
     [ApiController]
     public class PaymentsController : ControllerBase
     {
-        private readonly APIPaymentContext _context;
+        private readonly DataAPIContext _context;
 
-        public PaymentsController(APIPaymentContext context)
+        public PaymentsController(DataAPIContext context)
         {
             _context = context;
         }

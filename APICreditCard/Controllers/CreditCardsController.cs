@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using APICreditCard.Data;
 using Models;
 using Controllers;
+using DataAPI.Data;
 
 namespace APICreditCard.Controllers
 {
@@ -15,9 +16,9 @@ namespace APICreditCard.Controllers
     [ApiController]
     public class CreditCardsController : ControllerBase
     {
-        private readonly APICreditCardContext _context;
+        private readonly DataAPIContext _context;
 
-        public CreditCardsController(APICreditCardContext context)
+        public CreditCardsController(DataAPIContext context)
         {
             _context = context;
         }

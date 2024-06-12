@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using APICreditCard.Data;
+using DataAPI.Data;
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<APICreditCardContext>(options =>
+builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APICreditCardContext") ?? throw new InvalidOperationException("Connection string 'APICreditCardContext' not found.")));
 
 // Add services to the container.

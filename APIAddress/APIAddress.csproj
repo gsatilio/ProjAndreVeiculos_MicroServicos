@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataAPI\DataAPI.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\MongoDB\MongoDB.csproj" />
     <ProjectReference Include="..\Repositories\Repositories.csproj" />

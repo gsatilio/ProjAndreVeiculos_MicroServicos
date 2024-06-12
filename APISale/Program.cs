@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using APISale.Data;
+using DataAPI.Data;
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<APISaleContext>(options =>
+builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APISaleContext") ?? throw new InvalidOperationException("Connection string 'APISaleContext' not found.")));
 
 // Add services to the container.

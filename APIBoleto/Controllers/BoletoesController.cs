@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using APIBoleto.Data;
 using Models;
 using Controllers;
+using DataAPI.Data;
 
 namespace APIBoleto.Controllers
 {
@@ -15,9 +16,9 @@ namespace APIBoleto.Controllers
     [ApiController]
     public class BoletoesController : ControllerBase
     {
-        private readonly APIBoletoContext _context;
+        private readonly DataAPIContext _context;
 
-        public BoletoesController(APIBoletoContext context)
+        public BoletoesController(DataAPIContext context)
         {
             _context = context;
         }

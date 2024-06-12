@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using APIPixType.Data;
+using DataAPI.Data;
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<APIPixTypeContext>(options =>
+builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APIPixTypeContext") ?? throw new InvalidOperationException("Connection string 'APIPixTypeContext' not found.")));
 
 // Add services to the container.

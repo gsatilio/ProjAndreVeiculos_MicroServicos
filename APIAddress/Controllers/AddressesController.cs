@@ -4,6 +4,7 @@ using APIAddress.Data;
 using Models;
 using Models.DTO;
 using APIAddress.Services;
+using DataAPI.Data;
 
 namespace APIAddress.Controllers
 {
@@ -11,9 +12,9 @@ namespace APIAddress.Controllers
     [ApiController]
     public class AddressesController : ControllerBase
     {
-        private readonly APIAddressContext _context;
+        private readonly DataAPIContext _context;
         private readonly AddressesService _service;
-        public AddressesController(APIAddressContext context, AddressesService addressesService)
+        public AddressesController(DataAPIContext context, AddressesService addressesService)
         {
             _context = context;
             _service = addressesService;

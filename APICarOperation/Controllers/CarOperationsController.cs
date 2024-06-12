@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using APICarOperation.Data;
 using Models;
 using Controllers;
+using DataAPI.Data;
 
 namespace APICarOperation.Controllers
 {
@@ -15,9 +16,9 @@ namespace APICarOperation.Controllers
     [ApiController]
     public class CarOperationsController : ControllerBase
     {
-        private readonly APICarOperationContext _context;
+        private readonly DataAPIContext _context;
 
-        public CarOperationsController(APICarOperationContext context)
+        public CarOperationsController(DataAPIContext context)
         {
             _context = context;
         }

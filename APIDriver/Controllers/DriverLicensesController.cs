@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using APIDriver.Data;
 using Models;
 using Models.DTO;
+using DataAPI.Data;
 
 namespace APIDriver.Controllers
 {
@@ -15,12 +16,12 @@ namespace APIDriver.Controllers
     [ApiController]
     public class DriverLicensesController : ControllerBase
     {
-        private readonly APIDriverContext _context;
+        private readonly DataAPIContext _context;
 
         private readonly CategoriesController _categoriesController;
         private readonly ConductorsController _conductorsController;
 
-        public DriverLicensesController(APIDriverContext context)
+        public DriverLicensesController(DataAPIContext context)
         {
             _context = context;
         }

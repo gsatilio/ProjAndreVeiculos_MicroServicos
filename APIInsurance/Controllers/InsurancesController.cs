@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIInsurance.Data;
 using Models;
+using DataAPI.Data;
 
 namespace APIInsurance.Controllers
 {
@@ -14,9 +15,9 @@ namespace APIInsurance.Controllers
     [ApiController]
     public class InsurancesController : ControllerBase
     {
-        private readonly APIInsuranceContext _context;
+        private readonly DataAPIContext _context;
 
-        public InsurancesController(APIInsuranceContext context)
+        public InsurancesController(DataAPIContext context)
         {
             _context = context;
         }

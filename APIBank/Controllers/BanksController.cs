@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIBank.Data;
 using Models;
+using DataAPI.Data;
 
 namespace APIBank.Controllers
 {
@@ -14,9 +15,9 @@ namespace APIBank.Controllers
     [ApiController]
     public class BanksController : ControllerBase
     {
-        private readonly APIBankContext _context;
+        private readonly DataAPIContext _context;
 
-        public BanksController(APIBankContext context)
+        public BanksController(DataAPIContext context)
         {
             _context = context;
         }

@@ -4,8 +4,9 @@ using APIEmployee.Data;
 using APIAddress.Services;
 using Microsoft.Extensions.Options;
 using MongoDB;
+using DataAPI.Data;
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<APIEmployeeContext>(options =>
+builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APIEmployeeContext") ?? throw new InvalidOperationException("Connection string 'APIEmployeeContext' not found.")));
 
 // Add services to the container.

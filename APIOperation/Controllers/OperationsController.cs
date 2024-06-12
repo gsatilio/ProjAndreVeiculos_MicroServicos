@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using APIOperation.Data;
 using Models;
 using Controllers;
+using DataAPI.Data;
 
 namespace APIOperation.Controllers
 {
@@ -15,9 +16,9 @@ namespace APIOperation.Controllers
     [ApiController]
     public class OperationsController : ControllerBase
     {
-        private readonly APIOperationContext _context;
+        private readonly DataAPIContext _context;
 
-        public OperationsController(APIOperationContext context)
+        public OperationsController(DataAPIContext context)
         {
             _context = context;
         }

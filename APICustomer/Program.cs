@@ -4,8 +4,9 @@ using APICustomer.Data;
 using APIAddress.Services;
 using Microsoft.Extensions.Options;
 using MongoDB;
+using DataAPI.Data;
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<APICustomerContext>(options =>
+builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APICustomerContext") ?? throw new InvalidOperationException("Connection string 'APICustomerContext' not found.")));
 
 // Add services to the container.

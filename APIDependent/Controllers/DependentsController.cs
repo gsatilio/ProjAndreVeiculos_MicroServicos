@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIDependent.Data;
 using Models;
+using DataAPI.Data;
 
 namespace APIDependent.Controllers
 {
@@ -14,9 +15,9 @@ namespace APIDependent.Controllers
     [ApiController]
     public class DependentsController : ControllerBase
     {
-        private readonly APIDependentContext _context;
+        private readonly DataAPIContext _context;
 
-        public DependentsController(APIDependentContext context)
+        public DependentsController(DataAPIContext context)
         {
             _context = context;
         }

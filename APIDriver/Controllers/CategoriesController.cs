@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIDriver.Data;
 using Models;
+using DataAPI.Data;
 
 namespace APIDriver.Controllers
 {
@@ -14,9 +15,9 @@ namespace APIDriver.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly APIDriverContext _context;
+        private readonly DataAPIContext _context;
 
-        public CategoriesController(APIDriverContext context)
+        public CategoriesController(DataAPIContext context)
         {
             _context = context;
         }

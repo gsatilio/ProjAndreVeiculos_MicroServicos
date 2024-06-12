@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIFinancialPending.Data;
 using Models;
+using DataAPI.Data;
 
 namespace APIFinancialPending.Controllers
 {
@@ -14,9 +15,9 @@ namespace APIFinancialPending.Controllers
     [ApiController]
     public class FinancialPendingsController : ControllerBase
     {
-        private readonly APIFinancialPendingContext _context;
+        private readonly DataAPIContext _context;
 
-        public FinancialPendingsController(APIFinancialPendingContext context)
+        public FinancialPendingsController(DataAPIContext context)
         {
             _context = context;
         }

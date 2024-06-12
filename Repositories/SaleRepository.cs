@@ -60,7 +60,6 @@ namespace Repositories
         public async Task<List<Sale>> GetAll(int type)
         {
             List<Sale>? list = new();
-            List<SaleQuery>? lista = new();
             try
             {
                 using (var db = new SqlConnection(Conn))
@@ -118,7 +117,6 @@ namespace Repositories
         public async Task<Sale> Get(int id, int type)
         {
             Sale? list = null;
-            SaleQuery lista = null;
             try
             {
                 using (var db = new SqlConnection(Conn))

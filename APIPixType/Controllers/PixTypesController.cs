@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using APIPixType.Data;
 using Models;
 using Controllers;
+using DataAPI.Data;
 
 namespace APIPixType.Controllers
 {
@@ -15,9 +16,9 @@ namespace APIPixType.Controllers
     [ApiController]
     public class PixTypesController : ControllerBase
     {
-        private readonly APIPixTypeContext _context;
+        private readonly DataAPIContext _context;
 
-        public PixTypesController(APIPixTypeContext context)
+        public PixTypesController(DataAPIContext context)
         {
             _context = context;
         }

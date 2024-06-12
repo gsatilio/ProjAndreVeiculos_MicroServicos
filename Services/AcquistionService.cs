@@ -1,16 +1,11 @@
 ﻿using Models;
 using Repositories;
 
-namespace APIAcquisition.Services
+namespace Services
 {
     public class AcquisitionService
     {
-        private AcquisitionRepository _repository;
-
-        public AcquisitionService(AcquisitionRepository repository)
-        {
-            _repository = repository;
-        }
+        private AcquisitionRepository _repository = new();
 
         public async Task<int> Insert(Acquisition acquisition, int type)
         {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIFinancing.Data;
 using Models;
+using DataAPI.Data;
 
 namespace APIFinancing.Controllers
 {
@@ -14,9 +15,9 @@ namespace APIFinancing.Controllers
     [ApiController]
     public class FinancingsController : ControllerBase
     {
-        private readonly APIFinancingContext _context;
+        private readonly DataAPIContext _context;
 
-        public FinancingsController(APIFinancingContext context)
+        public FinancingsController(DataAPIContext context)
         {
             _context = context;
         }

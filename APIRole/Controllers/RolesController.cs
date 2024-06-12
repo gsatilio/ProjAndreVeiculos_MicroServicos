@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using APIRole.Data;
 using Models;
 using Controllers;
+using DataAPI.Data;
 
 namespace APIRole.Controllers
 {
@@ -15,9 +16,9 @@ namespace APIRole.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
-        private readonly APIRoleContext _context;
+        private readonly DataAPIContext _context;
 
-        public RolesController(APIRoleContext context)
+        public RolesController(DataAPIContext context)
         {
             _context = context;
         }

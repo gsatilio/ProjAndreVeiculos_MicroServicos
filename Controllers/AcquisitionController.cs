@@ -5,18 +5,18 @@ namespace Controllers
 {
     public class AcquisitionController
     {
-        private AcquisitionService _service = new();
+        private AcquisitionService _service = new AcquisitionService();
 
         public AcquisitionController()
         {
 
         }
-        public int Insert(Acquisition acquisition, int type)
+        public async Task<int> Insert(Acquisition acquisition, int type)
         {
             int result = 0;
             try
             {
-                result = _service.Insert(acquisition, type);
+                result = await _service.Insert(acquisition, type);
             }
             catch
             {

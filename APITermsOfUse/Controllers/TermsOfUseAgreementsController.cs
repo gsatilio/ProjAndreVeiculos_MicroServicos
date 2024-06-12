@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APITermsOfUse.Data;
 using Models;
+using DataAPI.Data;
 
 namespace APITermsOfUse.Controllers
 {
@@ -14,9 +15,9 @@ namespace APITermsOfUse.Controllers
     [ApiController]
     public class TermsOfUseAgreementsController : ControllerBase
     {
-        private readonly APITermsOfUseContext _context;
+        private readonly DataAPIContext _context;
 
-        public TermsOfUseAgreementsController(APITermsOfUseContext context)
+        public TermsOfUseAgreementsController(DataAPIContext context)
         {
             _context = context;
         }

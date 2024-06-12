@@ -10,6 +10,7 @@ using Models;
 using Controllers;
 using Models.DTO;
 using APIAddress.Services;
+using DataAPI.Data;
 
 namespace APICustomer.Controllers
 {
@@ -17,10 +18,10 @@ namespace APICustomer.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly APICustomerContext _context;
+        private readonly DataAPIContext _context;
         private readonly AddressesService _addressesService;
 
-        public CustomersController(APICustomerContext context, AddressesService addressesService)
+        public CustomersController(DataAPIContext context, AddressesService addressesService)
         {
             _context = context;
             _addressesService = addressesService;
@@ -124,7 +125,7 @@ namespace APICustomer.Controllers
             var customer = new Customer(customerDTO);
             var address = await _addressesService.RetrieveAdressAPI(customerDTO.Address);
             customer.Address = address;
-
+            /*
             try
             {
                 switch (techType)
@@ -155,6 +156,7 @@ namespace APICustomer.Controllers
                     throw;
                 }
             }
+            */
             return CreatedAtAction("GetCustomer", new { document = customer.Document, techType = 0 }, customer);
         }
 

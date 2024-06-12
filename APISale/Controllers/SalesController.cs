@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using APISale.Data;
 using Models;
 using Controllers;
+using DataAPI.Data;
 
 namespace APISale.Controllers
 {
@@ -15,9 +16,9 @@ namespace APISale.Controllers
     [ApiController]
     public class SalesController : ControllerBase
     {
-        private readonly APISaleContext _context;
+        private readonly DataAPIContext _context;
 
-        public SalesController(APISaleContext context)
+        public SalesController(DataAPIContext context)
         {
             _context = context;
         }

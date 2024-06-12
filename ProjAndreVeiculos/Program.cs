@@ -6,11 +6,13 @@ using System.Xml.Linq;
 
 internal class Program
 {
+    
     private static readonly int connectionType = 0; // 0 - ADO.NET  1 - Dapper
     // appsettings.json e App.config devem estar com o mesmo banco de dados AndreVeiculosAPI
     // executar database-update para gerar as tabelas antes
     private static void Main(string[] args)
     {
+        /*
         int opt = -1;
         do
         {
@@ -450,5 +452,6 @@ internal class Program
             writer.WriteLine(xml);
             writer.Close();
         }
+        */
     }
 }
