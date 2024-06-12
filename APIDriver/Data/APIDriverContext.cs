@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Models;
 
 namespace APIConductor.Data
@@ -19,5 +20,11 @@ namespace APIConductor.Data
         public DbSet<Models.CNH>? CNH { get; set; }
 
         public DbSet<Models.Conductor>? Conductor { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Conductor>().ToTable("CNH").ToTable("Category");
+        }   
     }
 }

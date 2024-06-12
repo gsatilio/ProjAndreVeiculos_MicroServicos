@@ -46,7 +46,7 @@ namespace Repositories
                             cnh.CPF,
                             cnh.MotherName,
                             cnh.FatherName,
-                            cnh.Category.Id
+                            CategoryId = cnh.Category.Id
                         });
                     }
                     db.Close();

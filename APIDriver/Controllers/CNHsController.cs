@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIConductor.Data;
 using Models;
+using Models.DTO;
+using APIAddress.Services;
+using Controllers;
+using System.Net;
 
 namespace APIConductor.Controllers
 {
@@ -25,10 +29,10 @@ namespace APIConductor.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CNH>>> GetCNH()
         {
-          if (_context.CNH == null)
-          {
-              return NotFound();
-          }
+            if (_context.CNH == null)
+            {
+                return NotFound();
+            }
             return await _context.CNH.ToListAsync();
         }
 
@@ -36,10 +40,10 @@ namespace APIConductor.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CNH>> GetCNH(long id)
         {
-          if (_context.CNH == null)
-          {
-              return NotFound();
-          }
+            if (_context.CNH == null)
+            {
+                return NotFound();
+            }
             var cNH = await _context.CNH.FindAsync(id);
 
             if (cNH == null)
@@ -83,17 +87,48 @@ namespace APIConductor.Controllers
 
         // POST: api/CNHs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<CNH>> PostCNH(CNH cNH)
+        [HttpPost("techType")]
+        public async Task<ActionResult<CNH>> PostCNH(int techType, CNHDTO cnhDTO)
         {
-          if (_context.CNH == null)
-          {
-              return Problem("Entity set 'APIConductorContext.CNH'  is null.");
-          }
-            _context.CNH.Add(cNH);
-            await _context.SaveChangesAsync();
+            if (_context.CNH == null)
+            {
+                return Problem("Entity set 'APIConductorContext.CNH'  is null.");
+            }
+            CategoryController categoryController = new CategoryController();
+            var category = await categoryController.Get(cnhDTO.Category.Id, 0);
+            if (category == null)
+                return BadRequest("Categoria não existe");
 
-            return CreatedAtAction("GetCNH", new { id = cNH.DriverLicense }, cNH);
+            var cnh = new CNH(cnhDTO);
+            cnh.Category = category;
+            try
+            {
+                switch (techType)
+                {
+                    case 0:
+                        _context.CNH.Add(cnh);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        new CNHController().Insert(cnh, 0);
+                        break;
+                    case 2:
+                        new CNHController().Insert(cnh, 1);
+                        break;
+                }
+            }
+            catch (DbUpdateException)
+            {
+                if (CNHExists(cnh.DriverLicense))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return CreatedAtAction("GetCNH", new { id = cnh.DriverLicense }, cnh);
         }
 
         // DELETE: api/CNHs/5

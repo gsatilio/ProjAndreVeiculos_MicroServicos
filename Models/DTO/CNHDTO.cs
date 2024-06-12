@@ -9,5 +9,11 @@ namespace Models.DTO
     public class CNHDTO
     {
         public long DriverLicense {  get; set; }
+        public DateTime DueDate { get; set; }
+        public string RG {  get; set; }
+        public string CPF { get; set; }
+        public string MotherName {  get; set; }
+        public string FatherName {  get; set; }
+        public CategoryDTO Category { get; set; }
     }
 }

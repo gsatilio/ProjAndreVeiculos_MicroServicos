@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Models.DTO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,5 +22,22 @@ namespace Models
         public string MotherName { get; set; }
         public string FatherName { get; set; }
         public Category Category { get; set; }
+
+        public CNH()
+        {
+            
+        }
+
+        public CNH(CNHDTO cnhDTO)
+        {
+            this.DriverLicense = cnhDTO.DriverLicense;
+            this.DueDate = cnhDTO.DueDate;
+            this.RG = cnhDTO.RG;
+            this.CPF = cnhDTO.CPF;
+            this.MotherName = cnhDTO.MotherName;
+            this.FatherName = cnhDTO.FatherName;
+            var category = new Category();
+            this.Category = category;
+        }
     }
 }
