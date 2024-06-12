@@ -60,12 +60,12 @@ namespace APIAddress.Services
             }
         }
 
-        public int Insert(Address address, int type)
+        public async Task<int> Insert(Address address, int type)
         {
             int result = 0;
             try
             {
-                result = _repository.Insert(address, type);
+                result = await _repository.Insert(address, type);
             }
             catch (Exception ex)
             {

@@ -11,12 +11,12 @@ namespace Controllers
         {
 
         }
-        public int Insert(Address address, int type)
+        public async Task<int> Insert(Address address, int type)
         {
             int result = 0;
             try
             {
-                result = _service.Insert(address, type);
+                result = await _service.Insert(address, type);
             }
             catch
             {

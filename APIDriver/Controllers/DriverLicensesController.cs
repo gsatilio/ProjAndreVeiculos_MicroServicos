@@ -96,7 +96,7 @@ namespace APIDriver.Controllers
                 return Problem("Entity set 'APIDriverContext.DriverLicense'  is null.");
             }
             DriverLicense driverLicense = new(driverLicenseDTO);
-            var category = _context.Category.Find(driverLicenseDTO.Category.Id);
+            var category = _context.Category.Where(x => x.Id == driverLicenseDTO.Category.Id).FirstOrDefault();
             if (category != null)
             {
                 driverLicense.Category = category;

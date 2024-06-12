@@ -9,6 +9,9 @@ using APIAcquisition.Data;
 using Models;
 using Controllers;
 using DataAPI.Data;
+using Models.DTO;
+using System.Net;
+using APIAcquisition.Services;
 
 namespace APIAcquisition.Controllers
 {
@@ -17,6 +20,7 @@ namespace APIAcquisition.Controllers
     public class AcquisitionsController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly AcquisitionsService _service = new();
 
         public AcquisitionsController(DataAPIContext context)
         {
@@ -110,17 +114,52 @@ namespace APIAcquisition.Controllers
 
         // POST: api/Acquisitions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Acquisition>> PostAcquisition(Acquisition acquisition)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<Acquisition>> PostAcquisition(int techType, AcquisitionDTO acquisitionDTO)
         {
             if (_context.Acquisition == null)
             {
                 return Problem("Entity set 'APIAcquisitionContext.Acquisition'  is null.");
             }
-            _context.Acquisition.Add(acquisition);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAcquisition", new { id = acquisition.Id }, acquisition);
+            var car = _context.Car.Where(x => x.LicensePlate == acquisitionDTO.LicensePlate).FirstOrDefault();
+            if (car == null)
+                return BadRequest("Carro inexistente");
+
+
+            Acquisition acquisition = new(acquisitionDTO);
+            acquisition.Car = car;
+            try
+            {
+                switch (techType)
+                {
+                    case 0:
+                        _context.Acquisition.Add(acquisition);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        acquisition.Id = await _service.Insert(acquisition, 0);
+                        break;
+                    case 2:
+                        acquisition.Id = await _service.Insert(acquisition, 1);
+                        break;
+                    default:
+                        return NotFound();
+                }
+            }
+            catch (DbUpdateException)
+            {
+                if (AcquisitionExists(acquisition.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return CreatedAtAction("GetAcquisition", new { id = acquisition.Id, techType }, acquisition);
         }
 
         // DELETE: api/Acquisitions/5

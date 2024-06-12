@@ -1,25 +1,18 @@
 ﻿using Models;
-using Models.DTO;
-using MongoDB;
-using MongoDB.Driver;
-using Newtonsoft.Json;
 using Repositories;
-using System.Collections.Generic;
-using System.Net;
 
-
-namespace Services
+namespace APIAcquisition.Services
 {
-    public class AddressService
+    public class AcquisitionsService
     {
-        private AddressRepository _repository = new();
+        private AcquisitionRepository _repository = new();
 
-        public async Task<int> Insert(Address address, int type)
+        public async Task<int> Insert(Acquisition acquisition, int type)
         {
             int result = 0;
             try
             {
-                result = await _repository.Insert(address, type);
+                result = await _repository.Insert(acquisition, type);
             }
             catch (Exception ex)
             {
@@ -28,9 +21,9 @@ namespace Services
             }
             return result;
         }
-        public async Task<List<Address>> GetAll(int type)
+        public async Task<List<Acquisition>> GetAll(int type)
         {
-            List<Address> list = new List<Address>();
+            List<Acquisition> list = new List<Acquisition>();
             try
             {
                 list = await _repository.GetAll(type);
@@ -42,9 +35,9 @@ namespace Services
             }
             return list;
         }
-        public async Task<Address> Get(int id, int type)
+        public async Task<Acquisition> Get(int id, int type)
         {
-            Address list = new Address();
+            Acquisition list = new Acquisition();
             try
             {
                 list = await _repository.Get(id, type);

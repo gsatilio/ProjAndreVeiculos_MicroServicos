@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,5 +18,15 @@ namespace Models
         public Decimal Price { get; set; }
         public DateTime AcquisitionDate { get; set; }
 
+        public Acquisition()
+        {
+            
+        }
+        public Acquisition(AcquisitionDTO acquisitionDTO)
+        {
+            this.Price = acquisitionDTO.Price;
+            this.AcquisitionDate = acquisitionDTO.AcquisitionDate;
+            this.Car = new Car { LicensePlate = acquisitionDTO.LicensePlate };
+        }
     }
 }
