@@ -7,12 +7,12 @@ namespace Services
     {
         private RoleRepository _repository = new();
 
-        public int Insert(Role role, int type)
+        public async Task<int> Insert(Role role, int type)
         {
             int result = 0;
             try
             {
-                result = _repository.Insert(role, type);
+                result = await _repository.Insert(role, type);
             }
             catch (Exception ex)
             {

@@ -1,25 +1,22 @@
 ﻿using Models;
-using Services;
+using Repositories;
 
-namespace Controllers
+namespace APIEmployee.Services
 {
-    public class RoleController
+    public class RolesService
     {
-        private RoleService _service = new();
+        private RoleRepository _repository = new();
 
-        public RoleController()
-        {
-
-        }
         public async Task<int> Insert(Role role, int type)
         {
             int result = 0;
             try
             {
-                result = await _service.Insert(role, type);
+                result = await _repository.Insert(role, type);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             return result;
@@ -30,7 +27,7 @@ namespace Controllers
             List<Role> list = new List<Role>();
             try
             {
-                list = await _service.GetAll(type);
+                list = await _repository.GetAll(type);
             }
             catch (Exception ex)
             {
@@ -44,7 +41,7 @@ namespace Controllers
             Role list = new Role();
             try
             {
-                list = await _service.Get(id, type);
+                list = await _repository.Get(id, type);
             }
             catch (Exception ex)
             {

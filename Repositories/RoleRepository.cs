@@ -13,7 +13,7 @@ namespace Repositories
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;
         }
 
-        public int Insert(Role role, int type)
+        public async Task<int> Insert(Role role, int type)
         {
             int result = 0;
             try
@@ -25,7 +25,7 @@ namespace Repositories
                     {
                         var cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = Role.INSERT;
-                        cmd.Parameters.Add(new SqlParameter("@Number", role.Description));
+                        cmd.Parameters.Add(new SqlParameter("@Description", role.Description));
                         result = (int)cmd.ExecuteScalar();
                     }
                     else // Dapper

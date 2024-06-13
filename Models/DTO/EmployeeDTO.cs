@@ -11,11 +11,11 @@ namespace Models.DTO
         public string Document { get; set; }
         public string Name { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public Role Role { get; set; }
         public Decimal ComissionValue { get; set; }
         public Decimal Comission { get; set; }
         public AddressDTO Address { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public int RoleId {  get; set; }
     }
 }

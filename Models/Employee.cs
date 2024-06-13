@@ -27,7 +27,6 @@ namespace Models
             this.Comission = dto.Comission;
             this.Name = dto.Name;
             this.Document = dto.Document;
-            this.Role = dto.Role;
             this.Document = dto.Document;
             this.DateOfBirth = dto.DateOfBirth;
             this.Phone = dto.Phone;

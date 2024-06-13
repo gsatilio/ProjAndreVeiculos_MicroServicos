@@ -23,10 +23,11 @@ namespace APIEmployee.Controllers
         private readonly AddressesService _addressesService;
         private readonly EmployeesService _service = new();
 
-        public EmployeesController(DataAPIContext context, EmployeesService service)
+        public EmployeesController(DataAPIContext context, EmployeesService service, AddressesService addressesService)
         {
             _context = context;
             _service = service;
+            _addressesService = addressesService;
         }
         /*public EmployeesController(DataAPIContext context, AddressesService addressesService)
         {
@@ -134,9 +135,16 @@ namespace APIEmployee.Controllers
             }
             var employee = new Employee(employeeDTO);
             var address = await _addressesService.RetrieveAdressAPI(employeeDTO.Address);
+
+            if (address == null)
+                return BadRequest("Endereço não existente");
+
+            var role = _context.Role.Where(x => x.Id == employeeDTO.RoleId).FirstOrDefault();
+            if (role == null)
+                return BadRequest("Cargo não existente");
+
             employee.Address = address;
-            
-            /*
+            employee.Role = role;
             try
             {
                 switch (techType)
@@ -146,11 +154,11 @@ namespace APIEmployee.Controllers
                         await _context.SaveChangesAsync();
                         break;
                     case 1:
-                        employee.Address.Id = new AddressController().Insert(address, 0);
+                        employee.Address.Id = await _addressesService.Insert(address, 0);
                         new EmployeeController().Insert(employee, 0);
                         break;
                     case 2:
-                        employee.Address.Id = new AddressController().Insert(address, 1);
+                        employee.Address.Id = await _addressesService.Insert(address, 1);
                         new EmployeeController().Insert(employee, 1);
                         break;
                 }
@@ -167,7 +175,7 @@ namespace APIEmployee.Controllers
                     throw;
                 }
             }
-            */
+            
             return CreatedAtAction("GetEmployee", new { document = employee.Document, techType = 0 }, employee);
         }
 

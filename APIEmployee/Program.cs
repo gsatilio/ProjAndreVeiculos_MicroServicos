@@ -27,6 +27,7 @@ builder.Services.AddSingleton<IMongoDBAPIDataBaseSettings>(sp =>
 
 builder.Services.AddSingleton<AddressesService>();
 builder.Services.AddSingleton<EmployeesService>();
+builder.Services.AddSingleton<RolesService>();
 #endregion
 
 var app = builder.Build();
