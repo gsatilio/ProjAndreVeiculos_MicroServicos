@@ -128,15 +128,12 @@ namespace APIPayment.Controllers
             }
 
 
-            Payment payment = new(paymentDTO);
-            var creditCard = _context.CreditCard.Where(x => x.Id == paymentDTO.IdCreditCard).FirstOrDefault();
-            var boleto = _context.Boleto.Where(x => x.Id == paymentDTO.IdBoleto).FirstOrDefault();
-            var pix = _context.Pix.Where(x => x.Id == paymentDTO.IdPix).FirstOrDefault();
-
-            if (creditCard == null) payment.CreditCard = null;
-            if (boleto == null) payment.Boleto = null;
-            if (pix == null) payment.Pix = null;
-
+            Payment payment = new(paymentDTO)
+            {
+                CreditCard = _context.CreditCard.Where(x => x.Id == paymentDTO.IdCreditCard).FirstOrDefault(),
+                Boleto = _context.Boleto.Where(x => x.Id == paymentDTO.IdBoleto).FirstOrDefault(),
+                Pix = _context.Pix.Where(x => x.Id == paymentDTO.IdPix).FirstOrDefault()
+            };
 
             _context.Payment.Add(payment);
             await _context.SaveChangesAsync();

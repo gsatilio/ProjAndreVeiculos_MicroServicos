@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -47,5 +48,14 @@ namespace Models
         public Employee Employee { get; set; }
         public Payment Payment { get; set; }
 
+        public Sale()
+        {
+
+        }
+        public Sale(SaleDTO saleDTO)
+        {
+            this.SaleValue = saleDTO.SaleValue;
+            this.SaleDate = saleDTO.SaleDate;
+        }
     }
 }
