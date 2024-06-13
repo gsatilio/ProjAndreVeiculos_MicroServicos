@@ -26,7 +26,6 @@ namespace APIAcquisition.Controllers
         {
             _context = context;
             _service = acquisitionsService;
-
         }
 
         // GET: api/Acquisitions

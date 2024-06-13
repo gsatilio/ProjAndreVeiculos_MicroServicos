@@ -9,6 +9,9 @@ namespace Models
 {
     public class Bank
     {
+        public static readonly string INSERT = " INSERT INTO Bank (CNPJ, BankName, FoundationDate) VALUES (@CNPJ, @BankName, @FoundationDate)";
+        public static readonly string GETALL = " SELECT CNPJ, BankName, FoundationDate FROM Bank";
+        public static readonly string GET = " SELECT CNPJ, BankName, FoundationDate FROM Bank WHERE CNPJ = @CNPJ";
         [Key]
         public string CNPJ { get; set; }
         public string BankName { get; set; }

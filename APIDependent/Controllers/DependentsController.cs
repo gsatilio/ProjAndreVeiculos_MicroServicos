@@ -20,7 +20,7 @@ namespace APIDependent.Controllers
     {
         private readonly DataAPIContext _context;
         private readonly AddressesService _addressesService;
-        private readonly DependentsService _service = new();
+        private readonly DependentsService _service;
 
         public DependentsController(DataAPIContext context, DependentsService dependentsService, AddressesService addressesService)
         {

@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using APIBank.Data;
 using Models;
 using DataAPI.Data;
+using Models.DTO;
+using APIBank.Services;
 
 namespace APIBank.Controllers
 {
@@ -16,32 +18,64 @@ namespace APIBank.Controllers
     public class BanksController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly BanksService _service;
 
-        public BanksController(DataAPIContext context)
+        public BanksController(DataAPIContext context, BanksService banksService)
         {
             _context = context;
+            _service = banksService;
         }
 
         // GET: api/Banks
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Bank>>> GetBank()
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Bank>>> GetBank(int techType)
         {
-          if (_context.Bank == null)
-          {
-              return NotFound();
-          }
-            return await _context.Bank.ToListAsync();
+            if (_context.Bank == null)
+            {
+                return NotFound();
+            }
+            List<Bank> banks = new List<Bank>();
+            switch (techType)
+            {
+                case 0:
+                    banks = await _context.Bank.ToListAsync();
+                    break;
+                case 1:
+                    banks = await _service.GetAll(0);
+                    break;
+                case 2:
+                    banks = await _service.GetAll(1);
+                    break;
+                default:
+                    return NotFound();
+            }
+            return banks;
         }
 
         // GET: api/Banks/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Bank>> GetBank(string id)
+        [HttpGet("{cnpj},{techType}")]
+        public async Task<ActionResult<Bank>> GetBank(string cnpj, int techType)
         {
-          if (_context.Bank == null)
-          {
-              return NotFound();
-          }
-            var bank = await _context.Bank.FindAsync(id);
+            if (_context.Bank == null)
+            {
+                return NotFound();
+            }
+
+            Bank? bank = new Bank();
+            switch (techType)
+            {
+                case 0:
+                    bank = await _context.Bank.FindAsync(cnpj);
+                    break;
+                case 1:
+                    bank = await _service.Get(cnpj, 0);
+                    break;
+                case 2:
+                    bank = await _service.Get(cnpj, 1);
+                    break;
+                default:
+                    return NotFound();
+            }
 
             if (bank == null)
             {
@@ -50,6 +84,7 @@ namespace APIBank.Controllers
 
             return bank;
         }
+
 
         // PUT: api/Banks/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -82,19 +117,34 @@ namespace APIBank.Controllers
             return NoContent();
         }
 
-        // POST: api/Banks
+        // POST: api/Bankes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Bank>> PostBank(Bank bank)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<Bank>> PostBank(int techType, Bank bank)
         {
-          if (_context.Bank == null)
-          {
-              return Problem("Entity set 'APIBankContext.Bank'  is null.");
-          }
-            _context.Bank.Add(bank);
+            if (_context.Bank == null)
+            {
+                return Problem("Entity set 'APIBankContext.Bank'  is null.");
+            }
+
             try
             {
-                await _context.SaveChangesAsync();
+                switch (techType)
+                {
+                    case 0:
+                        _context.Bank.Add(bank);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        await _service.Insert(bank, 0);
+                        break;
+                    case 2:
+                        await _service.Insert(bank, 1);
+                        break;
+                    default:
+                        return NotFound();
+                }
+                _service.InsertMongo(bank);
             }
             catch (DbUpdateException)
             {
@@ -107,8 +157,7 @@ namespace APIBank.Controllers
                     throw;
                 }
             }
-
-            return CreatedAtAction("GetBank", new { id = bank.CNPJ }, bank);
+            return CreatedAtAction("GetBank", new { cnpj = bank.CNPJ, techtype = techType }, bank);
         }
 
         // DELETE: api/Banks/5
