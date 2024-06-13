@@ -28,13 +28,15 @@ namespace APIBank.Controllers
 
         // GET: api/Banks
         [HttpGet("{techType}")]
-        public async Task<ActionResult<IEnumerable<Bank>>> GetBank(int techType)
+        public ActionResult<List<Models.Bank>> GetBank(int techType)
         {
             if (_context.Bank == null)
             {
                 return NotFound();
             }
-            List<Bank> banks = new List<Bank>();
+            return _service.GetAllMongo();
+            /*
+             new List<Bank>();
             switch (techType)
             {
                 case 0:
@@ -48,12 +50,11 @@ namespace APIBank.Controllers
                     break;
                 default:
                     return NotFound();
-            }
-            return banks;
+            }*/
         }
 
         // GET: api/Banks/5
-        [HttpGet("{cnpj},{techType}")]
+        [HttpGet("{cnpj:length(14)},{techType}")]
         public async Task<ActionResult<Bank>> GetBank(string cnpj, int techType)
         {
             if (_context.Bank == null)
@@ -61,6 +62,8 @@ namespace APIBank.Controllers
                 return NotFound();
             }
 
+            return _service.GetMongoById(cnpj);
+            /*
             Bank? bank = new Bank();
             switch (techType)
             {
@@ -83,6 +86,7 @@ namespace APIBank.Controllers
             }
 
             return bank;
+            */
         }
 
 
@@ -126,7 +130,8 @@ namespace APIBank.Controllers
             {
                 return Problem("Entity set 'APIBankContext.Bank'  is null.");
             }
-
+            return _service.InsertMongo(bank);
+            /*
             try
             {
                 switch (techType)
@@ -158,6 +163,7 @@ namespace APIBank.Controllers
                 }
             }
             return CreatedAtAction("GetBank", new { cnpj = bank.CNPJ, techtype = techType }, bank);
+            */
         }
 
         // DELETE: api/Banks/5

@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using Models;
+using MongoDB;
 using System.Configuration;
 using System.Net;
 
@@ -10,6 +11,7 @@ namespace Repositories
     public class BankRepository
     {
         private string Conn { get; set; }
+
         public BankRepository()
         {
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;

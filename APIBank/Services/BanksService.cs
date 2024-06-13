@@ -8,20 +8,32 @@ namespace APIBank.Services
 {
     public class BanksService
     {
+        private BankRepository _repository;
         private readonly IMongoCollection<Bank> _bank;
-        private BankRepository _repository = new();
-
         public BanksService(IMongoDBAPIDataBaseSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _bank = database.GetCollection<Bank>(settings.BankCollectionName);
         }
-        public void InsertMongo(Bank bank)
+        public BanksService()
         {
-            if (_bank != null)
-                _bank.InsertOne(bank);
+            _repository = new BankRepository();
         }
+        public Bank InsertMongo(Bank bank)
+        {
+            _bank.InsertOne(bank);
+            return bank;
+        }
+        public List<Bank> GetAllMongo()
+        {
+            return _bank.Find(x => true).ToList();
+        }
+        public Bank GetMongoById(string cnpj)
+        {
+            return _bank.Find<Bank>(bank => bank.CNPJ == cnpj).FirstOrDefault();
+        }
+
         public async Task<string> Insert(Bank acquisition, int type)
         {
             string result = null;

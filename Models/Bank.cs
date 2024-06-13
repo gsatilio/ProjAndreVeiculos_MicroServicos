@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace Models
         public static readonly string GETALL = " SELECT CNPJ, BankName, FoundationDate FROM Bank";
         public static readonly string GET = " SELECT CNPJ, BankName, FoundationDate FROM Bank WHERE CNPJ = @CNPJ";
         [Key]
+        [BsonId]
         public string CNPJ { get; set; }
         public string BankName { get; set; }
         public DateTime FoundationDate { get; set; }
