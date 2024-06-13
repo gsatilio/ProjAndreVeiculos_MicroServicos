@@ -1,18 +1,18 @@
 ﻿using Models;
 using Repositories;
 
-namespace APIFinancialPending.Services
+namespace APIFinancing.Services
 {
-    public class FinancialPendingsService
+    public class FinancingsService
     {
-        private FinancialPendingRepository _repository = new();
+        private FinancingRepository _repository = new();
 
-        public async Task<int> Insert(FinancialPending financialPending, int type)
+        public async Task<int> Insert(Financing employee, int type)
         {
             int result = 0;
             try
             {
-                result = await _repository.Insert(financialPending, type);
+                result = await _repository.Insert(employee, type);
             }
             catch (Exception ex)
             {
@@ -21,9 +21,9 @@ namespace APIFinancialPending.Services
             }
             return result;
         }
-        public async Task<List<FinancialPending>> GetAll(int type)
+        public async Task<List<Financing>> GetAll(int type)
         {
-            List<FinancialPending> list = new List<FinancialPending>();
+            List<Financing> list = new List<Financing>();
             try
             {
                 list = await _repository.GetAll(type);
@@ -35,9 +35,9 @@ namespace APIFinancialPending.Services
             }
             return list;
         }
-        public async Task<FinancialPending> Get(int id, int type)
+        public async Task<Financing> Get(int id, int type)
         {
-            FinancialPending list = new FinancialPending();
+            Financing list = new Financing();
             try
             {
                 list = await _repository.Get(id, type);

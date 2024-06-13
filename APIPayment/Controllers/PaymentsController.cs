@@ -10,6 +10,7 @@ using Models;
 using Controllers;
 using DataAPI.Data;
 using APIPayment.Services;
+using Models.DTO;
 
 namespace APIPayment.Controllers
 {
@@ -119,16 +120,28 @@ namespace APIPayment.Controllers
         // POST: api/Payments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Payment>> PostPayment(Payment payment)
+        public async Task<ActionResult<Payment>> PostPayment(PaymentDTO paymentDTO)
         {
-          if (_context.Payment == null)
-          {
-              return Problem("Entity set 'APIPaymentContext.Payment'  is null.");
-          }
+            if (_context.Payment == null)
+            {
+                return Problem("Entity set 'APIPaymentContext.Payment'  is null.");
+            }
+
+
+            Payment payment = new(paymentDTO);
+            var creditCard = _context.CreditCard.Where(x => x.Id == paymentDTO.IdCreditCard).FirstOrDefault();
+            var boleto = _context.Boleto.Where(x => x.Id == paymentDTO.IdBoleto).FirstOrDefault();
+            var pix = _context.Pix.Where(x => x.Id == paymentDTO.IdPix).FirstOrDefault();
+
+            if (creditCard == null) payment.CreditCard = null;
+            if (boleto == null) payment.Boleto = null;
+            if (pix == null) payment.Pix = null;
+
+
             _context.Payment.Add(payment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPayment", new { id = payment.Id }, payment);
+            return CreatedAtAction("GetPayment", new { id = payment.Id, techType = 0 }, payment);
         }
 
         // DELETE: api/Payments/5

@@ -9,6 +9,7 @@ using Models;
 using Controllers;
 using DataAPI.Data;
 using APIPayment.Services;
+using Models.DTO;
 
 namespace APIPix.Controllers
 {
@@ -117,16 +118,23 @@ namespace APIPix.Controllers
         // POST: api/Pixes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Pix>> PostPix(Pix pix)
+        public async Task<ActionResult<Pix>> PostPix(PixDTO pixDTO)
         {
             if (_context.Pix == null)
             {
                 return Problem("Entity set 'APIPixContext.Pix'  is null.");
             }
+            Pix pix = new Pix(pixDTO);
+            var pixType = _context.PixType.Where(x => x.Id == pixDTO.IdPixType).FirstOrDefault();
+            if (pixType == null)
+                return BadRequest("Tipo de Pix não encontrado");
+            
+            pix.PixType = pixType;
+
             _context.Pix.Add(pix);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPix", new { id = pix.Id }, pix);
+            return CreatedAtAction("GetPix", new { id = pix.Id, techType = 0}, pix);
         }
 
         // DELETE: api/Pixes/5

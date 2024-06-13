@@ -8,6 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using APIFinancing.Data;
 using Models;
 using DataAPI.Data;
+using Models.DTO;
+using APIFinancing.Services;
+using APISale.Services;
+using Services;
+using APIBank.Services;
 
 namespace APIFinancing.Controllers
 {
@@ -16,32 +21,68 @@ namespace APIFinancing.Controllers
     public class FinancingsController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly FinancingsService _service;
+        private readonly BanksService _bank;
+        private readonly SalesService _sale;
 
-        public FinancingsController(DataAPIContext context)
+        public FinancingsController(DataAPIContext context, FinancingsService financingsService, BanksService banksService, SalesService salesService )
         {
             _context = context;
+            _service = financingsService;
+            _bank = banksService;
+            _sale = salesService;
         }
 
-        // GET: api/Financings
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Financing>>> GetFinancing()
+        // GET: api/Financing
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<IEnumerable<Financing>>> GetFinancing(int techType)
         {
-          if (_context.Financing == null)
-          {
-              return NotFound();
-          }
-            return await _context.Financing.ToListAsync();
+            if (_context.Financing == null)
+            {
+                return NotFound();
+            }
+            List<Financing> financing = new List<Financing>();
+            switch (techType)
+            {
+                case 0:
+                    financing = await _context.Financing.Include(p => p.Bank).Include(p => p.Sale).Include(p => p.Sale.Customer).Include(p => p.Sale.Car).Include(p => p.Sale.Customer.Address).Include(p => p.Sale.Employee).Include(p => p.Sale.Employee.Address).Include(p => p.Sale.Employee.Role).Include(p => p.Sale.Payment.CreditCard).Include(p => p.Sale.Payment.Boleto).Include(p => p.Sale.Payment.Pix).Include(p => p.Sale.Payment.Pix.PixType).ToListAsync();
+                    break;
+                case 1:
+                    financing = await _service.GetAll(0);
+                    break;
+                case 2:
+                    financing = await _service.GetAll(1);
+                    break;
+                default:
+                    return NotFound();
+            }
+            return financing;
         }
 
-        // GET: api/Financings/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Financing>> GetFinancing(int id)
+        // GET: api/Financing/5
+        [HttpGet("{id},{techType}")]
+        public async Task<ActionResult<Financing>> GetFinancing(int id, int techType)
         {
-          if (_context.Financing == null)
-          {
-              return NotFound();
-          }
-            var financing = await _context.Financing.FindAsync(id);
+            if (_context.Financing == null)
+            {
+                return NotFound();
+            }
+
+            Financing? financing = new Financing();
+            switch (techType)
+            {
+                case 0:
+                    financing = await _context.Financing.Include(p => p.Bank).Include(p => p.Sale).Include(p => p.Sale.Customer).Include(p => p.Sale.Car).Include(p => p.Sale.Customer.Address).Include(p => p.Sale.Employee).Include(p => p.Sale.Employee.Address).Include(p => p.Sale.Employee.Role).Include(p => p.Sale.Payment.CreditCard).Include(p => p.Sale.Payment.Boleto).Include(p => p.Sale.Payment.Pix).Include(p => p.Sale.Payment.Pix.PixType).SingleOrDefaultAsync(p => p.Id == id);
+                    break;
+                case 1:
+                    financing = await _service.Get(id, 0);
+                    break;
+                case 2:
+                    financing = await _service.Get(id, 1);
+                    break;
+                default:
+                    return NotFound();
+            }
 
             if (financing == null)
             {
@@ -84,17 +125,53 @@ namespace APIFinancing.Controllers
 
         // POST: api/Financings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Financing>> PostFinancing(Financing financing)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<Financing>> PostFinancing(int techType, FinancingDTO financingDTO)
         {
-          if (_context.Financing == null)
-          {
-              return Problem("Entity set 'APIFinancingContext.Financing'  is null.");
-          }
-            _context.Financing.Add(financing);
-            await _context.SaveChangesAsync();
+            if (_context.Financing == null)
+            {
+                return Problem("Entity set 'APIFinancingContext.Financing'  is null.");
+            }
+            var financing = new Financing(financingDTO);
+            var sale = await _sale.Get(financing.Sale.Id, techType);
+            var bank = await _bank.Get(financing.Bank.CNPJ, techType);
 
-            return CreatedAtAction("GetFinancing", new { id = financing.Id }, financing);
+            if (sale == null)
+                return BadRequest("Venda não existe");
+
+            if (bank == null)
+                return BadRequest("Banco não existe");
+
+            financing.Sale = sale;
+            financing.Bank = bank;
+            try
+            {
+                switch (techType)
+                {
+                    case 0:
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        financing.Id = await _service.Insert(financing, 0);
+                        break;
+                    case 2:
+                        financing.Id = await _service.Insert(financing, 1);
+                        break;
+                }
+            }
+            catch (DbUpdateException)
+            {
+                if (FinancingExists(financing.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return CreatedAtAction("GetFinancing", new { document = financing.Id, techType = 0 }, financing);
         }
 
         // DELETE: api/Financings/5

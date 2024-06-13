@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +15,15 @@ namespace Models
         public int Id { get; set; }
         public PixType PixType { get; set; }
         public string PixKey { get; set; }
+
+        public Pix()
+        {
+            
+        }
+
+        public Pix(PixDTO pixDTO)
+        {
+            this.PixKey = pixDTO.PixKey;
+        }
     }
 }

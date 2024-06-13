@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Models.DTO;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,5 +18,15 @@ namespace Models
         public Boleto Boleto { get; set; }
         public Pix Pix { get; set; }
         public DateTime PaymentDate { get; set; }
+
+        public Payment()
+        {
+            
+        }
+
+        public Payment(PaymentDTO paymentDTO)
+        {
+            this.PaymentDate = paymentDTO.PaymentDate;
+        }
     }
 }

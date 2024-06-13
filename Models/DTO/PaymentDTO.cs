@@ -8,9 +8,9 @@ namespace Models.DTO
 {
     public class PaymentDTO
     {
-        public int IdCreditCard { get; set; }
-        public int IdBoleto { get; set; }
-        public int IdPix { get; set; }
+        public int? IdCreditCard { get; set; }
+        public int? IdBoleto { get; set; }
+        public int? IdPix { get; set; }
         public DateTime PaymentDate { get; set; }
     }
 }

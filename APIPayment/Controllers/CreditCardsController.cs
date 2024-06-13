@@ -127,7 +127,7 @@ namespace APIPayment.Controllers
             _context.CreditCard.Add(creditCard);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCreditCard", new { id = creditCard.Id }, creditCard);
+            return CreatedAtAction("GetCreditCard", new { id = creditCard.Id, techType = 0 }, creditCard);
         }
 
         // DELETE: api/CreditCards/5

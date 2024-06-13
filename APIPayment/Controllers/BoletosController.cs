@@ -127,7 +127,7 @@ namespace APIPayment.Controllers
             _context.Boleto.Add(boleto);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBoleto", new { id = boleto.Id }, boleto);
+            return CreatedAtAction("GetBoleto", new { id = boleto.Id, techType = 0 }, boleto);
         }
 
         // DELETE: api/Boletoes/5

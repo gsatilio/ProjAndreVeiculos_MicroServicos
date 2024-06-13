@@ -127,7 +127,7 @@ namespace APIPixType.Controllers
             _context.PixType.Add(pixType);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPixType", new { id = pixType.Id }, pixType);
+            return CreatedAtAction("GetPixType", new { id = pixType.Id, techType = 0 }, pixType);
         }
 
         // DELETE: api/PixTypes/5
