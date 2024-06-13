@@ -9,6 +9,7 @@ using APIDriver.Data;
 using Models;
 using Models.DTO;
 using DataAPI.Data;
+using APIDriver.Services;
 
 namespace APIDriver.Controllers
 {
@@ -18,34 +19,69 @@ namespace APIDriver.Controllers
     {
         private readonly DataAPIContext _context;
 
-        private readonly CategoriesController _categoriesController;
-        private readonly ConductorsController _conductorsController;
+        private readonly DriverLicensesService _service = new();
 
-        public DriverLicensesController(DataAPIContext context)
+        public DriverLicensesController(DataAPIContext context, DriverLicensesService driverLicensesService )
         {
             _context = context;
+            _service = driverLicensesService;
         }
 
-        // GET: api/DriverLicenses
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<DriverLicense>>> GetDriverLicense()
+        // GET: api/Categories/5
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<List<DriverLicense>>> GetDriverLicense(int techType)
         {
             if (_context.DriverLicense == null)
             {
                 return NotFound();
             }
-            return await _context.DriverLicense.ToListAsync();
+            List<DriverLicense>? driverLicense = new List<DriverLicense>();
+            switch (techType)
+            {
+                case 0:
+                    driverLicense = await _context.DriverLicense.ToListAsync();
+                    break;
+                case 1:
+                    driverLicense = await _service.GetAll(0);
+                    break;
+                case 2:
+                    driverLicense = await _service.GetAll(1);
+                    break;
+                default:
+                    return NotFound();
+            }
+
+            if (driverLicense == null)
+            {
+                return NotFound();
+            }
+
+            return driverLicense;
         }
 
-        // GET: api/DriverLicenses/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<DriverLicense>> GetDriverLicense(long id)
+        // GET: api/Categories/5
+        [HttpGet("{id},{techType}")]
+        public async Task<ActionResult<DriverLicense>> GetDriverLicense(long id, int techType)
         {
             if (_context.DriverLicense == null)
             {
                 return NotFound();
             }
-            var driverLicense = await _context.DriverLicense.FindAsync(id);
+            DriverLicense? driverLicense = new DriverLicense();
+            switch (techType)
+            {
+                case 0:
+                    driverLicense = await _context.DriverLicense.FindAsync(id);
+                    break;
+                case 1:
+                    driverLicense = await _service.Get(id, 0);
+                    break;
+                case 2:
+                    driverLicense = await _service.Get(id, 1);
+                    break;
+                default:
+                    return NotFound();
+            }
 
             if (driverLicense == null)
             {
@@ -88,27 +124,52 @@ namespace APIDriver.Controllers
 
         // POST: api/DriverLicenses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<DriverLicense>> PostDriverLicense(DriverLicenseDTO driverLicenseDTO)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<DriverLicense>> PostDriverLicense(int techType, DriverLicenseDTO driverLicenseDTO)
         {
             if (_context.DriverLicense == null)
             {
                 return Problem("Entity set 'APIDriverContext.DriverLicense'  is null.");
             }
-            DriverLicense driverLicense = new(driverLicenseDTO);
+
+            DriverLicense driverLicense = new DriverLicense(driverLicenseDTO);
             var category = _context.Category.Where(x => x.Id == driverLicenseDTO.Category.Id).FirstOrDefault();
-            if (category != null)
+            if (category == null)
+                return BadRequest("Categoria não existe");
+
+            driverLicense.Category = category;
+            try
             {
-                driverLicense.Category = category;
-                _context.DriverLicense.Add(driverLicense);
-                await _context.SaveChangesAsync();
-            } else
-            {
-                return BadRequest("Categoria inexistente");
+                switch (techType)
+                {
+                    case 0:
+                        _context.DriverLicense.Add(driverLicense);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        driverLicense.DriverId = await _service.Insert(driverLicense, 0);
+                        break;
+                    case 2:
+                        driverLicense.DriverId = await _service.Insert(driverLicense, 1);
+                        break;
+                    default:
+                        return NotFound();
+                }
             }
+            catch (DbUpdateException)
+            {
+                if (DriverLicenseExists(driverLicense.DriverId))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            await _context.SaveChangesAsync();
 
-
-            return CreatedAtAction("GetDriverLicense", new { id = driverLicense.DriverId }, driverLicense);
+            return CreatedAtAction("GetDriverLicense", new { id = driverLicense.DriverId, techType }, driverLicense);
         }
 
         // DELETE: api/DriverLicenses/5

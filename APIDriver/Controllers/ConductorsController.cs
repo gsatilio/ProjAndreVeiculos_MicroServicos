@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using APIDriver.Data;
 using Models;
 using DataAPI.Data;
+using APIDriver.Services;
+using Models.DTO;
+using APIAddress.Services;
 
 namespace APIDriver.Controllers
 {
@@ -16,32 +19,71 @@ namespace APIDriver.Controllers
     public class ConductorsController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly ConductorsService _service = new();
+        private readonly AddressesService _addressesService;
 
-        public ConductorsController(DataAPIContext context)
+        public ConductorsController(DataAPIContext context, ConductorsService conductorsService, AddressesService addressesService)
         {
             _context = context;
+            _service = conductorsService;
+            _addressesService = addressesService;
         }
 
         // GET: api/Conductors
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Conductor>>> GetConductor()
+        [HttpGet("{techType}")]
+        public async Task<ActionResult<List<Conductor>>> GetConductor(int techType)
         {
-          if (_context.Conductor == null)
-          {
-              return NotFound();
-          }
-            return await _context.Conductor.ToListAsync();
+            if (_context.Conductor == null)
+            {
+                return NotFound();
+            }
+            List<Conductor>? conductor = new List<Conductor>();
+            switch (techType)
+            {
+                case 0:
+                    conductor = await _context.Conductor.ToListAsync();
+                    break;
+                case 1:
+                    conductor = await _service.GetAll(0);
+                    break;
+                case 2:
+                    conductor = await _service.GetAll(1);
+                    break;
+                default:
+                    return NotFound();
+            }
+
+            if (conductor == null)
+            {
+                return NotFound();
+            }
+
+            return conductor;
         }
 
-        // GET: api/Conductors/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Conductor>> GetConductor(string id)
+        // GET: api/Categories/5
+        [HttpGet("{document},{techType}")]
+        public async Task<ActionResult<Conductor>> GetConductor(string document, int techType)
         {
-          if (_context.Conductor == null)
-          {
-              return NotFound();
-          }
-            var conductor = await _context.Conductor.FindAsync(id);
+            if (_context.Conductor == null)
+            {
+                return NotFound();
+            }
+            Conductor? conductor = new Conductor();
+            switch (techType)
+            {
+                case 0:
+                    conductor = await _context.Conductor.FindAsync(document);
+                    break;
+                case 1:
+                    conductor = await _service.Get(document, 0);
+                    break;
+                case 2:
+                    conductor = await _service.Get(document, 1);
+                    break;
+                default:
+                    return NotFound();
+            }
 
             if (conductor == null)
             {
@@ -84,17 +126,44 @@ namespace APIDriver.Controllers
 
         // POST: api/Conductors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Conductor>> PostConductor(Conductor conductor)
+        [HttpPost("{techType}")]
+        public async Task<ActionResult<Conductor>> PostConductor(int techType, ConductorDTO conductorDTO)
         {
-          if (_context.Conductor == null)
-          {
-              return Problem("Entity set 'APIDriverContext.Conductor'  is null.");
-          }
-            _context.Conductor.Add(conductor);
+            if (_context.Conductor == null)
+            {
+                return Problem("Entity set 'APIDriverContext.Conductor'  is null.");
+            }
+
+            Conductor conductor = new Conductor(conductorDTO);
+            var driverLicense = _context.DriverLicense.Where(x => x.DriverId == conductorDTO.DriverLicenseId).FirstOrDefault();
+            if (driverLicense == null)
+                return BadRequest("CNH não existe");
+
+            var address = await _addressesService.RetrieveAdressAPI(conductorDTO.Address); // usa API address
+            if (address == null)
+                return BadRequest("Endereço não encontrado");
+
+            conductor.DriverLicense = driverLicense;
+            conductor.Address = address;
             try
             {
-                await _context.SaveChangesAsync();
+                switch (techType)
+                {
+                    case 0:
+                        _context.Conductor.Add(conductor);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case 1:
+                        conductor.Address.Id = await _addressesService.Insert(address, 0);
+                        conductor.Document = await _service.Insert(conductor, 0);
+                        break;
+                    case 2:
+                        conductor.Address.Id = await _addressesService.Insert(address, 0);
+                        conductor.Document = await _service.Insert(conductor, 1);
+                        break;
+                    default:
+                        return NotFound();
+                }
             }
             catch (DbUpdateException)
             {
@@ -107,8 +176,9 @@ namespace APIDriver.Controllers
                     throw;
                 }
             }
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetConductor", new { id = conductor.Document }, conductor);
+            return CreatedAtAction("GetConductor", new { id = conductor.Document, techType }, conductor);
         }
 
         // DELETE: api/Conductors/5

@@ -7,12 +7,12 @@ namespace Services
     {
         private ConductorRepository _repository = new();
 
-        public int Insert(Conductor conductor, int type)
+        public async Task<string> Insert(Conductor conductor, int type)
         {
-            int result = 0;
+            string result = null;
             try
             {
-                result = _repository.Insert(conductor, type);
+                result = await _repository.Insert(conductor, type);
             }
             catch (Exception ex)
             {
@@ -35,12 +35,12 @@ namespace Services
             }
             return list;
         }
-        public async Task<Conductor> Get(int id, int type)
+        public async Task<Conductor> Get(string document, int type)
         {
             Conductor list = new Conductor();
             try
             {
-                list = await _repository.Get(id, type);
+                list = await _repository.Get(document, type);
             }
             catch (Exception ex)
             {

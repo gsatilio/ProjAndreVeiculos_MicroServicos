@@ -16,7 +16,7 @@ namespace Repositories
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;
         }
 
-        public int Insert(Category category, int type)
+        public async Task<int> Insert(Category category, int type)
         {
             int result = 0;
             try
@@ -27,7 +27,7 @@ namespace Repositories
                     if (type == 0) // ADO.NET
                     {
                         var cmd = new SqlCommand { Connection = db };
-                        cmd.CommandText = Address.INSERT;
+                        cmd.CommandText = Category.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@Description", category.Description));
                         result = (int)cmd.ExecuteScalar();
                     }

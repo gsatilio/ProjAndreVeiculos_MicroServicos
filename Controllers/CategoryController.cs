@@ -11,12 +11,12 @@ namespace Controllers
         {
 
         }
-        public int Insert(Category category, int type)
+        public async Task<int> Insert(Category category, int type)
         {
             int result = 0;
             try
             {
-                result = _service.Insert(category, type);
+                result = await _service.Insert(category, type);
             }
             catch
             {

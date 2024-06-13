@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Models;
+using MongoDB.Bson;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
@@ -15,7 +16,7 @@ namespace Repositories
         {
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;
         }
-        public int Insert(DriverLicense cnh, int type)
+        public async Task<int> Insert(DriverLicense driverLicense, int type)
         {
             int result = 0;
             try
@@ -27,26 +28,26 @@ namespace Repositories
                     {
                         var cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = DriverLicense.INSERT;
-                        cmd.Parameters.Add(new SqlParameter("@DriverLicense", cnh.DriverId));
-                        cmd.Parameters.Add(new SqlParameter("@DueDate", cnh.DueDate));
-                        cmd.Parameters.Add(new SqlParameter("@RG", cnh.RG));
-                        cmd.Parameters.Add(new SqlParameter("@CPF", cnh.CPF));
-                        cmd.Parameters.Add(new SqlParameter("@MotherName", cnh.MotherName));
-                        cmd.Parameters.Add(new SqlParameter("@FatherName", cnh.FatherName));
-                        cmd.Parameters.Add(new SqlParameter("@CategoryId", cnh.Category.Id));
+                        cmd.Parameters.Add(new SqlParameter("@DriverId", driverLicense.DriverId));
+                        cmd.Parameters.Add(new SqlParameter("@DueDate", driverLicense.DueDate));
+                        cmd.Parameters.Add(new SqlParameter("@RG", driverLicense.RG));
+                        cmd.Parameters.Add(new SqlParameter("@CPF", driverLicense.CPF));
+                        cmd.Parameters.Add(new SqlParameter("@MotherName", driverLicense.MotherName));
+                        cmd.Parameters.Add(new SqlParameter("@FatherName", driverLicense.FatherName));
+                        cmd.Parameters.Add(new SqlParameter("@CategoryId", driverLicense.Category.Id));
                         result = (int)cmd.ExecuteScalar();
                     }
                     else // Dapper
                     {
                         result = db.ExecuteScalar<int>(DriverLicense.INSERT, new
                         {
-                            cnh.DriverId,
-                            cnh.DueDate,
-                            cnh.RG,
-                            cnh.CPF,
-                            cnh.MotherName,
-                            cnh.FatherName,
-                            CategoryId = cnh.Category.Id
+                            driverLicense.DriverId,
+                            driverLicense.DueDate,
+                            driverLicense.RG,
+                            driverLicense.CPF,
+                            driverLicense.MotherName,
+                            driverLicense.FatherName,
+                            CategoryId = driverLicense.Category.Id
                         });
                     }
                     db.Close();
@@ -92,10 +93,10 @@ namespace Repositories
                     else // Dapper
                     {
                         list = db.Query<DriverLicense, Category, DriverLicense>(DriverLicense.GETALL,
-                            (cnh, category) =>
+                            (driverLicense, category) =>
                             {
-                                cnh.Category = category;
-                                return cnh;
+                                driverLicense.Category = category;
+                                return driverLicense;
                             }, splitOn: "Id"
                     ).ToList();
                     }
@@ -110,7 +111,7 @@ namespace Repositories
             return list;
         }
 
-        public async Task<DriverLicense> Get(int id, int type)
+        public async Task<DriverLicense> Get(long id, int type)
         {
             DriverLicense? list = null;
             try
@@ -122,7 +123,7 @@ namespace Repositories
                     {
                         var cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = DriverLicense.GET;
-                        cmd.Parameters.Add(new SqlParameter("@DriverLicense", id));
+                        cmd.Parameters.Add(new SqlParameter("@DriverId", id));
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -143,10 +144,10 @@ namespace Repositories
                     else // Dapper
                     {
                         list = db.Query<DriverLicense, Category, DriverLicense>(DriverLicense.GET,
-                            (cnh, category) =>
+                            (driverLicense, category) =>
                             {
-                                cnh.Category = category;
-                                return cnh;
+                                driverLicense.Category = category;
+                                return driverLicense;
                             }, splitOn: "Id"
                     ).ToList().First();
                     }

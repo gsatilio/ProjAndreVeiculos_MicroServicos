@@ -15,9 +15,9 @@ namespace Repositories
         {
             Conn = ConfigurationManager.ConnectionStrings["ConexaoSQL"].ConnectionString;
         }
-        public int Insert(Conductor conductor, int type)
+        public async Task<string> Insert(Conductor conductor, int type)
         {
-            int result = 0;
+            string result = null;
             try
             {
                 using (var db = new SqlConnection(Conn))
@@ -28,26 +28,28 @@ namespace Repositories
                         var cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = Conductor.INSERT;
                         cmd.Parameters.Add(new SqlParameter("@Document", conductor.Document));
-                        cmd.Parameters.Add(new SqlParameter("@CNHDriverLicense", conductor.DriverLicense.DriverId));
+                        cmd.Parameters.Add(new SqlParameter("@DriverLicenseDriverId", conductor.DriverLicense.DriverId));
                         cmd.Parameters.Add(new SqlParameter("@Name", conductor.Name));
                         cmd.Parameters.Add(new SqlParameter("@DateOfBirth", conductor.DateOfBirth));
                         cmd.Parameters.Add(new SqlParameter("@AddressId", conductor.Address.Id));
                         cmd.Parameters.Add(new SqlParameter("@Phone", conductor.Phone));
                         cmd.Parameters.Add(new SqlParameter("@Email", conductor.Email));
-                        result = (int)cmd.ExecuteScalar();
+                        cmd.ExecuteNonQuery();
+                        result = conductor.Document;
                     }
                     else // Dapper
                     {
-                        result = db.ExecuteScalar<int>(Conductor.INSERT, new
+                        db.Execute(Conductor.INSERT, new
                         {
                             conductor.Document,
-                            conductor.DriverLicense.DriverId,
+                            DriverLicenseDriverId = conductor.DriverLicense.DriverId,
                             conductor.Name,
                             conductor.DateOfBirth,
-                            conductor.Address.Id,
+                            AddressId = conductor.Address.Id,
                             conductor.Phone,
                             conductor.Email
                         });
+                        result = conductor.Document;
                     }
                     db.Close();
                 }
@@ -112,7 +114,7 @@ namespace Repositories
             return list;
         }
 
-        public async Task<Conductor> Get(int id, int type)
+        public async Task<Conductor> Get(string document, int type)
         {
             Conductor? list = null;
             try
@@ -124,7 +126,7 @@ namespace Repositories
                     {
                         var cmd = new SqlCommand { Connection = db };
                         cmd.CommandText = Conductor.GET;
-                        cmd.Parameters.Add(new SqlParameter("@Document", id));
+                        cmd.Parameters.Add(new SqlParameter("@Document", document));
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())

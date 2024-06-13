@@ -6,12 +6,12 @@ namespace Services
     public class DriverLicenseService
     {
         private DriverLicenseRepository _repository = new();
-        public int Insert(DriverLicense cnh, int type)
+        public async Task<long> Insert(DriverLicense cnh, int type)
         {
-            int result = 0;
+            long result = 0;
             try
             {
-                result = _repository.Insert(cnh, type);
+                result = await _repository.Insert(cnh, type);
             }
             catch (Exception ex)
             {

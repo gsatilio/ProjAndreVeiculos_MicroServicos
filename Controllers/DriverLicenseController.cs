@@ -11,12 +11,12 @@ namespace Controllers
         {
 
         }
-        public int Insert(DriverLicense cnh, int type)
+        public async Task<long> Insert(DriverLicense cnh, int type)
         {
-            int result = 0;
+            long result = 0;
             try
             {
-                result = _service.Insert(cnh, type);
+                result = await _service.Insert(cnh, type);
             }
             catch
             {

@@ -1,54 +1,51 @@
 ﻿using Models;
-using Services;
+using Repositories;
 
-namespace Controllers
+namespace APIDriver.Services
 {
-    public class ConductorController
+    public class ConductorsService
     {
-        private ConductorService _service = new();
-
-        public ConductorController()
-        {
-
-        }
+        private ConductorRepository _repository = new();
         public async Task<string> Insert(Conductor conductor, int type)
         {
             string result = null;
             try
             {
-                result = await _service.Insert(conductor, type);
+                result = await _repository.Insert(conductor, type);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             return result;
         }
+
         public async Task<List<Conductor>> GetAll(int type)
         {
-            List<Conductor> list = new List<Conductor>();
+            List<Conductor> conductorList = new List<Conductor>();
             try
             {
-                list = await _service.GetAll(type);
+                conductorList = await _repository.GetAll(type);
             }
             catch
             {
                 throw;
             }
-            return list;
+            return conductorList;
         }
         public async Task<Conductor> Get(string document, int type)
         {
-            Conductor list = new Conductor();
+            Conductor conductorList = new Conductor();
             try
             {
-                list = await _service.Get(document, type);
+                conductorList = await _repository.Get(document, type);
             }
             catch
             {
                 throw;
             }
-            return list;
+            return conductorList;
         }
     }
 }

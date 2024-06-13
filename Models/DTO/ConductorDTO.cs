@@ -14,7 +14,7 @@ namespace Models.DTO
         public AddressDTO Address { get; set; }
         public string Phone {  get; set; }
         public string Email {  get; set; }
-        public DriverLicenseDTO CNHDTO { get; set; }
+        public int DriverLicenseId { get; set; }
 
 
 

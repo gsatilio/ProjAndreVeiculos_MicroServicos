@@ -11,9 +11,9 @@ namespace Models
 {
     public class DriverLicense
     {
-        public readonly static string INSERT = " INSERT INTO CNH (DriverLicense, DueDate, RG, CPF, MotherName, FatherName, CategoryId) VALUES (@DriverLicense, @DueDate, @RG, @CPF, @MotherName, @FatherName, @CategoryId) ";
-        public readonly static string GETALL = " SELECT A.DriverLicense, A.DueDate, A.RG, A.CPF, A.MotherName, A.FatherName, B.Id, B.Description FROM CNH A INNER JOIN Category B ON A.CategoryId = B.Id ";
-        public readonly static string GET = " SELECT A.DriverLicense, A.DueDate, A.RG, A.CPF, A.MotherName, A.FatherName, B.Id, B.Description FROM CNH A INNER JOIN Category B ON A.CategoryId = B.Id WHERE A.DriverLicense = @DriverLicense ";
+        public readonly static string INSERT = " INSERT INTO DriverLicense (DueDate, RG, CPF, MotherName, FatherName, CategoryId) VALUES (@DueDate, @RG, @CPF, @MotherName, @FatherName, @CategoryId); SELECT cast(scope_identity() as int)   ";
+        public readonly static string GETALL = " SELECT A.DriverId, A.DueDate, A.RG, A.CPF, A.MotherName, A.FatherName, B.Id, B.Description FROM DriverLicense A INNER JOIN Category B ON A.CategoryId = B.Id ";
+        public readonly static string GET = " SELECT A.DriverId, A.DueDate, A.RG, A.CPF, A.MotherName, A.FatherName, B.Id, B.Description FROM DriverLicense A INNER JOIN Category B ON A.CategoryId = B.Id WHERE A.DriverId = @DriverId ";
         [Key]
         public long DriverId { get; set; }
         public DateTime DueDate { get; set; }
@@ -37,7 +37,6 @@ namespace Models
             this.CPF = cnhDTO.CPF;
             this.MotherName = cnhDTO.MotherName;
             this.FatherName = cnhDTO.FatherName;
-            this.Category = new Category { Id = cnhDTO.Category.Id };
         }
     }
 }

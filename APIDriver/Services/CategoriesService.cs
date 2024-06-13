@@ -1,17 +1,18 @@
 ﻿using Models;
+using NuGet.Protocol.Core.Types;
 using Repositories;
 
-namespace Services
+namespace APIDriver.Services
 {
-    public class CategoryService
+    public class CategoriesService
     {
         private CategoryRepository _repository = new();
-        public async Task<int> Insert(Category category, int type)
+        public async Task<int> Insert(Category car, int type)
         {
             int result = 0;
             try
             {
-                result = await _repository.Insert(category, type);
+                result = await _repository.Insert(car, type);
             }
             catch (Exception ex)
             {
@@ -20,33 +21,32 @@ namespace Services
             }
             return result;
         }
+
         public async Task<List<Category>> GetAll(int type)
         {
-            List<Category> list = new List<Category>();
+            List<Category> carList = new List<Category>();
             try
             {
-                list = await _repository.GetAll(type);
+                carList = await _repository.GetAll(type);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Message);
                 throw;
             }
-            return list;
+            return carList;
         }
         public async Task<Category> Get(int id, int type)
         {
-            Category list = new Category();
+            Category carList = new Category();
             try
             {
-                list = await _repository.Get(id, type);
+                carList = await _repository.Get(id, type);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Message);
                 throw;
             }
-            return list;
+            return carList;
         }
     }
 }
