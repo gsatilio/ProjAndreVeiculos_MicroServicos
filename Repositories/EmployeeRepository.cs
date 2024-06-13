@@ -42,7 +42,7 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        db.Execute(Employee.INSERT, new
+                        result = db.ExecuteScalar<int>(Employee.INSERT, new
                         {
                             employee.Document,
                             RoleId = employee.Role.Id,

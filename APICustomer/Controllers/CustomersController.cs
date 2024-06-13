@@ -146,12 +146,12 @@ namespace APICustomer.Controllers
                         await _context.SaveChangesAsync();
                         break;
                     case 1:
+                        customer.Address.Id = await _addressesService.Insert(address, 0);
                         _service.Insert(customer, 0);
-                        _addressesService.Insert(address, 0);
                         break;
                     case 2:
+                        customer.Address.Id = await _addressesService.Insert(address, 1);
                         _service.Insert(customer, 1);
-                        _addressesService.Insert(address, 1);
                         break;
                 }
                 _addressesService.InsertMongo(address);

@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using DataAPI.Data;
+using APICustomer.Services;
 using APIDependent.Services;
+using APIAddress.Services;
 using Models.DTO;
 using Services;
-using APIAddress.Services;
 
-namespace APIDependent.Controllers
+namespace APICustomer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

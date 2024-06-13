@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using MongoDB;
 using DataAPI.Data;
 using APICustomer.Services;
+using APIDependent.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APICustomerContext") ?? throw new InvalidOperationException("Connection string 'APICustomerContext' not found.")));
@@ -27,6 +28,7 @@ builder.Services.AddSingleton<IMongoDBAPIDataBaseSettings>(sp =>
 
 builder.Services.AddSingleton<AddressesService>();
 builder.Services.AddSingleton<CustomersService>();
+//builder.Services.AddSingleton<DependentsService>();
 #endregion
 
 var app = builder.Build();
