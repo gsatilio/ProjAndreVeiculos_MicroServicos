@@ -17,6 +17,7 @@ builder.Services.AddSingleton<PaymentsService>();
 builder.Services.AddSingleton<PixesService>();
 builder.Services.AddSingleton<PixTypesService>();
 builder.Services.AddSingleton<BoletosService>();
+builder.Services.AddSingleton<CreditCardsService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

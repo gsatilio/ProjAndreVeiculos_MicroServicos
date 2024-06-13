@@ -23,17 +23,12 @@ namespace APICustomer.Controllers
         private readonly AddressesService _addressesService;
         private readonly CustomersService _service = new();
 
-        public CustomersController(DataAPIContext context, CustomersService service)
+        public CustomersController(DataAPIContext context, CustomersService service, AddressesService addressesService)
         {
             _context = context;
             _service = service;
+            _addressesService = addressesService; // talvez remover
         }
-        /*
-        public CustomersController(DataAPIContext context, AddressesService addressesService)
-        {
-            _context = context;
-            _addressesService = addressesService;
-        }*/
 
         // GET: api/Customers
         [HttpGet("{techType}")]
@@ -134,25 +129,29 @@ namespace APICustomer.Controllers
                 return Problem("Entity set 'APICustomerContext.Customer'  is null.");
             }
 
+
             var customer = new Customer(customerDTO);
-            var address = await _addressesService.RetrieveAdressAPI(customerDTO.Address);
+            var address = await _addressesService.RetrieveAdressAPI(customerDTO.Address); // usa API address
+            if (address == null)
+                return BadRequest("Endereço não encontrado");
+
             customer.Address = address;
-            /*
             try
             {
                 switch (techType)
                 {
                     case 0:
+                        _context.Address.Add(address);
                         _context.Customer.Add(customer);
                         await _context.SaveChangesAsync();
                         break;
                     case 1:
-                        customer.Address.Id = new AddressController().Insert(address, 0);
-                        new CustomerController().Insert(customer, 0);
+                        _service.Insert(customer, 0);
+                        _addressesService.Insert(address, 0);
                         break;
                     case 2:
-                        customer.Address.Id = new AddressController().Insert(address, 1);
-                        new CustomerController().Insert(customer, 1);
+                        _service.Insert(customer, 1);
+                        _addressesService.Insert(address, 1);
                         break;
                 }
                 _addressesService.InsertMongo(address);
@@ -168,8 +167,8 @@ namespace APICustomer.Controllers
                     throw;
                 }
             }
-            */
-            return CreatedAtAction("GetCustomer", new { document = customer.Document, techType = 0 }, customer);
+            
+            return CreatedAtAction("GetCustomer", new { document = customer.Document, techType }, customer);
         }
 
         // DELETE: api/Customers/5
