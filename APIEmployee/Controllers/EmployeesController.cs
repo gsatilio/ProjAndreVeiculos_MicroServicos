@@ -155,11 +155,11 @@ namespace APIEmployee.Controllers
                         break;
                     case 1:
                         employee.Address.Id = await _addressesService.Insert(address, 0);
-                        new EmployeeController().Insert(employee, 0);
+                        _service.Insert(employee, 0);
                         break;
                     case 2:
                         employee.Address.Id = await _addressesService.Insert(address, 1);
-                        new EmployeeController().Insert(employee, 1);
+                        _service.Insert(employee, 1);
                         break;
                 }
                 _addressesService.InsertMongo(address);
