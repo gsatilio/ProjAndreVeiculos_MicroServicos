@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,5 +18,14 @@ namespace Models
         public decimal Deductible { get; set; }
         public Car Car { get; set; }
         public Conductor MainConductor { get; set; }
+
+        public Insurance()
+        {
+            
+        }
+        public Insurance(InsuranceDTO dto)
+        {
+            this.Deductible = dto.Deductible;
+        }
     }
 }

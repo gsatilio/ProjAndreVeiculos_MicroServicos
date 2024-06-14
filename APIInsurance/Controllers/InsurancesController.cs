@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using APIInsurance.Data;
 using Models;
 using DataAPI.Data;
+using APIInsurance.Services;
+using Models.DTO;
 
 namespace APIInsurance.Controllers
 {
@@ -16,10 +18,12 @@ namespace APIInsurance.Controllers
     public class InsurancesController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly InsurancesService _service;
 
-        public InsurancesController(DataAPIContext context)
+        public InsurancesController(DataAPIContext context, InsurancesService insurancesService)
         {
             _context = context;
+            _service = insurancesService;
         }
 
         // GET: api/Insurances
@@ -30,7 +34,7 @@ namespace APIInsurance.Controllers
           {
               return NotFound();
           }
-            return await _context.Insurance.ToListAsync();
+            return await _context.Insurance.Include(x => x.Car).Include(x => x.Customer).Include(x => x.MainConductor).Include(x => x.Customer.Address).ToListAsync();
         }
 
         // GET: api/Insurances/5
@@ -41,7 +45,7 @@ namespace APIInsurance.Controllers
           {
               return NotFound();
           }
-            var insurance = await _context.Insurance.FindAsync(id);
+            var insurance = await _context.Insurance.Include(x => x.Car).Include(x => x.Customer).Include(x => x.MainConductor).Include(x => x.Customer.Address).SingleOrDefaultAsync(x => x.Id == id);
 
             if (insurance == null)
             {
@@ -85,13 +89,30 @@ namespace APIInsurance.Controllers
         // POST: api/Insurances
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Insurance>> PostInsurance(Insurance insurance)
+        public async Task<ActionResult<Insurance>> PostInsurance(InsuranceDTO dto)
         {
           if (_context.Insurance == null)
           {
               return Problem("Entity set 'APIInsuranceContext.Insurance'  is null.");
           }
-            _context.Insurance.Add(insurance);
+            //_context.Insurance.Add(insurance);
+            Insurance insurance = new Insurance(dto);
+
+            var customer = _context.Customer.Where(x => x.Document == dto.CustomerDocument).FirstOrDefault();
+            if (customer == null)
+                return BadRequest("Cliente não encontrado");
+            var car = _context.Car.Where(x => x.LicensePlate == dto.CarLicense).FirstOrDefault();
+            if (car == null)
+                return BadRequest("Carro não encontrado");
+            var conductor = _context.Conductor.Where(x => x.Document == dto.MainConductorDocument).FirstOrDefault();
+            if (conductor == null)
+                return BadRequest("Motorista não encontrado");
+
+            insurance.Car = car;
+            insurance.Customer = customer;
+            insurance.MainConductor = conductor;
+
+            _service.Insert(insurance, 2);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetInsurance", new { id = insurance.Id }, insurance);
