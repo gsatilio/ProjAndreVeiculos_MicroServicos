@@ -6,5 +6,7 @@
         string DatabaseName { get; set; }
         string AddressCollectionName { get; set; }
         string BankCollectionName { get; set; }
+        string TermsOfUseAgreementCollectionName { get; set; }
+        string TermsOfUseCollectionName { get; set; }
     }
 }
