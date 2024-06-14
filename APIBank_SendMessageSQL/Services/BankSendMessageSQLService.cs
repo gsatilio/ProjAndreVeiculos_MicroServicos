@@ -1,38 +1,15 @@
 ﻿using Models;
-using MongoDB;
-using MongoDB.Driver;
 using Repositories;
-using System.Net;
 
-namespace APIBank.Services
+namespace APIBank_SQL.Services
 {
-    public class BanksService
+    public class BankSendMessageSQLService
     {
         private BankRepository _repository;
-        private readonly IMongoCollection<Bank> _bank;
-        public BanksService(IMongoDBAPIDataBaseSettings settings)
-        {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
-            _bank = database.GetCollection<Bank>(settings.BankCollectionName);
-            _repository = new BankRepository();
-        }
-        public BanksService()
+
+        public BankSendMessageSQLService()
         {
             _repository = new BankRepository();
-        }
-        public Bank InsertMongo(Bank bank)
-        {
-            _bank.InsertOne(bank);
-            return bank;
-        }
-        public List<Bank> GetAllMongo()
-        {
-            return _bank.Find(x => true).ToList();
-        }
-        public Bank GetMongoById(string cnpj)
-        {
-            return _bank.Find<Bank>(bank => bank.CNPJ == cnpj).FirstOrDefault();
         }
 
         public async Task<string> Insert(Bank acquisition, int type)

@@ -117,9 +117,10 @@ namespace APIFinancialPending.Controllers
 
         // POST: api/FinancialPendings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{techType}")]
-        public async Task<ActionResult<FinancialPending>> PostFinancialPending(int techType, FinancialPendingDTO financialPendingDTO)
+        [HttpPost]
+        public async Task<ActionResult<FinancialPending>> PostFinancialPending(FinancialPendingDTO financialPendingDTO)
         {
+            int techType = 0; // EF
             if (_context.FinancialPending == null)
             {
                 return Problem("Entity set 'APIFinancialPendingContext.FinancialPending'  is null.");

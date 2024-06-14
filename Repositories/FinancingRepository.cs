@@ -32,13 +32,11 @@ namespace Repositories
                         cmd.Parameters.Add(new SqlParameter("@SaleId", financing.Sale.Id));
                         cmd.Parameters.Add(new SqlParameter("@FinancingDate", financing.FinancingDate));
                         cmd.Parameters.Add(new SqlParameter("@BankCNPJ", financing.Bank.CNPJ));
-                        cmd.ExecuteNonQuery();
-                        result = financing.Id;
+                        result = (int)cmd.ExecuteScalar();
                     }
                     else // Dapper
                     {
-                        db.Execute(Financing.INSERT, financing);
-                        result = financing.Id;
+                        result = db.ExecuteScalar<int>(Financing.INSERT, new {SaleId = financing.Sale.Id, financing.FinancingDate, BankCNPJ = financing.Bank.CNPJ});
                     }
                     db.Close();
                 }

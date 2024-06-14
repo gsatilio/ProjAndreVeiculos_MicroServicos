@@ -2,22 +2,21 @@
 using MongoDB;
 using MongoDB.Driver;
 using Repositories;
-using System.Net;
 
-namespace APIBank.Services
+namespace APIBank_Mongo.Services
 {
-    public class BanksService
+    public class BanksMongoService
     {
         private BankRepository _repository;
         private readonly IMongoCollection<Bank> _bank;
-        public BanksService(IMongoDBAPIDataBaseSettings settings)
+        public BanksMongoService(IMongoDBAPIDataBaseSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _bank = database.GetCollection<Bank>(settings.BankCollectionName);
             _repository = new BankRepository();
         }
-        public BanksService()
+        public BanksMongoService()
         {
             _repository = new BankRepository();
         }

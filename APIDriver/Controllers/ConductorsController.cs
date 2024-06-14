@@ -126,9 +126,10 @@ namespace APIDriver.Controllers
 
         // POST: api/Conductors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{techType}")]
-        public async Task<ActionResult<Conductor>> PostConductor(int techType, ConductorDTO conductorDTO)
+        [HttpPost]
+        public async Task<ActionResult<Conductor>> PostConductor(ConductorDTO conductorDTO)
         {
+            int techType = 0; // EF
             if (_context.Conductor == null)
             {
                 return Problem("Entity set 'APIDriverContext.Conductor'  is null.");

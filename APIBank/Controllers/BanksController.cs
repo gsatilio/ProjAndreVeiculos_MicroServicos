@@ -10,6 +10,9 @@ using Models;
 using DataAPI.Data;
 using Models.DTO;
 using APIBank.Services;
+using System.Text;
+using RabbitMQ.Client;
+using Newtonsoft.Json;
 
 namespace APIBank.Controllers
 {
@@ -19,16 +22,19 @@ namespace APIBank.Controllers
     {
         private readonly DataAPIContext _context;
         private readonly BanksService _service;
+        private readonly ConnectionFactory _factory;
+        private const string QUEUE_NAME = "bank";
 
-        public BanksController(DataAPIContext context, BanksService banksService)
+        public BanksController(DataAPIContext context, BanksService banksService, ConnectionFactory factory)
         {
             _context = context;
             _service = banksService;
+            _factory = factory;
         }
 
         // GET: api/Banks
-        [HttpGet("{techType}")]
-        public ActionResult<List<Models.Bank>> GetBank(int techType)
+        [HttpGet]
+        public ActionResult<List<Bank>> GetBank()
         {
             if (_context.Bank == null)
             {
@@ -54,8 +60,8 @@ namespace APIBank.Controllers
         }
 
         // GET: api/Banks/5
-        [HttpGet("{cnpj:length(14)},{techType}")]
-        public async Task<ActionResult<Bank>> GetBank(string cnpj, int techType)
+        [HttpGet("{cnpj:length(14)}")]
+        public async Task<ActionResult<Bank>> GetBank(string cnpj)
         {
             if (_context.Bank == null)
             {
@@ -123,15 +129,44 @@ namespace APIBank.Controllers
 
         // POST: api/Bankes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{techType}")]
-        public async Task<ActionResult<Bank>> PostBank(int techType, Bank bank)
+        [HttpPost]
+        public IActionResult PostMQMessage([FromBody] Bank bank)
+        {
+            using (var connection = _factory.CreateConnection())
+            {
+                using (var channel = connection.CreateModel())
+                {
+
+                    channel.QueueDeclare(
+                        queue: QUEUE_NAME,
+                        durable: false,
+                        exclusive: false,
+                        autoDelete: false,
+                        arguments: null
+                        );
+
+                    var stringfieldMessage = JsonConvert.SerializeObject(bank);
+                    var bytesMessage = Encoding.UTF8.GetBytes(stringfieldMessage);
+
+                    channel.BasicPublish(
+                        exchange: "",
+                        routingKey: QUEUE_NAME,
+                        basicProperties: null,
+                        body: bytesMessage
+                        );
+                }
+            }
+            return Accepted();
+        }
+        /*
+        public async Task<ActionResult<Bank>> PostBank(Bank bank)
         {
             if (_context.Bank == null)
             {
                 return Problem("Entity set 'APIBankContext.Bank'  is null.");
             }
             return _service.InsertMongo(bank);
-            /*
+            
             try
             {
                 switch (techType)
@@ -163,8 +198,7 @@ namespace APIBank.Controllers
                 }
             }
             return CreatedAtAction("GetBank", new { cnpj = bank.CNPJ, techtype = techType }, bank);
-            */
-        }
+        }*/
 
         // DELETE: api/Banks/5
         [HttpDelete("{id}")]

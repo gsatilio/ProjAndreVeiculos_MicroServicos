@@ -120,9 +120,10 @@ namespace APIDependent.Controllers
 
         // POST: api/Dependents
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{techType}")]
-        public async Task<ActionResult<Dependent>> PostDependent(int techType, DependentDTO dependentDTO)
+        [HttpPost]
+        public async Task<ActionResult<Dependent>> PostDependent(DependentDTO dependentDTO)
         {
+            int techType = 1; // ADO
             if (_context.Dependent == null)
             {
                 return Problem("Entity set 'APIDependentContext.Dependent'  is null.");

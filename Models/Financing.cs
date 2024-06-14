@@ -10,7 +10,7 @@ namespace Models
 {
     public class Financing
     {
-        public readonly static string INSERT = " INSERT INTO Financing (SaleId, FinancingDate, BankCNPJ) VALUES (@SaleId, @FinancingDate, @BankCNPJ) ";
+        public readonly static string INSERT = " INSERT INTO Financing (SaleId, FinancingDate, BankCNPJ) VALUES (@SaleId, @FinancingDate, @BankCNPJ); SELECT cast(scope_identity() as int) ";
         public readonly static string GETALL = " SELECT Id, SaleId, FinancingDate, BankCNPJ FROM Financing ";
         public readonly static string GET = " SELECT Id, SaleId, FinancingDate, BankCNPJ FROM Financing WHERE Id = @FinancingId ";
         [Key]

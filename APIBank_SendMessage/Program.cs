@@ -1,16 +1,12 @@
+﻿using APIBank_Mongo.Services;
+using APIBank_SendMessage.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using APIBank.Data;
-using DataAPI.Data;
-using APIBank.Services;
 using Microsoft.Extensions.Options;
 using MongoDB;
-using RabbitMQ.Client;
-
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<DataAPIContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("APIBankContext") ?? throw new InvalidOperationException("Connection string 'APIBankContext' not found.")));
+builder.Services.AddDbContext<APIBank_SendMessageMongo>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("APIBank_SendMessageContext") ?? throw new InvalidOperationException("Connection string 'ProjRabbitMQSendMessageContext' not found.")));
 
 // Add services to the container.
 
@@ -19,8 +15,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddSingleton<ConnectionFactory>();
-
 #region Arquivo de config
 builder.Services.Configure<MongoDBAPIDataBaseSettings>(
                builder.Configuration.GetSection(nameof(MongoDBAPIDataBaseSettings)));
@@ -28,11 +22,10 @@ builder.Services.Configure<MongoDBAPIDataBaseSettings>(
 builder.Services.AddSingleton<IMongoDBAPIDataBaseSettings>(sp =>
     sp.GetRequiredService<IOptions<MongoDBAPIDataBaseSettings>>().Value);
 
-builder.Services.AddSingleton<BanksService>();
-
-builder.Services.AddSingleton<ConnectionFactory>();
+builder.Services.AddSingleton<BankSendMessageMongoService>();
 
 #endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

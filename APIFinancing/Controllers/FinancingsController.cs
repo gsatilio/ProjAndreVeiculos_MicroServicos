@@ -45,7 +45,20 @@ namespace APIFinancing.Controllers
             switch (techType)
             {
                 case 0:
-                    financing = await _context.Financing.Include(p => p.Bank).Include(p => p.Sale).Include(p => p.Sale.Customer).Include(p => p.Sale.Car).Include(p => p.Sale.Customer.Address).Include(p => p.Sale.Employee).Include(p => p.Sale.Employee.Address).Include(p => p.Sale.Employee.Role).Include(p => p.Sale.Payment.CreditCard).Include(p => p.Sale.Payment.Boleto).Include(p => p.Sale.Payment.Pix).Include(p => p.Sale.Payment.Pix.PixType).ToListAsync();
+                    financing = await _context.Financing
+                        .Include(p => p.Bank)
+                        .Include(p => p.Sale)
+                        .Include(p => p.Sale.Customer)
+                        .Include(p => p.Sale.Car)
+                        .Include(p => p.Sale.Customer.Address)
+                        .Include(p => p.Sale.Employee)
+                        .Include(p => p.Sale.Employee.Address)
+                        .Include(p => p.Sale.Employee.Role)
+                        .Include(p => p.Sale.Payment.CreditCard)
+                        .Include(p => p.Sale.Payment.Boleto)
+                        .Include(p => p.Sale.Payment.Pix)
+                        .Include(p => p.Sale.Payment.Pix.PixType)
+                        .ToListAsync();
                     break;
                 case 1:
                     financing = await _service.GetAll(0);
@@ -72,7 +85,20 @@ namespace APIFinancing.Controllers
             switch (techType)
             {
                 case 0:
-                    financing = await _context.Financing.Include(p => p.Bank).Include(p => p.Sale).Include(p => p.Sale.Customer).Include(p => p.Sale.Car).Include(p => p.Sale.Customer.Address).Include(p => p.Sale.Employee).Include(p => p.Sale.Employee.Address).Include(p => p.Sale.Employee.Role).Include(p => p.Sale.Payment.CreditCard).Include(p => p.Sale.Payment.Boleto).Include(p => p.Sale.Payment.Pix).Include(p => p.Sale.Payment.Pix.PixType).SingleOrDefaultAsync(p => p.Id == id);
+                    financing = await _context.Financing
+                        .Include(p => p.Bank)
+                        .Include(p => p.Sale)
+                        .Include(p => p.Sale.Customer)
+                        .Include(p => p.Sale.Car)
+                        .Include(p => p.Sale.Customer.Address)
+                        .Include(p => p.Sale.Employee)
+                        .Include(p => p.Sale.Employee.Address)
+                        .Include(p => p.Sale.Employee.Role)
+                        .Include(p => p.Sale.Payment.CreditCard)
+                        .Include(p => p.Sale.Payment.Boleto)
+                        .Include(p => p.Sale.Payment.Pix)
+                        .Include(p => p.Sale.Payment.Pix.PixType)
+                        .SingleOrDefaultAsync(p => p.Id == id);
                     break;
                 case 1:
                     financing = await _service.Get(id, 0);
@@ -125,16 +151,17 @@ namespace APIFinancing.Controllers
 
         // POST: api/Financings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("{techType}")]
-        public async Task<ActionResult<Financing>> PostFinancing(int techType, FinancingDTO financingDTO)
+        [HttpPost]
+        public async Task<ActionResult<Financing>> PostFinancing(FinancingDTO financingDTO)
         {
+            int techType = 2; // Dapper
             if (_context.Financing == null)
             {
                 return Problem("Entity set 'APIFinancingContext.Financing'  is null.");
             }
             var financing = new Financing(financingDTO);
-            var sale = await _sale.Get(financing.Sale.Id, techType);
-            var bank = await _bank.Get(financing.Bank.CNPJ, techType);
+            var sale = await _sale.Get(financingDTO.SaleId, techType);
+            var bank = _bank.GetMongoById(financingDTO.BankCNPJ);
 
             if (sale == null)
                 return BadRequest("Venda não existe");
@@ -149,6 +176,7 @@ namespace APIFinancing.Controllers
                 switch (techType)
                 {
                     case 0:
+                        _context.Financing.Add(financing);
                         await _context.SaveChangesAsync();
                         break;
                     case 1:
@@ -171,7 +199,7 @@ namespace APIFinancing.Controllers
                 }
             }
 
-            return CreatedAtAction("GetFinancing", new { document = financing.Id, techType = 0 }, financing);
+            return CreatedAtAction("GetFinancing", new { document = financing.Id, techType }, financing);
         }
 
         // DELETE: api/Financings/5
