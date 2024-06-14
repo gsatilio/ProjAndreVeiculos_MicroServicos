@@ -7,7 +7,7 @@ Dapper, Rabbit
 
 
 ---
-APIs que usam Address (Customer, Employee, Dependent) = usar o serviço http Address
+APIs que usam Address (Customer, Employee, Dependent) = usar o serviço http Address (OK)
 ---
 Remover dependencias não necessarias de todas as APIs (controller antigo)
 ---

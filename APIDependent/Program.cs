@@ -6,6 +6,7 @@ using APIDependent.Services;
 using APIAddress.Services;
 using Microsoft.Extensions.Options;
 using MongoDB;
+using DataAPI.Service;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APIDependentContext") ?? throw new InvalidOperationException("Connection string 'APIDependentContext' not found.")));
@@ -24,9 +25,9 @@ builder.Services.Configure<MongoDBAPIDataBaseSettings>(
 builder.Services.AddSingleton<IMongoDBAPIDataBaseSettings>(sp =>
     sp.GetRequiredService<IOptions<MongoDBAPIDataBaseSettings>>().Value);
 
-builder.Services.AddSingleton<AddressesService>();
+builder.Services.AddSingleton<DataAPIServices>();
 builder.Services.AddSingleton<DependentsService>();
-//builder.Services.AddSingleton<DependentsService>();
+
 #endregion
 var app = builder.Build();
 

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using MongoDB;
 using DataAPI.Data;
 using APIEmployee.Services;
+using DataAPI.Service;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APIEmployeeContext") ?? throw new InvalidOperationException("Connection string 'APIEmployeeContext' not found.")));
@@ -25,7 +26,7 @@ builder.Services.Configure<MongoDBAPIDataBaseSettings>(
 builder.Services.AddSingleton<IMongoDBAPIDataBaseSettings>(sp =>
     sp.GetRequiredService<IOptions<MongoDBAPIDataBaseSettings>>().Value);
 
-builder.Services.AddSingleton<AddressesService>();
+builder.Services.AddSingleton<DataAPIServices>();
 builder.Services.AddSingleton<EmployeesService>();
 builder.Services.AddSingleton<RolesService>();
 #endregion

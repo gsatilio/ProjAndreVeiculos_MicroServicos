@@ -41,7 +41,6 @@ namespace Repositories
                     }
                     else // Dapper
                     {
-                        db.Execute(Customer.INSERT, customer);
                         result = db.ExecuteScalar<int>(Customer.INSERT, new
                         {
                             customer.Document,

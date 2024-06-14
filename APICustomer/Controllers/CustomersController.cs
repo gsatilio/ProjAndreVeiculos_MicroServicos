@@ -12,6 +12,7 @@ using Models.DTO;
 using APIAddress.Services;
 using DataAPI.Data;
 using APICustomer.Services;
+using DataAPI.Service;
 
 namespace APICustomer.Controllers
 {
@@ -20,14 +21,14 @@ namespace APICustomer.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly DataAPIContext _context;
-        private readonly AddressesService _addressesService;
+        private readonly DataAPIServices _apiService;
         private readonly CustomersService _service = new();
 
-        public CustomersController(DataAPIContext context, CustomersService service, AddressesService addressesService)
+        public CustomersController(DataAPIContext context, CustomersService service, DataAPIServices dataAPIServices)
         {
             _context = context;
             _service = service;
-            _addressesService = addressesService; // talvez remover
+            _apiService = dataAPIServices;
         }
 
         // GET: api/Customers
@@ -129,9 +130,8 @@ namespace APICustomer.Controllers
                 return Problem("Entity set 'APICustomerContext.Customer'  is null.");
             }
 
-
             var customer = new Customer(customerDTO);
-            var address = await _addressesService.RetrieveAdressAPI(customerDTO.Address); // usa API address
+            var address = await _apiService.PostAddressAPI(customerDTO.Address); // Chama API Address
             if (address == null)
                 return BadRequest("Endereço não encontrado");
 
@@ -146,15 +146,12 @@ namespace APICustomer.Controllers
                         await _context.SaveChangesAsync();
                         break;
                     case 1:
-                        customer.Address.Id = await _addressesService.Insert(address, 0);
                         _service.Insert(customer, 0);
                         break;
                     case 2:
-                        customer.Address.Id = await _addressesService.Insert(address, 1);
                         _service.Insert(customer, 1);
                         break;
                 }
-                _addressesService.InsertMongo(address);
             }
             catch (DbUpdateException)
             {

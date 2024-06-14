@@ -12,6 +12,8 @@ using Models.DTO;
 using APIAddress.Services;
 using DataAPI.Data;
 using APIEmployee.Services;
+using DataAPI.Service;
+using MongoDB.Driver.Linq;
 
 namespace APIEmployee.Controllers
 {
@@ -20,20 +22,15 @@ namespace APIEmployee.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly DataAPIContext _context;
-        private readonly AddressesService _addressesService;
+        private readonly DataAPIServices _apiService;
         private readonly EmployeesService _service = new();
 
-        public EmployeesController(DataAPIContext context, EmployeesService service, AddressesService addressesService)
+        public EmployeesController(DataAPIContext context, EmployeesService service, DataAPIServices dataAPIServices)
         {
             _context = context;
             _service = service;
-            _addressesService = addressesService;
+            _apiService = dataAPIServices;
         }
-        /*public EmployeesController(DataAPIContext context, AddressesService addressesService)
-        {
-            _context = context;
-            _addressesService = addressesService;
-        }*/
 
         // GET: api/Employees
         [HttpGet("{techType}")]
@@ -43,22 +40,32 @@ namespace APIEmployee.Controllers
             {
                 return NotFound();
             }
-            List<Employee> customer = new List<Employee>();
+            List<Employee> employee = new List<Employee>();
             switch (techType)
             {
                 case 0:
-                    customer = await _context.Employee.Include(a => a.Address).Include(b => b.Role).ToListAsync();
+                    employee = await _context.Employee.Include(a => a.Address).Include(b => b.Role).ToListAsync();
+                    /*List<Address> addresses = new List<Address>();
+                    addresses = await _apiService.GetAllAddressAPI(); // Chama API Address
+                    foreach (var emp in employee)
+                    {
+                        foreach (var add in addresses.Where(x => x.Id == emp.Address.Id))
+                        {
+                            emp.Address = add;
+                        }
+                    }
+                    employee = await _context.Employee.Include(b => b.Role).ToListAsync();*/
                     break;
                 case 1:
-                    customer = await _service.GetAll(0);
+                    employee = await _service.GetAll(0);
                     break;
                 case 2:
-                    customer = await _service.GetAll(1);
+                    employee = await _service.GetAll(1);
                     break;
                 default:
                     return NotFound();
             }
-            return customer;
+            return employee;
         }
 
         // GET: api/Employees/5
@@ -69,28 +76,31 @@ namespace APIEmployee.Controllers
             {
                 return NotFound();
             }
-            Employee? customer = new Employee();
+            Employee? employee = new Employee();
             switch (techType)
             {
                 case 0:
-                    customer = await _context.Employee.Include(a => a.Address).Include(b => b.Role).SingleOrDefaultAsync(c => c.Document == document);
+                    employee = await _context.Employee.Include(a => a.Address).Include(b => b.Role).SingleOrDefaultAsync(c => c.Document == document);
+                    /*Address address = new Address();
+                    employee.Address = await _apiService.GetAddressAPI(employee.Address.Id); // Chama API Address
+                    employee = await _context.Employee.Include(b => b.Role).SingleOrDefaultAsync(c => c.Document == document);*/
                     break;
                 case 1:
-                    customer = await _service.Get(document, 0);
+                    employee = await _service.Get(document, 0);
                     break;
                 case 2:
-                    customer = await _service.Get(document, 1);
+                    employee = await _service.Get(document, 1);
                     break;
                 default:
                     return NotFound();
             }
 
-            if (customer == null)
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            return customer;
+            return employee;
         }
 
         // PUT: api/Employees/5
@@ -134,7 +144,7 @@ namespace APIEmployee.Controllers
                 return Problem("Entity set 'APIEmployeeContext.Employee'  is null.");
             }
             var employee = new Employee(employeeDTO);
-            var address = await _addressesService.RetrieveAdressAPI(employeeDTO.Address);
+            var address = await _apiService.PostAddressAPI(employeeDTO.Address); // Chama API Address
 
             if (address == null)
                 return BadRequest("Endereço não existente");
@@ -154,15 +164,12 @@ namespace APIEmployee.Controllers
                         await _context.SaveChangesAsync();
                         break;
                     case 1:
-                        employee.Address.Id = await _addressesService.Insert(address, 0);
                         _service.Insert(employee, 0);
                         break;
                     case 2:
-                        employee.Address.Id = await _addressesService.Insert(address, 1);
                         _service.Insert(employee, 1);
                         break;
                 }
-                _addressesService.InsertMongo(address);
             }
             catch (DbUpdateException)
             {
@@ -175,7 +182,7 @@ namespace APIEmployee.Controllers
                     throw;
                 }
             }
-            
+
             return CreatedAtAction("GetEmployee", new { document = employee.Document, techType = 0 }, employee);
         }
 

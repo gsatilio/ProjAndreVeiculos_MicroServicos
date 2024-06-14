@@ -1,4 +1,5 @@
 ﻿using Models.DTO;
+using Models.MyAPI;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
@@ -47,6 +48,18 @@ namespace Models
             this.CEP = addressDTO.CEP;
             this.Complement = addressDTO.Complement;
             this.Number = addressDTO.Number;
+        }
+        public Address(AddressAPI addressAPI)
+        {
+            this.Id = addressAPI.Id;
+            this.Street = addressAPI.Street;
+            this.CEP = addressAPI.CEP;
+            this.Neighborhood = addressAPI.Neighborhood;
+            this.StreetType = addressAPI.StreetType;
+            this.Number = addressAPI.Number;
+            this.Complement = addressAPI.Uf;
+            this.Uf = addressAPI.Uf;
+            this.City = addressAPI.City;
         }
     }
 }

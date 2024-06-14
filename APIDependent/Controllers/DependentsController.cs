@@ -11,6 +11,7 @@ using APIDependent.Services;
 using Models.DTO;
 using Services;
 using APIAddress.Services;
+using DataAPI.Service;
 
 namespace APIDependent.Controllers
 {
@@ -19,14 +20,14 @@ namespace APIDependent.Controllers
     public class DependentsController : ControllerBase
     {
         private readonly DataAPIContext _context;
-        private readonly AddressesService _addressesService;
+        private readonly DataAPIServices _apiService;
         private readonly DependentsService _service;
 
-        public DependentsController(DataAPIContext context, DependentsService dependentsService, AddressesService addressesService)
+        public DependentsController(DataAPIContext context, DependentsService dependentsService, DataAPIServices dataAPIServices)
         {
             _context = context;
             _service = dependentsService;
-            _addressesService = addressesService; // talvez remover
+            _apiService = dataAPIServices; 
         }
 
         // GET: api/Dependents
@@ -134,7 +135,7 @@ namespace APIDependent.Controllers
                 return BadRequest("Cliente titular não existe");
 
             var dependent = new Dependent(dependentDTO);
-            var address = await _addressesService.RetrieveAdressAPI(dependentDTO.Address); // usa API address
+            var address = await _apiService.PostAddressAPI(dependentDTO.Address); // Chama API Address
             if (address == null)
                 return BadRequest("Endereço não encontrado");
 
@@ -150,15 +151,12 @@ namespace APIDependent.Controllers
                         await _context.SaveChangesAsync();
                         break;
                     case 1:
-                        dependent.Address.Id = await _addressesService.Insert(address, 0);
                         _service.Insert(dependent, 0);
                         break;
                     case 2:
-                        dependent.Address.Id = await _addressesService.Insert(address, 1);
                         _service.Insert(dependent, 1);
                         break;
                 }
-                _addressesService.InsertMongo(address);
             }
             catch (DbUpdateException)
             {
