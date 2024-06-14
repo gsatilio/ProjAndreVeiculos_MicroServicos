@@ -12,6 +12,7 @@ using DataAPI.Data;
 using Models.DTO;
 using System.Net;
 using APIAcquisition.Services;
+using DataAPI.Service;
 
 namespace APIAcquisition.Controllers
 {
@@ -21,11 +22,13 @@ namespace APIAcquisition.Controllers
     {
         private readonly DataAPIContext _context;
         private readonly AcquisitionsService _service;
+        private readonly DataAPIServices _serviceAPI;
 
-        public AcquisitionsController(DataAPIContext context, AcquisitionsService acquisitionsService)
+        public AcquisitionsController(DataAPIContext context, AcquisitionsService acquisitionsService, DataAPIServices dataAPIServices)
         {
             _context = context;
             _service = acquisitionsService;
+            _serviceAPI = dataAPIServices;
         }
 
         // GET: api/Acquisitions
@@ -123,7 +126,8 @@ namespace APIAcquisition.Controllers
                 return Problem("Entity set 'APIAcquisitionContext.Acquisition'  is null.");
             }
 
-            var car = _context.Car.Where(x => x.LicensePlate == acquisitionDTO.LicensePlate).FirstOrDefault();
+            //var car = _context.Car.Where(x => x.LicensePlate == acquisitionDTO.LicensePlate).FirstOrDefault();
+            var car = await _serviceAPI.GetCarAPI(acquisitionDTO.LicensePlate);
             if (car == null)
                 return BadRequest("Carro inexistente");
 

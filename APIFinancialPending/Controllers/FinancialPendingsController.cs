@@ -10,6 +10,7 @@ using Models;
 using DataAPI.Data;
 using Models.DTO;
 using APIFinancialPending.Services;
+using DataAPI.Service;
 
 namespace APIFinancialPending.Controllers
 {
@@ -18,12 +19,14 @@ namespace APIFinancialPending.Controllers
     public class FinancialPendingsController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly DataAPIServices _serviceAPI;
         private readonly FinancialPendingsService _service;
 
-        public FinancialPendingsController(DataAPIContext context, FinancialPendingsService financialPendingsService)
+        public FinancialPendingsController(DataAPIContext context, FinancialPendingsService financialPendingsService, DataAPIServices dataAPIServices)
         {
             _context = context;
             _service = financialPendingsService;
+            _serviceAPI = dataAPIServices;
         }
 
         // GET: api/FinancialPendings
@@ -127,9 +130,12 @@ namespace APIFinancialPending.Controllers
             }
             var financialPending = new FinancialPending(financialPendingDTO);
 
-            var customer = _context.Customer.Where(x => x.Document == financialPendingDTO.Document).Include(c => c.Address).FirstOrDefault();
+            //var customer = _context.Customer.Where(x => x.Document == financialPendingDTO.Document).Include(c => c.Address).FirstOrDefault();
+            var customer = await _serviceAPI.GetCustomerAPI(financialPendingDTO.Document);
             if (customer == null)
                 return BadRequest("Cliente não existente");
+
+
 
             financialPending.Customer = customer;
             try
@@ -137,6 +143,7 @@ namespace APIFinancialPending.Controllers
                 switch (techType)
                 {
                     case 0:
+                        _context.Customer.Attach(customer); 
                         _context.FinancialPending.Add(financialPending);
                         await _context.SaveChangesAsync();
                         break;

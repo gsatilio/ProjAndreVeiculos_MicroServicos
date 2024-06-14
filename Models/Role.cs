@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,9 @@ namespace Models
         public readonly static string GETALL = " SELECT Id, Description FROM Role ";
         public readonly static string GET = " SELECT Id, Description FROM Role WHERE Id = @IdRole";
 
+        [JsonProperty("id")]
         public int Id { get; set; }
+        [JsonProperty("description")]
         public string Description { get; set; }
 
     }

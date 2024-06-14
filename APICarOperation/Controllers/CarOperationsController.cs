@@ -12,6 +12,7 @@ using DataAPI.Data;
 using APICarOperation.Services;
 using System.Runtime.ConstrainedExecution;
 using Models.DTO;
+using DataAPI.Service;
 
 namespace APICarOperation.Controllers
 {
@@ -21,11 +22,13 @@ namespace APICarOperation.Controllers
     {
         private readonly DataAPIContext _context;
         private readonly CarOperationsService _service = new();
+        private readonly DataAPIServices _serviceAPI = new();
 
-        public CarOperationsController(DataAPIContext context, CarOperationsService service)
+        public CarOperationsController(DataAPIContext context, CarOperationsService service, DataAPIServices dataAPIServices)
         {
             _context = context;
             _service = service;
+            _serviceAPI = dataAPIServices;
         }
 
         // GET: api/CarOperations
@@ -127,16 +130,16 @@ namespace APICarOperation.Controllers
                 return Problem("Entity set 'APICarOperationContext.CarOperation'  is null.");
             }
 
-            var car = _context.Car.Where(x => x.LicensePlate == carOperationDTO.LicensePlate).FirstOrDefault();
+            //var car = _context.Car.Where(x => x.LicensePlate == carOperationDTO.LicensePlate).FirstOrDefault();
+            var car = await _serviceAPI.GetCarAPI(carOperationDTO.LicensePlate);
             if (car == null)
                 return BadRequest("Carro inexistente");
-            var operation = _context.Operation.Where(x => x.Id == carOperationDTO.IdOperation).FirstOrDefault();
+            var operation = await _serviceAPI.GetOperationAPI(carOperationDTO.IdOperation);
             if (operation == null)
                 return BadRequest("Serviço inexistente");
 
-            CarOperation carOperation = new(carOperationDTO);
-            carOperation.Car = car;
-            carOperation.Operation = operation;
+            CarOperation carOperation = new(carOperationDTO) { Car = car, Operation = operation };
+
             try
             {
                 switch (techType)

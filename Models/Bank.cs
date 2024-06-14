@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,8 +16,11 @@ namespace Models
         public static readonly string GET = " SELECT CNPJ, BankName, FoundationDate FROM Bank WHERE CNPJ = @CNPJ";
         [Key]
         [BsonId]
+        [JsonProperty("cnpj")]
         public string CNPJ { get; set; }
+        [JsonProperty("bankname")]
         public string BankName { get; set; }
+        [JsonProperty("foundationdate")]
         public DateTime FoundationDate { get; set; }
 
     }

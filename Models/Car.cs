@@ -19,7 +19,7 @@ namespace Models
         public int ModelYear { get; set; }
         [JsonProperty("fabricationYear")]
         public int FabricationYear { get; set; }
-        [JsonProperty("cor")]
+        [JsonProperty("color")]
         public string Color { get; set; }
         [JsonProperty("sold")]
         public bool Sold { get; set; }

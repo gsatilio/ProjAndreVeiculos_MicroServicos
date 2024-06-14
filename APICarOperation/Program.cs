@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using APICarOperation.Data;
 using DataAPI.Data;
 using APICarOperation.Services;
+using DataAPI.Service;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APICarOperationContext") ?? throw new InvalidOperationException("Connection string 'APICarOperationContext' not found.")));
@@ -14,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<CarOperationsService>();
+builder.Services.AddSingleton<DataAPIServices>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

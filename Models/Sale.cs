@@ -1,4 +1,5 @@
 ﻿using Models.DTO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,13 +40,19 @@ namespace Models
         public readonly static string GET = GETALL + " WHERE A.Id = @IdSale";
         public readonly static string GETALLGENERIC = "SELECT Id, CarLicensePlate, SaleDate, SaleValue, CustomerDocument, EmployeeDocument, PaymentId FROM Sale ";
         public readonly static string GETGENERIC = GETALLGENERIC + " WHERE Id = @IdSale";
-
+        [JsonProperty("id")]
         public int Id { get; set; }
+        [JsonProperty("car")]
         public Car Car { get; set; }
+        [JsonProperty("saledate")]
         public DateTime SaleDate { get; set; }
+        [JsonProperty("salevalue")]
         public Decimal SaleValue { get; set; }
+        [JsonProperty("customer")]
         public Customer Customer { get; set; }
+        [JsonProperty("employee")]
         public Employee Employee { get; set; }
+        [JsonProperty("payment")]
         public Payment Payment { get; set; }
 
         public Sale()

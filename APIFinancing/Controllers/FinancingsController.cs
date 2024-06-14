@@ -13,6 +13,7 @@ using APIFinancing.Services;
 using APISale.Services;
 using Services;
 using APIBank.Services;
+using DataAPI.Service;
 
 namespace APIFinancing.Controllers
 {
@@ -21,16 +22,24 @@ namespace APIFinancing.Controllers
     public class FinancingsController : ControllerBase
     {
         private readonly DataAPIContext _context;
+        private readonly DataAPIServices _serviceapi;
         private readonly FinancingsService _service;
-        private readonly BanksService _bank;
-        private readonly SalesService _sale;
+        /* private readonly BanksService _bank;
+         private readonly SalesService _sale;
 
-        public FinancingsController(DataAPIContext context, FinancingsService financingsService, BanksService banksService, SalesService salesService )
+         public FinancingsController(DataAPIContext context, FinancingsService financingsService, BanksService banksService, SalesService salesService )
+         {
+             _context = context;
+             _service = financingsService;
+             _bank = banksService;
+             _sale = salesService;
+         }
+        */
+        public FinancingsController(DataAPIContext context, FinancingsService financingsService, DataAPIServices dataAPIServices)
         {
             _context = context;
             _service = financingsService;
-            _bank = banksService;
-            _sale = salesService;
+            _serviceapi = dataAPIServices;
         }
 
         // GET: api/Financing
@@ -160,8 +169,10 @@ namespace APIFinancing.Controllers
                 return Problem("Entity set 'APIFinancingContext.Financing'  is null.");
             }
             var financing = new Financing(financingDTO);
-            var sale = await _sale.Get(financingDTO.SaleId, techType);
-            var bank = _bank.GetMongoById(financingDTO.BankCNPJ);
+            var sale = await _serviceapi.GetSaleAPI(financingDTO.SaleId);
+            //var sale = await _sale.Get(financingDTO.SaleId, techType);
+            Bank bank = null;
+            //var bank = _bank.GetMongoById(financingDTO.BankCNPJ);
 
             if (sale == null)
                 return BadRequest("Venda não existe");

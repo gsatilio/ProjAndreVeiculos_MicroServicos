@@ -7,6 +7,7 @@ using APISale.Services;
 using APIBank.Services;
 using Microsoft.Extensions.Options;
 using MongoDB;
+using DataAPI.Service;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("APIFinancingContext") ?? throw new InvalidOperationException("Connection string 'APIFinancingContext' not found.")));
@@ -25,8 +26,9 @@ builder.Services.AddSingleton<IMongoDBAPIDataBaseSettings>(sp =>
     sp.GetRequiredService<IOptions<MongoDBAPIDataBaseSettings>>().Value);
 
 builder.Services.AddSingleton<FinancingsService>();
-builder.Services.AddSingleton<BanksService>();
-builder.Services.AddSingleton<SalesService>();
+builder.Services.AddSingleton<DataAPIServices>();
+//builder.Services.AddSingleton<BanksService>();
+//builder.Services.AddSingleton<SalesService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

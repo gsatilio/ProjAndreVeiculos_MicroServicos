@@ -17,7 +17,7 @@ namespace APIBank_Test
                     CNPJ = "12345678900000",
                     FoundationDate = DateTime.Now
                 };
-                Bank msgOut = new BankRabbitService().PostBank(msg).Result;
+                Bank msgOut = new BankRabbitService().PostBankToMongo(msg).Result;
             }
 
             Assert.True(true);

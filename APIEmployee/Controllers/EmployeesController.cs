@@ -160,6 +160,8 @@ namespace APIEmployee.Controllers
                 switch (techType)
                 {
                     case 0:
+                        _context.Address.Attach(address);
+                        _context.Role.Attach(role);
                         _context.Employee.Add(employee);
                         await _context.SaveChangesAsync();
                         break;

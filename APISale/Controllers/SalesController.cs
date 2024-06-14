@@ -35,11 +35,11 @@ namespace APISale.Controllers
             {
                 return NotFound();
             }
-            List<Sale> addresses = new List<Sale>();
+            List<Sale> sales = new List<Sale>();
             switch (techType)
             {
                 case 0:
-                    addresses = await _context.Sale
+                    sales = await _context.Sale
                         .Include(p => p.Car)
                         .Include(p => p.Customer)
                         .Include(p => p.Customer.Address)
@@ -52,15 +52,15 @@ namespace APISale.Controllers
                         .Include(p => p.Payment.Pix.PixType).ToListAsync();
                     break;
                 case 1:
-                    addresses = await _service.GetAll(0);
+                    sales = await _service.GetAll(0);
                     break;
                 case 2:
-                    addresses = await _service.GetAll(1);
+                    sales = await _service.GetAll(1);
                     break;
                 default:
                     return NotFound();
             }
-            return addresses;
+            return sales;
         }
 
         // GET: api/Sale/5
@@ -72,11 +72,11 @@ namespace APISale.Controllers
                 return NotFound();
             }
 
-            Sale? address = new Sale();
+            Sale? sale = new Sale();
             switch (techType)
             {
                 case 0:
-                    address = await _context.Sale
+                    sale = await _context.Sale
                         .Include(p => p.Car)
                         .Include(p => p.Customer)
                         .Include(p => p.Customer.Address)
@@ -90,21 +90,19 @@ namespace APISale.Controllers
                         .SingleOrDefaultAsync(p => p.Id == id);
                     break;
                 case 1:
-                    address = await _service.Get(id, 0);
+                    sale = await _service.Get(id, 0);
                     break;
                 case 2:
-                    address = await _service.Get(id, 1);
+                    sale = await _service.Get(id, 1);
                     break;
                 default:
                     return NotFound();
             }
 
-            if (address == null)
-            {
+            if (sale == null)
                 return NotFound();
-            }
 
-            return address;
+            return sale;
         }
 
         // PUT: api/Sales/5
