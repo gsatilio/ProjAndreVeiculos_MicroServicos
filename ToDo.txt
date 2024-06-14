@@ -14,26 +14,25 @@ Corrigir instancias de Services das APIs
 ---
 Criar testes
 ---
-Criar Rabbit
+Criar Rabbit (OK)
 ---
 
+FinancialPending -- EF
 
-select * from Category
+Dependent -- ADO.NET
 
-select * from DriverLicense
+Insurance -- Dapper
 
-select * from Conductor -- EF
+TermsOfUse -- mongo
 
-select * from Dependent -- ADO.NET
+Financing -- Dapper
 
-select * from Insurance -- Dapper
+Bank -- mongo ( + rabbit + SQL)
 
-select * from FinancialPending -- EF
+Conductor -- EF
 
-select * from Bank -- mongo
+Category
 
-select * from Financing -- Dapper
+DriverLicense
 
-select * from TermsOfUse -- mongo
-
-select * from TermsOfUseAgreement -- mongo
+TermsOfUseAgreement -- mongo
