@@ -1,9 +1,10 @@
-API FinancialPending
-API Financing
-API Insurance
-API Payment
-API Sale
-API TermsOfUse
+
+1 xUnit test projet (Bank Test)
+2 requisições http (Bank SendMessage Mongo e SQL)
+15 APIs (ADO, Dapper, EF)
+SQL Server e MongoDB
+Dapper, Rabbit
+
 
 ---
 APIs que usam Address (Customer, Employee, Dependent) = usar o serviço http Address
@@ -12,7 +13,7 @@ Remover dependencias não necessarias de todas as APIs (controller antigo)
 ---
 Corrigir instancias de Services das APIs
 ---
-Criar testes
+Criar testes 
 ---
 Criar Rabbit (OK)
 ---
